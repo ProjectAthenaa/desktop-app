@@ -32,12 +32,13 @@ const createWindow = async (): Promise<void> => {
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   if (isDev) {
+    // TODO: Figure this shit out, dk what's going on
     // Install react developer tools
-    const reactDevToolsName = await installExtension({
-      id: 'fmkadmapgofadopljbjfkapdkoienihi',
-      electron: '>=1.2.1'
-    });
-    console.log(`${reactDevToolsName} installed`);
+    // const reactDevToolsName = await installExtension({
+    //   id: 'fmkadmapgofadopljbjfkapdkoienihi',
+    //   electron: '>=1.2.1'
+    // });
+    // console.log(`${reactDevToolsName} installed`);
     mainWindow.webContents.openDevTools();
   }
 };

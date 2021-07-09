@@ -61,6 +61,12 @@ table.floating-header-table {
     }
   }
 
+  tbody {
+    tr:last-child  td {
+      padding-bottom: 30px;
+    }
+  }
+
   .actions {
     .actions-layout {
       display: flex;

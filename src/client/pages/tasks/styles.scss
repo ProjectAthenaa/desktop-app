@@ -1,23 +1,40 @@
 @import '../../assets/styles/vars';
 
+.task-page {
+  .os-scrollbar {
+    &.os-scrollbar-vertical {
+      top: 53px;
+      bottom: 31px;
+    }
+    &.os-scrollbar-horizontal {
+      background-color: #fff;
+      border-top: 1px solid #E6E6E6;
+      padding: 15px 10px;
+      right: 0;
 
-.task-table {
-  height: calc(100vh - (175px));
-  width: calc(100vw - 275px);
-  overflow: scroll;
+      .os-scrollbar-handle {
+        &::before {
+          border-radius: 10px;
+          background-color: #D4D4D4;
+          top: -4px;
+          bottom: -5px;
+        }
+      }
 
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+      &::before {
+        content: "";
+        height: 15px;
+        width: 100%;
+        bottom: 100%;
+        background-image: url('../../assets/images/overflow-shadow.png');
+        transform: scaleY(-1);
+        position: absolute;
+        left: 0;
+      }
+    }
   }
 
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 5px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #929292;
-    border-radius: 5px;
+  .task-table:not(.x-can-scroll) table.floating-header-table tbody tr:last-child td {
+    padding-bottom: 0;
   }
 }
