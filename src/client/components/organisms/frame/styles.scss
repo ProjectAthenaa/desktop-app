@@ -7,6 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  -webkit-app-region: drag;
 
   h1.title {
     font-weight: $fw-bold;
@@ -20,23 +21,35 @@
   }
 
   .frame-actions {
+    position: relative;
+    z-index: 10000;
     button {
-      cursor: pointer;
+      cursor: pointer !important;
       height: 15px;
       width: 15px;
       border-radius: 8px;
       background-color: rgba(0,0,0,.2);
       outline: none;
       border: none;
+      transition: background-color 200ms ease;
 
       &.close {
         background-color: #a83e3e;
+        &:hover {
+          background-color: #d34f4f;
+        }
       }
       &.minimize {
         background-color: #dfae3a;
+        &:hover {
+          background-color: #eec458;
+        }
       }
       &.maximize {
         background-color: #629235;
+        &:hover {
+          background-color: #76aa46;
+        }
       }
 
       &:not(:last-child) {
