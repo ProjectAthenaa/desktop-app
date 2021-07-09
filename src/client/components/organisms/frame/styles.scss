@@ -1,0 +1,47 @@
+@import '../../../assets/styles/vars';
+
+.frame {
+  border-bottom: 1px solid #E6E6E6;
+  height: 35px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h1.title {
+    font-weight: $fw-bold;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  p.version {
+    font-size: $fs-small;
+  }
+
+  .frame-actions {
+    button {
+      cursor: pointer;
+      height: 15px;
+      width: 15px;
+      border-radius: 8px;
+      background-color: rgba(0,0,0,.2);
+      outline: none;
+      border: none;
+
+      &.close {
+        background-color: #a83e3e;
+      }
+      &.minimize {
+        background-color: #dfae3a;
+      }
+      &.maximize {
+        background-color: #629235;
+      }
+
+      &:not(:last-child) {
+        margin-right: 5px;
+      }
+    }
+  }
+}

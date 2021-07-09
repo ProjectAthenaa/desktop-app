@@ -1,0 +1,27 @@
+@keyframes animateInOut {
+  0% {
+    fill: rgb(22, 64, 127);
+  }
+  25% {
+    fill: rgba(22, 64, 127, .4);
+    transform: scale(.93) translateX(3px) translateY(2px);
+  }
+  60% {
+    fill: rgb(22, 64, 127);
+  }
+}
+.svg-elem-1, .svg-elem-2, .svg-elem-3, .svg-elem-4, .svg-elem-5, .svg-elem-6 {
+  animation-duration: 3s;
+  animation-name: animateInOut;
+  animation-iteration-count: infinite;
+}
+
+// row 2
+.svg-elem-3, .svg-elem-6 {
+  animation-delay: .25s;
+}
+
+// row 3
+.svg-elem-4, .svg-elem-5 {
+  animation-delay: .5s;
+}
