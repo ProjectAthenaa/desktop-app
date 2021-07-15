@@ -12,7 +12,7 @@ export type Route = {
 const routes: Route[] = [
   {
     title: 'Dashboard',
-    route: '/dashboard',
+    route: '/',
     icon: Dashboard
   },
   {

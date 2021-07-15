@@ -1,12 +1,12 @@
 import React from 'react';
-import {BrowserRouter} from 'react-router-dom';
+import {HashRouter} from 'react-router-dom';
 import Global from './templates/global';
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Global />
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 

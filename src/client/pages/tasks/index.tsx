@@ -408,7 +408,9 @@ const Tasks: React.FC<Props> = () => {
             ]}
             actions={[
               {
-                onClick: () => console.log('click'),
+                onClick: () => {
+                  console.log('click')
+                },
                 icon: PlayIcon,
                 color: ActionColor.GREEN
               },

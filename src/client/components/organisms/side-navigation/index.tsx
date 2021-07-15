@@ -4,6 +4,7 @@ import LogoImage from '../../../assets/images/logo.svg';
 import SideNavigationLink from '../../molecules/side-navigation-link';
 import { useLocation } from 'react-router-dom';
 import routes from '../../../routes';
+import AnnouncementSlider from '../../molecules/announcement-slider';
 
 const SideNavigation: React.FC = () => {
   const { pathname } = useLocation();
@@ -11,7 +12,9 @@ const SideNavigation: React.FC = () => {
 
   return (
     <div className={'side-nav'}>
-      <img src={LogoImage} alt="Project Athena" className="logo"/>
+      <div className="top">
+        <img src={LogoImage} alt="Project Athena" className="logo"/>
+      </div>
       <nav>
         {routes.map(route => (
           <SideNavigationLink
@@ -23,7 +26,9 @@ const SideNavigation: React.FC = () => {
           />
         ))}
       </nav>
-      <div />
+      <div className="announcements-section">
+        <AnnouncementSlider />
+      </div>
     </div>
   );
 };

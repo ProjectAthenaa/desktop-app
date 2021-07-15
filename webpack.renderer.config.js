@@ -14,4 +14,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css']
   },
+  externals: {
+    "@sentry/electron": "@sentry/electron",
+  }
 };

@@ -1,5 +1,6 @@
 import React from 'react';
 import './styles.scss';
+import Settings from '../../../assets/images/icons/settings';
 const {remote} = window.require('electron');
 
 const Frame: React.FC = () => {
@@ -33,8 +34,12 @@ const Frame: React.FC = () => {
         <button className="minimize" onClick={() => onClickWindowAction('minimize')}/>
         <button className="maximize" onClick={() => onClickWindowAction('maximize')}/>
       </div>
-      <h1 className={'title'}>Athena AIO</h1>
-      <p className={'version'}>v{'1.0.0'}</p>
+      <div className={'right'}>
+        <p className={'version'}>v{'1.0.0'}</p>
+        <button className={'settings-button'}>
+          {Settings}
+        </button>
+      </div>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { Switch, Route } from 'react-router-dom';
 import Tasks from '../../pages/tasks';
 import Frame from '../../components/organisms/frame';
 import ipcRenderer from '../../util/ipc-renderer';
+import routes from '../../routes';
 
 type Props = {
 }
@@ -27,8 +28,8 @@ const Global: React.FC<Props> = () => {
         <div>
           <Header />
           <Switch>
-            <Route path={'/'}> {/* Change this to /tasks */}
-              <Tasks/>
+            <Route path={'/'}>
+              <Tasks />
             </Route>
           </Switch>
         </div>
