@@ -7,6 +7,7 @@ import PlayIcon from '../../assets/images/icons/play';
 import EditIcon from '../../assets/images/icons/edit';
 import DeleteIcon from '../../assets/images/icons/delete';
 import OverlayScrollbars from 'overlayscrollbars';
+import ipcRenderer from '../../util/ipc-renderer';
 
 
 // TODO Create Task Status enum
@@ -408,8 +409,9 @@ const Tasks: React.FC<Props> = () => {
             ]}
             actions={[
               {
-                onClick: () => {
+                onClick: async () => {
                   console.log('click')
+                  const response = await ipcRenderer.invoke('login');
                 },
                 icon: PlayIcon,
                 color: ActionColor.GREEN

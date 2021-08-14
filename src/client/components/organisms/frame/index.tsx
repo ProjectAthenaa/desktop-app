@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './styles.scss';
 import Settings from '../../../assets/images/icons/settings';
+import FullModal from '../../molecules/full-modal';
 const {remote} = window.require('electron');
 
 const Frame: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const onClickWindowAction = async (action: 'minimize' | 'maximize' | 'close') => {
     const currentWindow = remote.getCurrentWindow();
 
@@ -36,7 +38,9 @@ const Frame: React.FC = () => {
       </div>
       <div className={'right'}>
         <p className={'version'}>v{'1.0.0'}</p>
-        <button className={'settings-button'}>
+        <button
+          onClick={() => setIsOpen(true)}
+          className={'settings-button'}>
           {Settings}
         </button>
       </div>

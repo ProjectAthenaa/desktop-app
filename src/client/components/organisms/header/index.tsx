@@ -9,7 +9,7 @@ import Profile from '../../molecules/profile';
 import Shadow from '../../../assets/images/overflow-shadow.png'
 const Header: React.FC = () => {
   const { pathname } = useLocation();
-  console.log(pathname, routes)
+
   const title = routes.filter(
     route => pathname === route.route
   )[0].title;
