@@ -1,9 +1,10 @@
-import {IpcMainInvokeEvent} from 'electron';
+import {BrowserWindow, IpcMainInvokeEvent, remote} from 'electron';
 import * as yup from 'yup';
 import validationMessages from '../../util/validation-messages';
 import respond, {Response} from '../../util/respond';
 import {authenticate} from '../../clients';
 import store from '../../util/store';
+import {createMainWindow} from '../../../index';
 
 type Body = {
   token: string;
@@ -29,6 +30,10 @@ const login = async (event: IpcMainInvokeEvent, body: Body): Promise<Response> =
 
     store.set('token', body.token);
     store.set('sessionId', loginResponse.getSessionid());
+
+    // Close out of the authentication window and open the main frame
+    BrowserWindow.fromId(event.frameId).close();
+    await createMainWindow();
 
     return respond(true, 'Login Success.',  {
       isFirstLogin: loginResponse.getIsfirstlogin(),

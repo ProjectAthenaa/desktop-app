@@ -19,13 +19,12 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-const createAuthenticationWindow = async (): Promise<void> => {
+export const createAuthenticationWindow = async (): Promise<void> => {
   const mainWindow = new BrowserWindow({
-    minHeight: 800,
-    minWidth: 1000,
-    width: 1440,
-    height: 1024,
+    width: 600,
+    height: 360,
     frame: false,
+    resizable: false,
     webPreferences: {
       preload: AUTH_WINDOW_WEBPACK_ENTRY,
       contextIsolation: false,
@@ -41,7 +40,7 @@ const createAuthenticationWindow = async (): Promise<void> => {
   if (isDev) mainWindow.webContents.openDevTools();
 };
 
-const createMainWindow = async (): Promise<void> => {
+export const createMainWindow = async (): Promise<void> => {
   const mainWindow = new BrowserWindow({
     minHeight: 800,
     minWidth: 1000,
@@ -76,6 +75,7 @@ const onReady = async (): Promise<void> => {
   // Check the current auth state
   const token: string | null = store.get('token');
   const sessionId: string | null = store.get('sessionId');
+
 
   if (!token || !sessionId) return await createAuthenticationWindow();
   await createMainWindow();
