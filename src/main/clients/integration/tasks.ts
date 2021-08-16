@@ -37,7 +37,6 @@ type ModifiedTask = {
   profileGroupId?: string;
 };
 
-
 /**
  * Creates a Task Group
  * @param name

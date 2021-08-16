@@ -1,11 +1,13 @@
-import { app, BrowserWindow, session, } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import isDev from 'electron-is-dev';
 // import installExtension from 'electron-devtools-installer';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import './main';
+import store from './main/util/store';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
+declare const AUTH_WINDOW_WEBPACK_ENTRY: string;
 
 Sentry.init({
   dsn: "https://1e22a3786c39402886f145cbae15881b@o706779.ingest.sentry.io/5867060",
@@ -17,7 +19,29 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-const createWindow = async (): Promise<void> => {
+const createAuthenticationWindow = async (): Promise<void> => {
+  const mainWindow = new BrowserWindow({
+    minHeight: 800,
+    minWidth: 1000,
+    width: 1440,
+    height: 1024,
+    frame: false,
+    webPreferences: {
+      preload: AUTH_WINDOW_WEBPACK_ENTRY,
+      contextIsolation: false,
+      spellcheck: false,
+      nodeIntegration: true,
+      enableRemoteModule: true
+    }
+  });
+
+  // and load the index.html of the app.
+  await mainWindow.loadURL(AUTH_WINDOW_WEBPACK_ENTRY);
+
+  if (isDev) mainWindow.webContents.openDevTools();
+};
+
+const createMainWindow = async (): Promise<void> => {
   const mainWindow = new BrowserWindow({
     minHeight: 800,
     minWidth: 1000,
@@ -48,12 +72,21 @@ const createWindow = async (): Promise<void> => {
   }
 };
 
-app.on('ready', createWindow);
+const onReady = async (): Promise<void> => {
+  // Check the current auth state
+  const token: string | null = store.get('token');
+  const sessionId: string | null = store.get('sessionId');
+
+  // if (!token || !sessionId) return await createAuthenticationWindow();
+  await createMainWindow();
+};
+
+app.on('ready', onReady);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
 app.on('activate', async () => {
-  if (BrowserWindow.getAllWindows().length === 0) await createWindow();
+  if (BrowserWindow.getAllWindows().length === 0) await onReady();
 });
