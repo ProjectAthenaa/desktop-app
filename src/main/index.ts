@@ -1,3 +1,7 @@
+// gRPC Clients
+import './clients';
+
+// IPC Listeners
 import './ipc/accounts';
 import './ipc/dashboard';
 import './ipc/profiles';

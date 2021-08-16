@@ -16,9 +16,7 @@ const Header: React.FC = () => {
 
   return (
     <div className={`header${title !== 'Dashboard' ? ' slim' : ''}`}>
-    {/*<div className={`header slim`}>*/}
       <h1>{title}</h1>
-      <img src={Shadow} />
       <div className="right">
         <Clock />
         <NotificationPanel />

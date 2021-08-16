@@ -410,8 +410,10 @@ const Tasks: React.FC<Props> = () => {
             actions={[
               {
                 onClick: async () => {
-                  console.log('click')
-                  const response = await ipcRenderer.invoke('login');
+                  console.log('login invoked')
+                  const response = await ipcRenderer.invoke('login', { token: 'ab6123af-e98b-4604-826d-1ffd37465b62' });
+
+                  console.log(response);
                 },
                 icon: PlayIcon,
                 color: ActionColor.GREEN
