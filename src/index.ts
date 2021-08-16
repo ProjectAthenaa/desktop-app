@@ -19,6 +19,15 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
+const heartbeat = async () => {
+  const token: string | null = store.get('token');
+  const sessionId: string | null = store.get('sessionId');
+
+  // Check session validity
+  // - if invalid, clear token and session in store and force user to sign in, clear interval
+  // - if valid, update token and session Id
+};
+
 export const createAuthenticationWindow = async (): Promise<void> => {
   const mainWindow = new BrowserWindow({
     width: 600,
