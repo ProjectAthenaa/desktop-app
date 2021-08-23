@@ -81,6 +81,9 @@ export const createMainWindow = async (): Promise<void> => {
 };
 
 const onReady = async (): Promise<void> => {
+  // store.set('token', null);
+  // store.set('sessionId', null);
+
   // Check the current auth state
   const token: string | null = store.get('token');
   const sessionId: string | null = store.get('sessionId');
