@@ -1,0 +1,103 @@
+@import '../../../assets/styles/vars';
+
+
+table.floating-header-table {
+  width: 100%;
+  border-collapse: separate;
+  position: relative;
+
+  tr {
+    td, th {
+      padding: 17px 30px;
+      white-space: nowrap;
+      &.actions {
+        position: sticky;
+        z-index: 100;
+        right: 0;
+        padding: 0 19px;
+        top: 0;
+        width: 185px;
+        min-width: 185px;
+        max-width: 185px;
+        border-left: 1px solid #E6E6E6;
+        background: #fff;
+      }
+    }
+    th {
+      background: #fff;
+    }
+  }
+
+  thead {
+    tr {
+      th {
+        text-align: left;
+        border-bottom: 1px solid #E6E6E6;
+        padding: 17px 30px;
+        font-weight: $fw-bold;
+        font-size: 14px;
+        line-height: 16px;
+        color: #808080;
+        position: sticky;
+        z-index: 100;
+        top: 0;
+
+        &.actions {
+          z-index: 101;
+        }
+        &::after {
+          content: '';
+          left: 0;
+          background-image: url('../../../assets/images/overflow-shadow.png');
+          background-repeat: repeat-x;
+          pointer-events: none;
+          height: 15px;
+          width: 100%;
+          position: absolute;
+          bottom: -15px;
+          z-index: 99;
+        }
+      }
+    }
+  }
+
+  tbody {
+    tr:last-child  td {
+      padding-bottom: 30px;
+    }
+  }
+
+  .actions {
+    .actions-layout {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+    }
+    button {
+      border: none;
+      outline: none;
+      border-radius: 8px;
+      height: 32px;
+      width: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+      transition: background-color 200ms ease;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #F3F3F3;
+      }
+
+      &.green:hover {
+        background-color: #EBF9EB;
+      }
+
+      &.red:hover {
+        background-color: #F9EBEB;
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+@import '../../../assets/styles/vars';
+
+.profile {
+  display: flex;
+  align-items: center;
+
+  .image {
+    margin-right: 12px;
+    height: 42px;
+    width: 42px;
+    background-size: cover;
+    border-radius: 50%;
+  }
+
+  p {
+    font-style: normal;
+    font-size: 14px;
+    line-height: 17px;
+
+    b {
+      font-weight: $fw-bold;
+    }
+  }
+}

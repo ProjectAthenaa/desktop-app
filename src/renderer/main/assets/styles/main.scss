@@ -1,0 +1,43 @@
+@import 'vendor/normalize';
+@import 'vendor/reset';
+@import 'vars';
+
+@import '../../../../../node_modules/overlayscrollbars/css/OverlayScrollbars.css';
+@import '../../../../../node_modules/react-responsive-carousel/lib/styles/carousel.min.css';
+
+@import '../../../../../node_modules/@fontsource/inter/100.css'; // 100 - Thin
+@import '../../../../../node_modules/@fontsource/inter/200.css'; // 200 - Extra Light
+@import '../../../../../node_modules/@fontsource/inter/300.css'; // 300 - Light
+@import '../../../../../node_modules/@fontsource/inter/400.css'; // 400 - Regular
+@import '../../../../../node_modules/@fontsource/inter/500.css'; // 500 - Medium
+@import '../../../../../node_modules/@fontsource/inter/600.css'; // 600 - Semi Bold
+@import '../../../../../node_modules/@fontsource/inter/700.css'; // 700 - Bold
+@import '../../../../../node_modules/@fontsource/inter/800.css'; // 800 - Extra Bold
+@import '../../../../../node_modules/@fontsource/inter/900.css'; // 900 - Black
+
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: $fw-regular;
+  user-select: none;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #929292;
+  border-radius: 5px;
+}
