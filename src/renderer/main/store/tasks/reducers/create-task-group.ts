@@ -1,5 +1,6 @@
-import {TasksState, TaskGroup} from '../index';
+import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
+import {TaskGroup} from '../../../../../types/task';
 
 type TaskGroupCreation = {
   Name?: string;

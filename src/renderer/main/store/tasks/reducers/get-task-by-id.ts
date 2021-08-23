@@ -1,5 +1,6 @@
-import {Task, TasksState} from '../index';
+import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
+import {Task} from '../../../../../types/task';
 
 const getTaskById = createAsyncThunk(
   'tasks/getTaskById',

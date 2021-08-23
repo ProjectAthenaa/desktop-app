@@ -1,5 +1,6 @@
-import {LookupType, Site, TasksState, Task} from '../index';
+import { TasksState } from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
+import {Task, LookupType, Site} from '../../../../../types/task';
 
 type TaskCreation = {
   StartTime?: string;

@@ -1,5 +1,3 @@
-
-
 export enum ProxyListType {
   Residential = "Residential",
   Datacenter  = "Datacenter",

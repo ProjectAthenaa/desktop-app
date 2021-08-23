@@ -51,13 +51,13 @@
               "config": "./webpack.renderer.config.js",
               "entryPoints": [
                 {
-                  "html": "./src/windows/main/index.html",
-                  "js": "./src/windows/main/renderer.ts",
+                  "html": "./src/renderer/main/index.html",
+                  "js": "./src/renderer/main/renderer.ts",
                   "name": "main_window"
                 },
                 {
-                  "html": "./src/windows/auth/index.html",
-                  "js": "./src/windows/auth/renderer.ts",
+                  "html": "./src/renderer/auth/index.html",
+                  "js": "./src/renderer/auth/renderer.ts",
                   "name": "auth_window"
                 }
               ]
@@ -82,7 +82,7 @@
     "css-loader": "^5.0.0",
     "electron": "13.1.6",
     "eslint": "^7.6.0",
-    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-import": "^2.24.1",
     "fork-ts-checker-webpack-plugin": "^6.0.1",
     "node-loader": "^2.0.0",
     "sass": "^1.35.2",

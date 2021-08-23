@@ -1,4 +1,4 @@
-const CopyPlugin = require("copy-webpack-plugin");
+const plugins = require('./webpack.plugins');
 
 module.exports = {
   /**
@@ -11,9 +11,10 @@ module.exports = {
     rules: require('./webpack.rules'),
   },
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json']
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
   },
   externals: {
     "@sentry/electron": "@sentry/electron",
   },
+  plugins,
 };

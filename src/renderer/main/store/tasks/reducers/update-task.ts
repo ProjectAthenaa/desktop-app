@@ -1,5 +1,6 @@
-import {TasksState, Task} from '../index';
+import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
+import {Task} from '../../../../../types/task';
 
 type UpdatedTask = {
   taskId: string;
