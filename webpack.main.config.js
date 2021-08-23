@@ -1,4 +1,4 @@
-const plugins = require('./webpack.plugins');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   /**
@@ -11,10 +11,18 @@ module.exports = {
     rules: require('./webpack.rules'),
   },
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json']
   },
   externals: {
     "@sentry/electron": "@sentry/electron",
   },
-  plugins,
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: 'src/main/certs/ca-cert.pem', to: 'ca-cert.pem' },
+        { from: 'src/main/certs/client-key.pem', to: 'client-key.pem' },
+        { from: 'src/main/certs/client-cert.pem', to: 'client-cert.pem' },
+      ]
+    }),
+  ]
 };

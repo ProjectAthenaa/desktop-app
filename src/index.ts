@@ -39,8 +39,8 @@ export const createAuthenticationWindow = async (): Promise<void> => {
       contextIsolation: false,
       spellcheck: false,
       nodeIntegration: true,
-      enableRemoteModule: true,
-    },
+      enableRemoteModule: true
+    }
   });
 
   // and load the index.html of the app.
@@ -81,8 +81,8 @@ export const createMainWindow = async (): Promise<void> => {
 };
 
 const onReady = async (): Promise<void> => {
-  store.set('token', null);
-  store.set('sessionId', null);
+  // store.set('token', null);
+  // store.set('sessionId', null);
 
   // Check the current auth state
   const token: string | null = store.get('token');

@@ -1,5 +1,3 @@
-// This is a standardized way of responding back to the renderer's requests to main process.
-
 export interface Response {
   success: boolean;
   message: string;
