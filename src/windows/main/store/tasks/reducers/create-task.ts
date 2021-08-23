@@ -1,4 +1,4 @@
-import {LookupType, Site, TasksState, Task} from './index';
+import {LookupType, Site, TasksState, Task} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
 
 type TaskCreation = {
@@ -23,13 +23,16 @@ type TaskCreation = {
 
 const createTask = createAsyncThunk(
   'tasks/createTask',
-  async (task: TaskCreation, thunkAPI) => {
-
+  async (task: TaskCreation): Promise<Task> => {
+    // Todo: Return newly created task from API
+    return task as unknown as Task;
   }
-)
+);
 
-export const addTask = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+export const createTaskReducer = (state: Draft<TasksState>, action: PayloadAction<Task>): Draft<TasksState> => {
   state.tasks.push(action.payload);
+
+  return state;
 };
 
 export default createTask;
