@@ -1,32 +1,12 @@
 import { TasksState } from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {Task, LookupType, Site} from '../../../../../types/task';
-
-type TaskCreation = {
-  StartTime?: string;
-  Product: {
-    Name: string;
-    Image?: string;
-    LookupType: LookupType;
-    PositiveKeywords: string[];
-    NegativeKeywords: string[];
-    Link?: string;
-    Quantity?: number;
-    Sizes: string[];
-    Colors: string[];
-    Site: Site;
-    Metadata: { [key: string]: never; }
-  };
-  ProxyListID: string;
-  ProfileGroupID: string;
-  TaskGroupID: string;
-};
+import {Task, TaskCreation} from '../../../../../types/task';
+import ipcRenderer from '../../../util/ipc-renderer';
 
 const createTask = createAsyncThunk(
   'tasks/createTask',
   async (task: TaskCreation): Promise<Task> => {
-    // Todo: Return newly created task from API
-    return task as unknown as Task;
+    return await ipcRenderer.invoke('createTask', task) as Task;
   }
 );
 

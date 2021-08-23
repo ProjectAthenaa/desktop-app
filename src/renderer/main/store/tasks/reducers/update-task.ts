@@ -1,6 +1,7 @@
 import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {Task} from '../../../../../types/task';
+import {Task, TaskGroup} from '../../../../../types/task';
+import ipcRenderer from '../../../util/ipc-renderer';
 
 type UpdatedTask = {
   taskId: string;
@@ -14,8 +15,7 @@ type UpdatedTask = {
 const updateTask = createAsyncThunk(
   'tasks/updateTask',
   async ({ taskId, ...updatedPayload }: UpdatedTask): Promise<Task> => {
-    // Todo: Return newly updated task from API
-    return {} as unknown as Task;
+    return await ipcRenderer.invoke('updateTask', taskId, updatedPayload) as Task;
   }
 );
 

@@ -1,6 +1,7 @@
 import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {TaskGroup} from '../../../../../types/task';
+import {Task, TaskGroup} from '../../../../../types/task';
+import ipcRenderer from '../../../util/ipc-renderer';
 
 type TaskGroupCreation = {
   Name?: string;
@@ -9,8 +10,7 @@ type TaskGroupCreation = {
 const createTaskGroup = createAsyncThunk(
   'tasks/createTaskGroup',
   async (taskGroup: TaskGroupCreation): Promise<TaskGroup> => {
-    // Todo: Return newly created task group from API
-    return {} as TaskGroup;
+    return await ipcRenderer.invoke('createTaskGroup', taskGroup) as TaskGroup;
   }
 );
 

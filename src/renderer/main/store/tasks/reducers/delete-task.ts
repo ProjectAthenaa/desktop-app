@@ -1,5 +1,7 @@
 import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
+import ipcRenderer from '../../../util/ipc-renderer';
+import {TaskGroup} from '../../../../../types/task';
 
 type DeletedTask = {
   taskId: string;
@@ -8,8 +10,7 @@ type DeletedTask = {
 const deleteTask = createAsyncThunk(
   'tasks/deleteTask',
   async ({ taskId }: DeletedTask): Promise<string> => {
-    // Todo: Return taskId to be deleted
-    return taskId;
+    return await ipcRenderer.invoke('deleteTask', taskId) as string;
   }
 );
 

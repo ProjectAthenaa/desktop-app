@@ -1,19 +1,19 @@
 import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
 import {Task, TaskGroup} from '../../../../../types/task';
+import ipcRenderer from '../../../util/ipc-renderer';
 
 interface Group extends TaskGroup {
   Tasks: Task[];
 }
-const getGroupById = createAsyncThunk(
-  'tasks/getTasksByGroupId',
+const getGroup = createAsyncThunk(
+  'tasks/getGroup',
   async (groupId: string): Promise<Group> => {
-    // Todo: Return tasks from groupId
-    return {} as Group;
+    return await ipcRenderer.invoke('getGroup', groupId) as Group;
   }
 );
 
-export const getGroupByIdReducer = (state: Draft<TasksState>, action: PayloadAction<Group>): Draft<TasksState> => {
+export const getGroupReducer = (state: Draft<TasksState>, action: PayloadAction<Group>): Draft<TasksState> => {
   return {
     ...state,
     tasks: action.payload.Tasks,
@@ -24,4 +24,4 @@ export const getGroupByIdReducer = (state: Draft<TasksState>, action: PayloadAct
   };
 };
 
-export default getGroupById;
+export default getGroup;

@@ -1,12 +1,12 @@
 import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {TaskGroup} from '../../../../../types/task';
+import {Task, TaskGroup} from '../../../../../types/task';
+import ipcRenderer from '../../../util/ipc-renderer';
 
 const getTaskGroups = createAsyncThunk(
   'tasks/getTaskGroups',
   async (): Promise<TaskGroup[]> => {
-    // Todo: Return task groups
-    return [];
+    return await ipcRenderer.invoke('getTaskGroups') as TaskGroup[];
   }
 );
 

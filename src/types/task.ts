@@ -89,3 +89,27 @@ export interface TaskGroup {
   ID: string;
   Name: string;
 }
+
+export type TaskCreation = {
+  StartTime?: string;
+  Product: {
+    Name: string;
+    Image?: string;
+    LookupType: LookupType;
+    PositiveKeywords: string[];
+    NegativeKeywords: string[];
+    Link?: string;
+    Quantity?: number;
+    Sizes: string[];
+    Colors: string[];
+    Site: Site;
+    Metadata: { [key: string]: never; }
+  };
+  ProxyListID: string;
+  ProfileGroupID: string;
+  TaskGroupID: string;
+};
+
+export type TaskGroupCreation = {
+  Name?: string;
+};

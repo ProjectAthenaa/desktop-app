@@ -3,8 +3,8 @@ import createTask, {createTaskReducer} from './reducers/create-task';
 import setStatus from '../util/set-status';
 import updateTask, {updateTaskReducer} from './reducers/update-task';
 import deleteTask, {deleteTaskReducer} from './reducers/delete-task';
-import getGroupById, {getGroupByIdReducer} from './reducers/get-group-by-id';
-import getTaskById, {getTaskByIdReducer} from './reducers/get-task-by-id';
+import getGroup, {getGroupReducer} from './reducers/get-group';
+import getTask, {getTaskReducer} from './reducers/get-task';
 import clearTask from './reducers/clear-task';
 import getTaskGroups, {getTaskGroupsReducer} from './reducers/get-task-groups';
 import createTaskGroup, {createTaskGroupReducer} from './reducers/create-task-group';
@@ -41,9 +41,9 @@ const tasksSlice = createSlice({
     // Delete a Task
     builder.addCase(deleteTask.fulfilled, deleteTaskReducer);
     // Gets Group by GroupId
-    builder.addCase(getGroupById.fulfilled, getGroupByIdReducer);
+    builder.addCase(getGroup.fulfilled, getGroupReducer);
     // Gets Task by Id
-    builder.addCase(getTaskById.fulfilled, getTaskByIdReducer);
+    builder.addCase(getTask.fulfilled, getTaskReducer);
     // Gets Task Groups
     builder.addCase(getTaskGroups.fulfilled, getTaskGroupsReducer);
     // Creates a Task Group
@@ -57,7 +57,7 @@ export const taskActions = {
   createTask,
   updateTask,
   deleteTask,
-  getTasksByGroupId: getGroupById,
-  getTaskById,
+  getTasksByGroupId: getGroup,
+  getTaskById: getTask,
   getTaskGroups,
 }
