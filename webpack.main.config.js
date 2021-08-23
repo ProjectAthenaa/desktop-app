@@ -16,13 +16,4 @@ module.exports = {
   externals: {
     "@sentry/electron": "@sentry/electron",
   },
-  plugins: [
-    new CopyPlugin({
-      patterns: [
-        { from: 'src/main/certs/ca-cert.pem', to: 'ca-cert.pem' },
-        { from: 'src/main/certs/client-key.pem', to: 'client-key.pem' },
-        { from: 'src/main/certs/client-cert.pem', to: 'client-cert.pem' },
-      ]
-    }),
-  ]
 };
