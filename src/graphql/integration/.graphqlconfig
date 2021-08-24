@@ -1,0 +1,15 @@
+{
+  "name": "Integration Service",
+  "schemaPath": "schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "Integration": {
+        "url": "https://api.athenabot.com/integration",
+        "headers": {
+          "Authorization": "Bearer d47ed931-a635-47c1-a140-8cc3b9f4fc4f"
+        },
+        "introspect": false
+      }
+    }
+  }
+}

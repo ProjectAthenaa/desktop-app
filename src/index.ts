@@ -89,7 +89,7 @@ const onReady = async (): Promise<void> => {
   const sessionId: string | null = store.get('sessionId');
 
 
-  if (!token || !sessionId) return await createAuthenticationWindow();
+  // if (!token || !sessionId) return await createAuthenticationWindow();
   await createMainWindow();
 };
 

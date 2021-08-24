@@ -419,7 +419,12 @@ const Tasks: React.FC<Props> = () => {
                 color: ActionColor.GREEN
               },
               {
-                onClick: () => console.log('click'),
+                onClick: async () => {
+                  console.log('login invoked')
+                  const response = await ipcRenderer.invoke('getTaskGroups');
+
+                  console.log(response);
+                },
                 icon: EditIcon
               },
               {

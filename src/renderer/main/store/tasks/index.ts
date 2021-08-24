@@ -57,7 +57,7 @@ export const taskActions = {
   createTask,
   updateTask,
   deleteTask,
-  getTasksByGroupId: getGroup,
-  getTaskById: getTask,
+  getGroup,
+  getTask,
   getTaskGroups,
 }
