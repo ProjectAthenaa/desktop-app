@@ -1,0 +1,12 @@
+{
+  "name": "Auth Service",
+  "schemaPath": "schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "Integration": {
+        "url": "https://api.athenabot.com/auth",
+        "introspect": false
+      }
+    }
+  }
+}
