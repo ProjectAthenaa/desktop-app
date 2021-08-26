@@ -5,7 +5,7 @@ import ipcRenderer from '../../../main/util/ipc-renderer';
 
 const Auth: React.FC = () => {
   const handleAuthentication = async (token: string) => {
-    return await ipcRenderer.invoke('login', { token });
+    return await ipcRenderer.invoke('login', token);
   };
 
   return (

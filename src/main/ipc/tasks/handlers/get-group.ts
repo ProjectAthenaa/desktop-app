@@ -4,7 +4,7 @@ interface Group extends TaskGroup {
   Tasks: Task[];
 }
 
-export const getGroup = async (event: Electron.IpcMainInvokeEvent, groupId: string): Promise<Group> => {
+const getGroup = async (event: Electron.IpcMainInvokeEvent, groupId: string): Promise<Group> => {
   return {} as Group;
 };
 

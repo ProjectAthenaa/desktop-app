@@ -1,4 +1,4 @@
-export const deleteTask = async (event: Electron.IpcMainInvokeEvent, taskId: string): Promise<string> => {
+const deleteTask = async (event: Electron.IpcMainInvokeEvent, taskId: string): Promise<string> => {
   return taskId;
 };
 

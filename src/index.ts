@@ -5,6 +5,9 @@ import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import './main';
 import store from './main/util/store';
+import {authClient} from './graphql/auth';
+import {gql} from 'graphql-request';
+import {machineId} from 'node-machine-id';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const AUTH_WINDOW_WEBPACK_ENTRY: string;
@@ -88,8 +91,7 @@ const onReady = async (): Promise<void> => {
   const token: string | null = store.get('token');
   const sessionId: string | null = store.get('sessionId');
 
-
-  // if (!token || !sessionId) return await createAuthenticationWindow();
+  if (!token || !sessionId) return await createAuthenticationWindow();
   await createMainWindow();
 };
 

@@ -1,6 +1,6 @@
 import {gql} from 'graphql-request';
-import {Task, TaskCreation} from '../../../types/task';
-import {integrationClient} from '../index';
+import {Task, TaskCreation} from '../../../../types/task';
+import {integrationClient} from '../../index';
 
 const CREATE_TASK = gql`
     mutation CreateTask($newTask: NewTask!){

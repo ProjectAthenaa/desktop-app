@@ -1,4 +1,4 @@
-import {TaskGroup} from '../../../types/task';
+import {TaskGroup} from '../../../../types/task';
 
 type UpdatedTaskGroup = {
   taskGroupId: string;

@@ -2,9 +2,10 @@ import React, {useEffect, useState} from 'react';
 import './styles.scss';
 import Frame from '../../components/organisms/frame';
 import LogoImage from '../../../main/assets/images/logo.svg';
+import {LoginResponse} from '../../../../types/auth';
 
 type Props = {
-  submitKey: (token: string) => Promise<{ message: string; }>;
+  submitKey: (token: string) => Promise<LoginResponse>;
 }
 
 
@@ -18,10 +19,14 @@ const AuthTemplate: React.FC<Props> = ({ submitKey }) => {
     setLoading(true);
     setMessage('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx');
 
-    const response = await submitKey(token);
+    try {
+      await submitKey(token);
+      setMessage('Login Success: Please wait.')
+    } catch (error) {
+      setMessage('Login Failure: Please try again.')
+    }
 
     setToken('');
-    setMessage(response.message)
     setLoading(false);
   }
 
