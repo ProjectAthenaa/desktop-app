@@ -8,6 +8,7 @@ import store from './main/util/store';
 import {authClient} from './graphql/auth';
 import {gql} from 'graphql-request';
 import {machineId} from 'node-machine-id';
+import {subscribeToRefreshSession} from './main/subscriptions/auth/handlers/refresh-session';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const AUTH_WINDOW_WEBPACK_ENTRY: string;
@@ -21,15 +22,6 @@ Sentry.init({
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
-
-const heartbeat = async () => {
-  const token: string | null = store.get('token');
-  const sessionId: string | null = store.get('sessionId');
-
-  // Check session validity
-  // - if invalid, clear token and session in store and force user to sign in, clear interval
-  // - if valid, update token and session Id
-};
 
 export const createAuthenticationWindow = async (): Promise<void> => {
   const mainWindow = new BrowserWindow({
@@ -68,6 +60,9 @@ export const createMainWindow = async (): Promise<void> => {
     }
   });
 
+  // Subscribe to refresh session to receive updates on refresh token
+  await subscribeToRefreshSession(mainWindow);
+
   // and load the index.html of the app.
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
@@ -84,6 +79,13 @@ export const createMainWindow = async (): Promise<void> => {
 };
 
 const onReady = async (): Promise<void> => {
+  const hardwareId = await machineId(true);
+  await authClient.request(gql`
+     mutation {
+       reBindHardwareID(key: "ATH-7d8ed177-52d6-4b11-ac35-22da0712d3d0", newHardwareID: "${hardwareId}")
+     }
+  `);
+
   store.set('token', null);
   store.set('sessionId', null);
 
