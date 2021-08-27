@@ -5,10 +5,13 @@ import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import './main';
 import store from './main/util/store';
-import {authClient} from './graphql/auth';
+import {authClient, authSubClient} from './graphql/auth';
 import {gql} from 'graphql-request';
 import {machineId} from 'node-machine-id';
 import {subscribeToRefreshSession} from './main/subscriptions/auth/handlers/refresh-session';
+import {ExecutionResult} from 'graphql';
+import {Session} from './types/auth';
+import {REFRESH_SESSION} from './graphql/auth/handlers/refresh-session';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const AUTH_WINDOW_WEBPACK_ENTRY: string;
@@ -60,11 +63,52 @@ export const createMainWindow = async (): Promise<void> => {
     }
   });
 
-  // Subscribe to refresh session to receive updates on refresh token
-  await subscribeToRefreshSession(mainWindow);
-
   // and load the index.html of the app.
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  let unsubscribe: () => void | undefined;
+  // Subscribe to refresh session to receive updates on refresh token
+  // await subscribeToRefreshSession(mainWindow);
+  const hardwareId = await machineId(true);
+  await new Promise<void>((resolve, reject) => {
+    const onNext = async (data: ExecutionResult<Record<string, unknown>, unknown>) => {
+      console.log('sub event rcvd', data);
+      const {refreshSession} = data.data as unknown as { refreshSession: Session };
+      if (refreshSession.HardwareID !== hardwareId) {
+
+        // Reset store back to defaults
+        store.set('sessionId', null);
+        store.set('token', null);
+        store.set('preferences', {});
+
+        // Close main window open auth
+        mainWindow.close();
+        await createMainWindow();
+
+        unsubscribe();
+      }
+
+      // Update session store
+      store.set('sessionId', refreshSession.ID);
+    };
+    const sessionId: string = store.get('sessionId');
+    // const hardwareId = await machineId(true);
+    unsubscribe = authSubClient.subscribe(
+      {
+        query: REFRESH_SESSION,
+        variables: {
+          session: {
+            ID: sessionId,
+            HardwareID: hardwareId,
+          }
+        }
+      },
+      {
+        next: onNext,
+        error: reject,
+        complete: resolve,
+      }
+    );
+  });
 
   if (isDev) {
     // TODO: Figure this shit out, dk what's going on

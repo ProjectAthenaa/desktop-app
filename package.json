@@ -108,6 +108,7 @@
     "@types/react-router-dom": "^5.1.8",
     "@types/react-table": "^7.7.2",
     "@types/uuid": "^8.3.1",
+    "@types/ws": "^7.4.7",
     "@types/yup": "^0.29.13",
     "ajv": "^8.6.2",
     "ajv-formats": "^2.1.1",
@@ -135,6 +136,7 @@
     "react-table": "^7.7.0",
     "redux": "^4.1.1",
     "uuid": "^8.3.2",
+    "ws": "^8.2.0",
     "yup": "^0.32.9"
   }
 }
