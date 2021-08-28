@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import {app, BrowserWindow, ipcMain, ipcRenderer} from 'electron';
 import isDev from 'electron-is-dev';
 // import installExtension from 'electron-devtools-installer';
 import * as Sentry from '@sentry/node';
@@ -10,8 +10,10 @@ import {gql} from 'graphql-request';
 import {machineId} from 'node-machine-id';
 import {subscribeToRefreshSession} from './main/subscriptions/auth/handlers/refresh-session';
 import {ExecutionResult} from 'graphql';
-import {Session} from './types/auth';
+import {DeviceType, Session} from './types/auth';
 import {REFRESH_SESSION} from './graphql/auth/handlers/refresh-session';
+import loginRequest from './graphql/auth/handlers/login';
+import {hostname, type} from 'os';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const AUTH_WINDOW_WEBPACK_ENTRY: string;
@@ -123,22 +125,49 @@ export const createMainWindow = async (): Promise<void> => {
 };
 
 const onReady = async (): Promise<void> => {
-  const hardwareId = await machineId(true);
-  await authClient.request(gql`
-     mutation {
-       reBindHardwareID(key: "ATH-7d8ed177-52d6-4b11-ac35-22da0712d3d0", newHardwareID: "${hardwareId}")
-     }
-  `);
+
+
 
   store.set('token', null);
   store.set('sessionId', null);
 
   // Check the current auth state
-  const token: string | null = store.get('token');
-  const sessionId: string | null = store.get('sessionId');
+  // const token: string | null = store.set('token');
+  // const sessionId: string | null = store.set('sessionId');
 
-  if (!token || !sessionId) return await createAuthenticationWindow();
-  await createMainWindow();
+  // if (!token || !sessionId) return await createAuthenticationWindow();
+  // await createMainWindow();
+  const hardwareId = await machineId(true);
+
+  await authClient.request(gql`
+      mutation {
+          reBindHardwareID(key: "ATH-7d8ed177-52d6-4b11-ac35-22da0712d3d0", newHardwareID: "${hardwareId}")
+      }
+  `);
+
+  const operatingSystem = type();
+  const hostName = hostname();
+  const token: string | null = store.get('token');
+
+  // If the token doesn't exist, open the auth window.
+  if (!token) return await createAuthenticationWindow();
+
+  // The token exists, attempt to authenticate and get the sessionId
+  try {
+    const response = await loginRequest(token, {
+      HardwareID: hardwareId,
+      OS: operatingSystem,
+      DeviceName: hostName,
+      DeviceType: DeviceType.Desktop,
+    });
+
+    // The session is now valid, store the ID and create the main window
+    store.set('sessionId', response.Session.ID);
+    await createMainWindow();
+  } catch (error) {
+    console.error(error);
+    return await createAuthenticationWindow();
+  }
 };
 
 app.on('ready', onReady);
