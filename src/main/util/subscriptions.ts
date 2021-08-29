@@ -7,5 +7,5 @@ export const getWsClient = (url: string): SubscriptionClient => new Subscription
 
 export const createSubscriptionObservable = (url: string, query: DocumentNode, variables?: Record<string, unknown>) => {
   const link = new WebSocketLink(getWsClient(url));
-  return execute(link, {query: query, variables: variables});
+  return execute(link, { query, variables });
 };

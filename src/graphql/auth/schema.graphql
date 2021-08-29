@@ -1,7 +1,30 @@
+
+enum Theme {
+    VARIATION_1
+    VARIATION_2
+    VARIATION_3
+    VARIATION_4
+}
+
+type Query {
+    login(key: String!, params: LoginParameters!): LoginResponse!
+}
+
 enum DeviceType {
     Unknown
     Mobile
     Desktop
+}
+
+type LoginResponse {
+    Session: Session!
+    Theme: Theme!
+    IsFirstLogin: Boolean!
+}
+
+input SessionInput {
+    ID: String!
+    HardwareID: String!
 }
 
 input LoginParameters {
@@ -11,38 +34,12 @@ input LoginParameters {
     HardwareID: String
 }
 
-type LoginResponse {
-    Session: Session!
-    Theme: Theme!
-    IsFirstLogin: Boolean!
-}
-
-type Mutation {
-    reBindHardwareID(key: String!, newHardwareID: String!): Boolean!
-}
-
-type Query {
-    login(key: String!, params: LoginParameters!): LoginResponse!
-}
-
 type Session {
     ID: String!
     HardwareID: String!
 }
 
-input SessionInput {
-    ID: String!
-    HardwareID: String!
-}
-
-type Subscription {
+type Mutation {
+    reBindHardwareID(key: String!, newHardwareID: String!): Boolean!
     refreshSession(session: SessionInput!): Session!
 }
-
-enum Theme {
-    VARIATION_1
-    VARIATION_2
-    VARIATION_3
-    VARIATION_4
-}
-

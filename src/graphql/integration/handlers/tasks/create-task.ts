@@ -26,11 +26,10 @@ const CREATE_TASK = gql`
 `;
 
 const createTask = async (taskBody: TaskCreation): Promise<Task> => {
-  const response = await integrationClient.request(CREATE_TASK, {
+  const response = await integrationClient().request<{ createTask: Task }>(CREATE_TASK, {
     taskBody
   });
-
-  return response;
+  return response.createTask;
 };
 
 

@@ -1,34 +1,28 @@
-import React, {useState} from 'react';
+import React, {useReducer, useState} from 'react';
 import './styles.scss';
 import {Link, useLocation} from 'react-router-dom';
 import Plus from '../../../assets/images/icons/plus';
 import Check from '../../../assets/images/icons/check';
+import {useDispatch, useSelector} from 'react-redux';
+import {TasksState} from '../../../store/tasks';
+import {TaskGroup} from '../../../../../types/task';
+import {RootState} from '../../../store';
+import {createTaskGroupRequest} from '../../../store/tasks/reducers/create-task-group';
 
-type TaskGroup = {
-  title: string;
-  id: string;
-}
-
-const fakeInitialState: TaskGroup[] = [
-  {
-    title: 'SUbreme',
-    id: '398402-43242-432-4322-342424',
-  },
-  {
-    title: 'McDonalds',
-    id: '398402-43242-432-4322-penis',
-  }
-];
 
 const TaskGroupHeader: React.FC = () => {
+  const dispatch = useDispatch();
+  const { taskGroups } = useSelector((state: RootState) => state.tasks);
   const [createGroupVisibility, setCreateGroupVisibility] = useState(true);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupPlaceholderName, setNewGroupPlaceholderName] = useState('New Group');
-  const [taskGroups, setTaskGroups] = useState<TaskGroup[]>([...fakeInitialState]);
   const {pathname} = useLocation();
 
-  const createGroup = () => {
-    setTaskGroups([...taskGroups, {id: 'uuid', title: newGroupName}]);
+  const createGroup = async () => {
+    if (newGroupName.trim() === "") return; // TODO: add a modal or toast displaying no name set or something
+
+    console.log('pls')
+    dispatch(createTaskGroupRequest({ Name: newGroupName.trim() }));
     setNewGroupName('');
     setNewGroupPlaceholderName('');
     setTimeout(() => setNewGroupPlaceholderName('New Group'), 400);
@@ -38,12 +32,12 @@ const TaskGroupHeader: React.FC = () => {
   return (
     <div className={'task-group-header'}>
       <div className="group-list">
-        {taskGroups.map(taskGroup => (
+        {(taskGroups || []).map(taskGroup => (
           <Link
-            className={`group ${`/tasks/${taskGroup.id}` === pathname ? 'active' : ''}`}
-            to={`/tasks/${taskGroup.id}`}
-            key={taskGroup.id}>
-            {taskGroup.title}
+            className={`group ${`/tasks/${taskGroup.ID}` === pathname ? 'active' : ''}`}
+            to={`/tasks/${taskGroup.ID}`}
+            key={taskGroup.ID}>
+            {taskGroup.Name}
           </Link>
         ))}
         <input

@@ -1,25 +1,45 @@
-import {app, BrowserWindow} from 'electron';
+import {app, BrowserWindow, session} from 'electron';
 import isDev from 'electron-is-dev';
 import * as Sentry from '@sentry/node';
 import './main';
 import store from './main/util/store';
 import {machineId} from 'node-machine-id';
 import {DeviceType,} from './types/auth';
-import {handleSessionRefresh} from './graphql/auth/handlers/refresh-session';
+import {refreshSessionHeartbeat} from './graphql/auth/handlers/refresh-session';
 import loginRequest from './graphql/auth/handlers/login';
 import {hostname, type} from 'os';
+import installExtensions, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
+
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const AUTH_WINDOW_WEBPACK_ENTRY: string;
 
 Sentry.init({
-  dsn: "https://1e22a3786c39402886f145cbae15881b@o706779.ingest.sentry.io/5867060",
+  dsn: 'https://1e22a3786c39402886f145cbae15881b@o706779.ingest.sentry.io/5867060',
   tracesSampleRate: 1.0,
 });
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
+}
+
+const loadToolsIfDev = async (window: BrowserWindow) => {
+  if (isDev) {
+    try {
+      await installExtensions(
+        [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS],
+        {
+          loadExtensionOptions: { allowFileAccess: true },
+          forceDownload: !!process.env.UPGRADE_EXTENSIONS
+        }
+      )
+    } catch (error) {
+      console.error(error);
+    }
+
+    window.webContents.openDevTools();
+  }
 }
 
 export const createAuthenticationWindow = async (): Promise<void> => {
@@ -37,10 +57,10 @@ export const createAuthenticationWindow = async (): Promise<void> => {
     },
   });
 
+  await loadToolsIfDev(mainWindow);
+
   // and load the index.html of the app.
   await mainWindow.loadURL(AUTH_WINDOW_WEBPACK_ENTRY);
-
-  if (isDev) mainWindow.webContents.openDevTools();
 };
 
 export const createMainWindow = async (): Promise<void> => {
@@ -59,11 +79,13 @@ export const createMainWindow = async (): Promise<void> => {
     }
   });
 
+  await loadToolsIfDev(mainWindow);
+
   // and load the index.html of the app.
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // Subscribe to refresh session to receive updates on refresh token
-  await handleSessionRefresh(mainWindow);
+  // Refresh session every 15 min to receive updates on refresh token
+  await refreshSessionHeartbeat(mainWindow);
 };
 
 const onReady = async (): Promise<void> => {
@@ -98,7 +120,6 @@ const onReady = async (): Promise<void> => {
     store.set('sessionId', response.Session.ID);
     await createMainWindow();
   } catch (error) {
-    console.error(error);
     return await createAuthenticationWindow();
   }
 };

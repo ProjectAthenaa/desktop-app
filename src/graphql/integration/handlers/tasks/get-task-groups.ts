@@ -1,7 +1,6 @@
 import {gql, request} from 'graphql-request';
 import {TaskGroup} from '../../../../types/task';
-// import {integrationClient, SERVICE_ENDPOINT} from '../../index';
-import auth from '../../../auth/handlers/login';
+import {integrationClient} from '../../index';
 
 
 
@@ -16,24 +15,15 @@ const GET_TASK_GROUPS = gql`
 
 const getTaskGroups = async (): Promise<TaskGroup[]> => {
   try {
-    // const response = await integrationClient.request(GET_TASK_GROUPS);
-    // const sessionID = await auth();
-    //
-    // console.log(sessionID)
-    //
-    // const response = await request(SERVICE_ENDPOINT, GET_TASK_GROUPS, {}, {
-    //   Authorization: `Bearer ${sessionID}`
-    // });
+    const response = await integrationClient()
+      .request<{ getAllTaskGroups: TaskGroup[] }>(GET_TASK_GROUPS);
 
-    // console.log(response);
-
-    return [];
+    return response.getAllTaskGroups;
 
   } catch (error) {
     console.log('error' , JSON.stringify(error));
     console.log('response', JSON.stringify(error.response));
   }
-
 };
 
 export default getTaskGroups;

@@ -1,16 +1,13 @@
 import {gql} from 'graphql-request';
-import {createSubscriptionObservable} from '../../../main/util/subscriptions';
-import {SERVICE_WS_ENDPOINT} from '../index';
-import {DocumentNode} from 'apollo-link';
-import {machineId} from 'node-machine-id';
+import {authClient} from '../index';
+import {Session} from '../../../types/auth';
 import store from '../../../main/util/store';
-import * as Sentry from '@sentry/node';
-import {createAuthenticationWindow} from '../../../index';
+import {machineId} from 'node-machine-id';
 import {BrowserWindow} from 'electron';
-
+import {createAuthenticationWindow} from '../../../index';
 
 export const REFRESH_SESSION = gql`
-    subscription RefreshSession($session: SessionInput!) {
+    mutation RefreshSession($session: SessionInput!) {
         refreshSession(session: $session) {
             ID
             HardwareID
@@ -18,72 +15,36 @@ export const REFRESH_SESSION = gql`
     }
 `;
 
-const refreshSessionObservable = (variables?: Record<string, unknown>) => createSubscriptionObservable(
-  SERVICE_WS_ENDPOINT,
-  REFRESH_SESSION as unknown as DocumentNode,
-  variables
-);
+const ONE_MINUTE = 1000 * 60;
 
-export const handleSessionRefresh = async (window: BrowserWindow) => {
+export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<NodeJS.Timer> => {
+  return setInterval(async () => {
     const hardwareId = await machineId(true);
-    let waiting = false;
-    let stopped = false;
+    const sessionId: string = store.get('sessionId');
 
-    (function recursiveSub() {
-        if (!stopped) {
-            if (!waiting) {
-                const sessionId: string | null = store.get('sessionId');
-                const refreshSessionClient = refreshSessionObservable({
-                    session: {
-                        ID: sessionId,
-                        HardwareID: hardwareId
-                    }
-                });
-
-                const refreshSessionSub = refreshSessionClient.subscribe(
-                  (event) => {
-                      refreshSessionSub.unsubscribe();
-
-                      // Check to see if errors exist, if so, just show the auth window because auth failed.
-                      // TODO: handle this more gracefully, in terms of UX
-                      if (event.errors) {
-                          stopped = true;
-                          refreshSessionSub.unsubscribe();
-                          createAuthenticationWindow();
-                          window.close();
-                          return;
-                      }
-
-                      if (event.data.refreshSession.HardwareID === "LOGGED_ELSEWHERE") {
-                          store.set('sessionId', null);
-                          store.set('token', null);
-                          window.close();
-                          createAuthenticationWindow();
-                          stopped = true;
-                          return;
-                      }
-
-                      // Update the sessionId in store
-                      store.set('sessionId', event.data.refreshSession.ID);
-                      console.log('new session set', event.data.refreshSession.ID);
-
-                      // Resubscribe on the next iteration
-                      waiting = false;
-                  },
-                  (error) => {
-                      Sentry.captureException(error);
-                      refreshSessionSub.unsubscribe();
-                      createAuthenticationWindow();
-                      window.close();
-                      stopped = true;
-                  });
-
-                waiting = true;
-
-                if (!stopped) setTimeout(recursiveSub, 100);
-            } else {
-                setTimeout(recursiveSub, 100);
-            }
+    const response = await authClient.request<{ refreshSession: Session }>(
+      REFRESH_SESSION,
+      {
+        session: {
+          ID: sessionId,
+          HardwareID: hardwareId
         }
-    })();
-}
+      }
+    );
+
+    const session = response.refreshSession;
+
+    if (hardwareId !== session.HardwareID) {
+      store.set('sessionId', null);
+      store.set('token', null);
+
+      // Close main window and open auth window
+      window.close();
+      await createAuthenticationWindow();
+
+      return;
+    }
+
+    store.set('sessionId', session.ID);
+  }, ONE_MINUTE * 15);
+};
