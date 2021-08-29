@@ -1,15 +1,11 @@
-import {app, BrowserWindow, ipcMain, ipcRenderer} from 'electron';
+import {app, BrowserWindow} from 'electron';
 import isDev from 'electron-is-dev';
-// import installExtension from 'electron-devtools-installer';
 import * as Sentry from '@sentry/node';
-import * as Tracing from '@sentry/tracing';
 import './main';
 import store from './main/util/store';
-import {authClient} from './graphql/auth';
-import {gql} from 'graphql-request';
 import {machineId} from 'node-machine-id';
-import {DeviceType, Session} from './types/auth';
-import {refreshSessionObservable} from './graphql/auth/handlers/refresh-session';
+import {DeviceType,} from './types/auth';
+import {handleSessionRefresh} from './graphql/auth/handlers/refresh-session';
 import loginRequest from './graphql/auth/handlers/login';
 import {hostname, type} from 'os';
 
@@ -67,71 +63,12 @@ export const createMainWindow = async (): Promise<void> => {
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Subscribe to refresh session to receive updates on refresh token
-  const hardwareId = await machineId(true);
-  let waiting = false;
-  let stopped = false;
-
-  (function recursiveSub() {
-    if (!stopped) {
-      if (!waiting) {
-        const sessionId: string | null = store.get('sessionId');
-        const refreshSessionClient = refreshSessionObservable({
-          session: {
-            ID: sessionId,
-            HardwareID: hardwareId
-          }
-        });
-
-        const refreshSessionSub = refreshSessionClient.subscribe(
-          (event) => {
-            refreshSessionSub.unsubscribe();
-
-            // Check to see if errors exist, if so, just show the auth window because auth failed.
-            // TODO: handle this more gracefully, in terms of UX
-            if (event.errors) {
-              stopped = true;
-              refreshSessionSub.unsubscribe();
-              createAuthenticationWindow();
-              mainWindow.close();
-              return;
-            }
-
-            if (event.data.refreshSession.HardwareID === "LOGGED_ELSEWHERE") {
-              store.set('sessionId', null);
-              store.set('token', null);
-              mainWindow.close();
-              createAuthenticationWindow();
-              stopped = true;
-              return;
-            }
-
-            // Update the sessionId in store
-            store.set('sessionId', event.data.refreshSession.ID);
-
-            // Resubscribe on the next iteration
-            waiting = false;
-          },
-          (error) => {
-            Sentry.captureException(error);
-            refreshSessionSub.unsubscribe();
-            createAuthenticationWindow();
-            mainWindow.close();
-            stopped = true;
-          });
-
-        waiting = true;
-
-        if (!stopped) setTimeout(recursiveSub, 100);
-      } else {
-        setTimeout(recursiveSub, 100);
-      }
-    }
-  })();
+  await handleSessionRefresh(mainWindow);
 };
 
 const onReady = async (): Promise<void> => {
-  store.set('token', null);
-  store.set('sessionId', null);
+  // store.set('token', null);
+  // store.set('sessionId', null);
 
   const hardwareId = await machineId(true);
 
