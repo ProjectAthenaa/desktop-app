@@ -1,9 +1,9 @@
-import {taskActions, TasksState} from '../index';
+import {TasksState} from '../index';
 import {createAction, createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {Task, TaskGroup} from '../../../../../types/task';
+import {TaskGroup} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
-import {store} from '../../index';
 import {PendingAction} from '../../util/async-action-types';
+import {Status} from '../../util/set-status';
 
 type TaskGroupCreation = {
   Name?: string;
@@ -13,6 +13,8 @@ export const createTaskGroupAction = createAction('tasks/createTaskGroup');
 
 export const createTempTaskGroup = (state: Draft<TasksState>, action: PendingAction): Draft<TasksState> => {
   const pendingBody: TaskGroupCreation = action.meta.arg;
+
+  state.statuses.taskCreation = Status.PENDING;
 
   state.taskGroups.push({
     ID: 'temp',
@@ -26,36 +28,24 @@ export const undoTaskGroup = (state: Draft<TasksState>, action: PayloadAction<Ta
   state.taskGroups = state.taskGroups.filter(taskGroup => taskGroup.ID !== "temp");
 
   // TODO: Fire method to show error toast
+  state.statuses.taskCreation = Status.REJECTED;
 
   return state;
 };
 
 export const createTaskGroupRequest = createAsyncThunk(
   'tasks/createTaskGroup',
-  async (taskGroup: TaskGroupCreation, { dispatch }): Promise<TaskGroup> => {
-    return await ipcRenderer.invoke('createTaskGroup', taskGroup) as TaskGroup;
+  async (taskGroup: TaskGroupCreation ) => {
+    return await ipcRenderer.invoke('createTaskGroup', taskGroup);;
   }
 );
 
-// export const createTaskGroupRequest = async (taskGroup: TaskGroupCreation) => {
-//   store.dispatch({
-//     type: 'tasks/createTempTaskGroup',
-//     payload: taskGroup
-//   });
-//
-//   try {
-//     const response = await ipcRenderer.invoke('createTaskGroup', taskGroup) as TaskGroup;
-//
-//     store.dispatch({
-//       type: 'tasks/createTaskGroup',
-//       payload: response
-//     });
-//   } catch (error) {
-//     store.dispatch({
-//       type: 'tasks/undoTaskGroup'
-//     });
+// const getTask = createAsyncThunk(
+//   'tasks/getTask',
+//   async (taskId: string): Promise<Task> => {
+//     return await ipcRenderer.invoke('getTask', taskId) as Task;
 //   }
-// };
+// );
 
 
 export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>): Draft<TasksState> => {
@@ -66,6 +56,8 @@ export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<
 
     return taskGroup;
   });
+
+  state.statuses.taskCreation = Status.FULFILLED;
 
   state.selectedTaskGroup = {
     ID: action.payload.ID,

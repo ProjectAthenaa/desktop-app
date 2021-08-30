@@ -1,39 +1,75 @@
-import React, {useReducer, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './styles.scss';
 import {Link, useLocation} from 'react-router-dom';
 import Plus from '../../../assets/images/icons/plus';
 import Check from '../../../assets/images/icons/check';
 import {useDispatch, useSelector} from 'react-redux';
-import {TasksState} from '../../../store/tasks';
-import {TaskGroup} from '../../../../../types/task';
 import {RootState} from '../../../store';
 import {createTaskGroupRequest} from '../../../store/tasks/reducers/create-task-group';
+import {Status} from '../../../store/util/set-status';
+import useOutsideAlerter from '../../../util/useOutsideAlerter';
 
 
 const TaskGroupHeader: React.FC = () => {
   const dispatch = useDispatch();
-  const { taskGroups } = useSelector((state: RootState) => state.tasks);
+  const { taskGroups, statuses } = useSelector((state: RootState) => state.tasks);
   const [createGroupVisibility, setCreateGroupVisibility] = useState(true);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupPlaceholderName, setNewGroupPlaceholderName] = useState('New Group');
   const {pathname} = useLocation();
+  const contextMenuRef = useRef();
+  const [contextMenu, setContextMenu] = useState({ shown: false, coords: [0, 0]});
+  useOutsideAlerter(contextMenuRef, () => {
+    setContextMenu(prev => ({ ...prev, shown: false }));
+    setTimeout(() => {
+      setContextMenu(prev => ({ ...prev, coords: [0, 0] }));
+    }, 100)
+  });
 
   const createGroup = async () => {
     if (newGroupName.trim() === "") return; // TODO: add a modal or toast displaying no name set or something
 
-    console.log('pls')
     dispatch(createTaskGroupRequest({ Name: newGroupName.trim() }));
-    setNewGroupName('');
-    setNewGroupPlaceholderName('');
-    setTimeout(() => setNewGroupPlaceholderName('New Group'), 400);
-    setCreateGroupVisibility(true);
   };
+  const handleRightClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    setContextMenu({
+      shown: true,
+      coords: [event.clientX, event.clientY]
+    });
+  };
+  useEffect(() => {
+    switch (statuses.taskCreation) {
+      case Status.FULFILLED:
+        setNewGroupName('');
+        setNewGroupPlaceholderName('');
+        setTimeout(() => setNewGroupPlaceholderName('New Group'), 400);
+        setCreateGroupVisibility(true);
+        break;
+      case Status.IDLE:
+      case Status.PENDING:
+      case Status.REJECTED:
+      default:
+        break;
+    }
+  }, [statuses.taskCreation]);
 
   return (
     <div className={'task-group-header'}>
       <div className="group-list">
+        <ul
+          ref={contextMenuRef}
+          style={{ top: contextMenu.coords[1], left: contextMenu.coords[0] }}
+          className={`context-menu ${contextMenu.shown ? 'shown' : ''}`}>
+          <li>
+            <button>Edit</button>
+          </li>
+          <li>
+            <button>Delete</button>
+          </li>
+        </ul>
         {(taskGroups || []).map(taskGroup => (
           <Link
+            onContextMenu={handleRightClick}
             className={`group ${`/tasks/${taskGroup.ID}` === pathname ? 'active' : ''}`}
             to={`/tasks/${taskGroup.ID}`}
             key={taskGroup.ID}>

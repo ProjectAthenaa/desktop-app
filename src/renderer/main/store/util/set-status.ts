@@ -1,18 +1,14 @@
 import {Draft, PayloadAction} from '@reduxjs/toolkit';
 
-export type StateStatus = "idle" | "pending";
+export enum Status {
+  IDLE,
+  PENDING,
+  FULFILLED,
+  REJECTED,
+}
 
-const setStatus = <T extends { status: StateStatus }>(state: Draft<T>, action: PayloadAction): void => {
-  switch (action.type) {
-    case "IDLE":
-      state.status = "idle";
-      break;
-    case "PENDING":
-      state.status = "pending";
-      break;
-    default:
-      throw Error(`Action type of '${action.type}' not supported.`);
-  }
+const setStatus = <S extends { statuses: Record<string, Status>}, F>(state: Draft<S>, action: PayloadAction<{ for: F; status: Status }>): void => {
+  state.statuses[action.payload.for as unknown as string] = action.payload.status;
 };
 
 export default setStatus;

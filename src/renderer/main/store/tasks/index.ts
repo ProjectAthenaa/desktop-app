@@ -4,23 +4,33 @@ import updateTask, {updateTaskReducer} from './reducers/update-task';
 import deleteTask, {deleteTaskReducer} from './reducers/delete-task';
 import getGroup, {getGroupReducer} from './reducers/get-group';
 import getTask, {getTaskReducer} from './reducers/get-task';
-import clearTask from './reducers/clear-task';
+import clearTaskReducer from './reducers/clear-task';
 import getTaskGroups, {getTaskGroupsReducer} from './reducers/get-task-groups';
 import {
-  createTaskGroup, createTaskGroupAction, createTaskGroupRequest,
+  createTaskGroup,
+  createTaskGroupAction,
+  createTaskGroupRequest,
   createTempTaskGroup,
   undoTaskGroup
 } from './reducers/create-task-group';
 import {Task, TaskGroup} from '../../../../types/task';
-import setSelectedTask from './reducers/set-selected-task';
-import setSelectedTaskGroup from './reducers/set-selected-task-group';
+import setSelectedTaskReducer from './reducers/set-selected-task';
+import setSelectedTaskGroupReducer from './reducers/set-selected-task-group';
+import setStatusReducer, {Status} from '../util/set-status';
 import {isFulfilledAction, isPendingAction, isRejectedAction} from '../util/async-action-types';
+
+export enum TaskStatusType {
+  taskCreation = 'taskCreation'
+}
 
 export interface TasksState {
   selectedTaskGroup: TaskGroup | null;
   selectedTask: Task | null;
   taskGroups: TaskGroup[];
   tasks: Task[];
+  statuses: {
+    taskCreation: Status;
+  };
 }
 
 const initialState: TasksState = {
@@ -28,18 +38,19 @@ const initialState: TasksState = {
   selectedTask: null,
   taskGroups: [],
   tasks: [],
+  statuses: {
+    taskCreation: Status.IDLE
+  },
 };
 
 const tasksSlice = createSlice({
   name: 'tasks',
   initialState,
   reducers: {
-    // createTempTaskGroup,
-    // undoTaskGroup,
-    // createTaskGroup,
-    setSelectedTask,
-    setSelectedTaskGroup,
-    clearTask,
+    setSelectedTask: setSelectedTaskReducer,
+    setSelectedTaskGroup: setSelectedTaskGroupReducer,
+    clearTask: clearTaskReducer,
+    setStatus: setStatusReducer,
   },
   extraReducers: {
     // [getTaskGroups.pending.type]: getTaskGroups,
@@ -48,54 +59,22 @@ const tasksSlice = createSlice({
 
     // Task Group Creation
     [createTaskGroupRequest.pending.type]: createTempTaskGroup,
-    [createTaskGroupRequest.rejected.type]: () => {
-      console.log(createTaskGroupRequest.rejected.type, createTaskGroupRequest.rejected.name);
-    },
-    [createTaskGroupRequest.fulfilled.type]: () => {
-      console.log(createTaskGroupRequest.fulfilled.type, createTaskGroupRequest.fulfilled.name);
-    }
-    // [createTaskGroupRequest.pending.type]: () => {
-    //   console.log(createTaskGroupRequest.pending.type, createTaskGroupRequest.pending.name);
-    // },
-    // [createTaskGroupRequest.rejected.type]: () => {
-    //   console.log(createTaskGroupRequest.rejected.type, createTaskGroupRequest.rejected.name);
-    // },
-    // [createTaskGroupRequest.fulfilled.type]: () => {
-    //   console.log(createTaskGroupRequest.fulfilled.type, createTaskGroupRequest.fulfilled.name);
-    // }
+    [createTaskGroupRequest.rejected.type]: undoTaskGroup,
+    [createTaskGroupRequest.fulfilled.type]: createTaskGroup,
   }
-  // extraReducers: builder => {
-  //   // Add Task
-  //   builder.addCase(createTask.fulfilled, createTaskReducer);
-  //   // Update a Task
-  //   builder.addCase(updateTask.fulfilled, updateTaskReducer);
-  //   // Delete a Task
-  //   builder.addCase(deleteTask.fulfilled, deleteTaskReducer);
-  //   // Gets Group by GroupId
-  //   builder.addCase(getGroup.fulfilled, getGroupReducer);
-  //   // Gets Task by Id
-  //   builder.addCase(getTask.fulfilled, getTaskReducer);
-  //   // Gets Task Groups
-  //   builder.addCase(getTaskGroups.fulfilled, getTaskGroupsReducer);
-  //   // Creates a Task Group
-  //   // builder.addCase(createTaskGroupAction, state => state)
-  //   //   .addMatcher(isPendingAction, createTempTaskGroup)
-  //   //   .addMatcher(isRejectedAction, undoTaskGroup)
-  //   //   .addMatcher(isFulfilledAction, createTaskGroup);
-  //   builder
-  //     .addCase(createTaskGroupRequest.fulfilled, createTaskGroup)
-  //     .addCase(createTaskGroupRequest.rejected, undoTaskGroup);
-  // }
 });
 
 export const reducer = tasksSlice.reducer;
-export const taskActions = {
-  ...tasksSlice.actions,
-  createTask,
-  updateTask,
-  deleteTask,
-  getGroup,
-  getTask,
-  getTaskGroups,
-  createTaskGroupRequest
-}
+export const {
+  setSelectedTask,
+  setSelectedTaskGroup,
+  clearTask,
+  setStatus,
+  // createTask,
+  // updateTask,
+  // deleteTask,
+  // getGroup,
+  // getTask,
+  // getTaskGroups,
+  // createTaskGroupRequest
+} = tasksSlice.actions;

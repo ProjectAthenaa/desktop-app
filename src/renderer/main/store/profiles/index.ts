@@ -22,7 +22,7 @@ const tasksSlice = createSlice({
   name: 'profiles',
   initialState,
   reducers: {
-    setStatus,
+    // setStatus,
   },
   extraReducers: builder => {
     // Add Task

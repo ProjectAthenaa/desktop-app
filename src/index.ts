@@ -9,6 +9,8 @@ import {refreshSessionHeartbeat} from './graphql/auth/handlers/refresh-session';
 import loginRequest from './graphql/auth/handlers/login';
 import {hostname, type} from 'os';
 import installExtensions, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
+import {authClient} from './graphql/auth';
+import {gql} from 'graphql-request';
 
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -57,10 +59,9 @@ export const createAuthenticationWindow = async (): Promise<void> => {
     },
   });
 
-  await loadToolsIfDev(mainWindow);
-
   // and load the index.html of the app.
   await mainWindow.loadURL(AUTH_WINDOW_WEBPACK_ENTRY);
+  await loadToolsIfDev(mainWindow);
 };
 
 export const createMainWindow = async (): Promise<void> => {
@@ -79,10 +80,9 @@ export const createMainWindow = async (): Promise<void> => {
     }
   });
 
-  await loadToolsIfDev(mainWindow);
-
   // and load the index.html of the app.
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  await loadToolsIfDev(mainWindow);
 
   // Refresh session every 15 min to receive updates on refresh token
   await refreshSessionHeartbeat(mainWindow);

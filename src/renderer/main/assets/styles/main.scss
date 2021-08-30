@@ -41,3 +41,39 @@ body {
   background: #929292;
   border-radius: 5px;
 }
+
+.context-menu {
+  position: absolute;
+  background-color: #fff;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  padding: 15px;
+  z-index: 10000;
+  border-radius: 16px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+
+  li:not(:last-child) {
+    margin-bottom: 5px;
+  }
+  button {
+    background-color: transparent;
+    width: 100%;
+    padding: 8px 15px;
+    border-radius: 6px;
+    outline: none;
+    border: none;
+    font-weight: bold;
+    transition: background-color 200ms ease;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, .05);
+    }
+  }
+
+  &.shown {
+    opacity: 1;
+    pointer-events: initial;
+  }
+}
