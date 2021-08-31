@@ -59,9 +59,10 @@ export const createAuthenticationWindow = async (): Promise<void> => {
     },
   });
 
+  await loadToolsIfDev(mainWindow);
+
   // and load the index.html of the app.
   await mainWindow.loadURL(AUTH_WINDOW_WEBPACK_ENTRY);
-  await loadToolsIfDev(mainWindow);
 };
 
 export const createMainWindow = async (): Promise<void> => {
@@ -80,9 +81,10 @@ export const createMainWindow = async (): Promise<void> => {
     }
   });
 
+  await loadToolsIfDev(mainWindow);
+
   // and load the index.html of the app.
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  await loadToolsIfDev(mainWindow);
 
   // Refresh session every 15 min to receive updates on refresh token
   await refreshSessionHeartbeat(mainWindow);
@@ -93,16 +95,15 @@ const onReady = async (): Promise<void> => {
   // store.set('sessionId', null);
 
   const hardwareId = await machineId(true);
+  const operatingSystem = type();
+  const hostName = hostname();
+  const token: string | null = store.get('token');
 
   // await authClient.request(gql`
   //     mutation {
   //         reBindHardwareID(key: "ATH-7d8ed177-52d6-4b11-ac35-22da0712d3d0", newHardwareID: "${hardwareId}")
   //     }
   // `);
-
-  const operatingSystem = type();
-  const hostName = hostname();
-  const token: string | null = store.get('token');
 
   // If the token doesn't exist, open the auth window.
   if (!token) return await createAuthenticationWindow();

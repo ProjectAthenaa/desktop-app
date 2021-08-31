@@ -8,7 +8,6 @@ import clearTaskReducer from './reducers/clear-task';
 import getTaskGroups, {getTaskGroupsReducer} from './reducers/get-task-groups';
 import {
   createTaskGroup,
-  createTaskGroupAction,
   createTaskGroupRequest,
   createTempTaskGroup,
   undoTaskGroup
@@ -18,6 +17,7 @@ import setSelectedTaskReducer from './reducers/set-selected-task';
 import setSelectedTaskGroupReducer from './reducers/set-selected-task-group';
 import setStatusReducer, {Status} from '../util/set-status';
 import {isFulfilledAction, isPendingAction, isRejectedAction} from '../util/async-action-types';
+import {deleteTaskGroup, deleteTaskGroupRequest, tempDeleteTaskGroup} from './reducers/delete-task-group';
 
 export enum TaskStatusType {
   taskCreation = 'taskCreation'
@@ -29,7 +29,8 @@ export interface TasksState {
   taskGroups: TaskGroup[];
   tasks: Task[];
   statuses: {
-    taskCreation: Status;
+    taskGroupCreation: Status;
+    taskGroupDeletion: Status;
   };
 }
 
@@ -39,7 +40,8 @@ const initialState: TasksState = {
   taskGroups: [],
   tasks: [],
   statuses: {
-    taskCreation: Status.IDLE
+    taskGroupCreation: Status.IDLE,
+    taskGroupDeletion: Status.IDLE
   },
 };
 
@@ -53,14 +55,18 @@ const tasksSlice = createSlice({
     setStatus: setStatusReducer,
   },
   extraReducers: {
-    // [getTaskGroups.pending.type]: getTaskGroups,
-    // [getTaskGroups.rejected.type]: undoTaskGroup,
+    // Todo: Reducers for failed and maybe pending?
     [getTaskGroups.fulfilled.type]: getTaskGroupsReducer,
 
     // Task Group Creation
     [createTaskGroupRequest.pending.type]: createTempTaskGroup,
     [createTaskGroupRequest.rejected.type]: undoTaskGroup,
     [createTaskGroupRequest.fulfilled.type]: createTaskGroup,
+
+    // Task Group Deletion
+    [deleteTaskGroupRequest.pending.type]: tempDeleteTaskGroup,
+    [deleteTaskGroupRequest.rejected.type]: undoTaskGroup,
+    [deleteTaskGroupRequest.fulfilled.type]: createTaskGroup,
   }
 });
 

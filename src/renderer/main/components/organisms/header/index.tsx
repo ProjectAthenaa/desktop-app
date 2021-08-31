@@ -10,9 +10,10 @@ import Shadow from '../../../assets/images/overflow-shadow.png'
 const Header: React.FC = () => {
   const { pathname } = useLocation();
 
-  const title = routes.filter(
+  const route = routes.filter(
     route => pathname === route.route
-  )[0].title;
+  )[0];
+  const title = route ? route.title : '';
 
   return (
     <div className={`header${title !== 'Dashboard' ? ' slim' : ''}`}>

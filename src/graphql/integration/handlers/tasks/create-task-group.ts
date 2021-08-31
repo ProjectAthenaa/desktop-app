@@ -13,20 +13,11 @@ const CREATE_TASK_GROUP = gql`
 `;
 
 export const createTaskGroup = async (taskGroup: TaskGroupCreation): Promise<TaskGroup> => {
-  console.log('hiiiit')
-  try {
-    const response = await integrationClient()
-      .request<{ createTaskGroup: TaskGroup }>(CREATE_TASK_GROUP, {
-        newTaskGroup: taskGroup
-      });
-
-    console.log('response', response);
-
-    return response.createTaskGroup;
-  } catch (error) {
-    console.log('errorino', error);
-  }
-
+  const response = await integrationClient()
+    .request<{ createTaskGroup: TaskGroup }>(CREATE_TASK_GROUP, {
+      newTaskGroup: taskGroup
+    });
+  return response.createTaskGroup;
 };
 
 export default createTaskGroup;

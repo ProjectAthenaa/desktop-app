@@ -4,17 +4,16 @@ import {TaskGroup} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {PendingAction} from '../../util/async-action-types';
 import {Status} from '../../util/set-status';
+import { toast } from 'react-toastify';
 
 type TaskGroupCreation = {
   Name?: string;
 };
 
-export const createTaskGroupAction = createAction('tasks/createTaskGroup');
-
 export const createTempTaskGroup = (state: Draft<TasksState>, action: PendingAction): Draft<TasksState> => {
   const pendingBody: TaskGroupCreation = action.meta.arg;
 
-  state.statuses.taskCreation = Status.PENDING;
+  state.statuses.taskGroupCreation = Status.PENDING;
 
   state.taskGroups.push({
     ID: 'temp',
@@ -27,25 +26,18 @@ export const createTempTaskGroup = (state: Draft<TasksState>, action: PendingAct
 export const undoTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>): Draft<TasksState> => {
   state.taskGroups = state.taskGroups.filter(taskGroup => taskGroup.ID !== "temp");
 
-  // TODO: Fire method to show error toast
-  state.statuses.taskCreation = Status.REJECTED;
+  state.statuses.taskGroupCreation = Status.REJECTED;
+  toast.error('There was an issue creating the task group at this time.');
 
   return state;
 };
 
 export const createTaskGroupRequest = createAsyncThunk(
   'tasks/createTaskGroup',
-  async (taskGroup: TaskGroupCreation ) => {
-    return await ipcRenderer.invoke('createTaskGroup', taskGroup);;
+  async (taskGroup: TaskGroupCreation) => {
+    return await ipcRenderer.invoke('createTaskGroup', taskGroup);
   }
 );
-
-// const getTask = createAsyncThunk(
-//   'tasks/getTask',
-//   async (taskId: string): Promise<Task> => {
-//     return await ipcRenderer.invoke('getTask', taskId) as Task;
-//   }
-// );
 
 
 export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>): Draft<TasksState> => {
@@ -57,8 +49,9 @@ export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<
     return taskGroup;
   });
 
-  state.statuses.taskCreation = Status.FULFILLED;
-
+  state.statuses.taskGroupCreation = Status.FULFILLED;
+  toast.success('Task group created.');
+  
   state.selectedTaskGroup = {
     ID: action.payload.ID,
     Name: action.payload.Name,

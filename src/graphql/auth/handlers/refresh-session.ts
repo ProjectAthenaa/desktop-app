@@ -1,10 +1,12 @@
 import {gql} from 'graphql-request';
 import {authClient} from '../index';
-import {Session} from '../../../types/auth';
+import {DeviceType, LoginResponse, Session} from '../../../types/auth';
 import store from '../../../main/util/store';
 import {machineId} from 'node-machine-id';
 import {BrowserWindow} from 'electron';
 import {createAuthenticationWindow} from '../../../index';
+import loginRequest from './login';
+import {hostname, type} from 'os';
 
 export const REFRESH_SESSION = gql`
     mutation RefreshSession($session: SessionInput!) {
@@ -22,15 +24,42 @@ export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<No
     const hardwareId = await machineId(true);
     const sessionId: string = store.get('sessionId');
 
-    const response = await authClient.request<{ refreshSession: Session }>(
-      REFRESH_SESSION,
-      {
-        session: {
-          ID: sessionId,
-          HardwareID: hardwareId
+    let response: { refreshSession: Session };
+
+    try {
+      response = await authClient.request<{ refreshSession: Session }>(
+        REFRESH_SESSION,
+        {
+          session: {
+            ID: sessionId,
+            HardwareID: hardwareId
+          }
         }
+      );
+    } catch (error) {
+      // This is put in place to update the session token if it
+      // somehow expires while the computer is slump or something
+      const token: string = store.get('token');
+      const operatingSystem = type();
+      const hostName = hostname();
+
+      if (!token) return await createAuthenticationWindow();
+
+      let loginResponse: LoginResponse;
+      try {
+        loginResponse = await loginRequest(token, {
+          HardwareID: hardwareId,
+          OS: operatingSystem,
+          DeviceName: hostName,
+          DeviceType: DeviceType.Desktop,
+        });
+
+        store.set('sessionId', loginResponse.Session.ID);
+      } catch (error) {
+        window.close();
+        await createAuthenticationWindow();
       }
-    );
+    }
 
     const session = response.refreshSession;
 

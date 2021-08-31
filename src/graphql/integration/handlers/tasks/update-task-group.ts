@@ -1,11 +1,10 @@
 import {TaskGroup} from '../../../../types/task';
 
 type UpdatedTaskGroup = {
-  taskGroupId: string;
   Name: string;
 };
 
-export const updateTaskGroup = async (event: Electron.IpcMainInvokeEvent, taskGroupId: string, updatedPayload: UpdatedTaskGroup): Promise<TaskGroup> => {
+const updateTaskGroup = async (taskGroupId: string, name: UpdatedTaskGroup): Promise<TaskGroup> => {
   return {} as TaskGroup;
 };
 

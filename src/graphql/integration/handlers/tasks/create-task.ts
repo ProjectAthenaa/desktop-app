@@ -32,4 +32,4 @@ const createTask = async (taskBody: TaskCreation): Promise<Task> => {
   return response.createTask;
 };
 
-
+export default createTask;
