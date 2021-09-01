@@ -1,10 +1,56 @@
 import {Task, TaskGroup} from '../../../../types/task';
-interface Group extends TaskGroup {
-  Tasks: Task[];
+import {gql} from 'graphql-request';
+import {integrationClient} from '../../index';
+
+export interface Group extends TaskGroup {
+  Tasks: {
+    ID: string;
+    Name: string;
+    Product: {
+      ID: string;
+      Name: string;
+    };
+    ProxyList: {
+      ID: string;
+      Name: string;
+    };
+    ProfileGroup: {
+      ID: string;
+      Name: string;
+    };
+  }[];
 }
 
+const GET_GROUP = gql`
+    query GetGroup ($taskGroupID: UUID!){
+        getTaskGroup(taskGroupID: $taskGroupID) {
+            ID
+            Name
+            Tasks {
+                ID
+                StartTime
+                Product {
+                    ID
+                    Name
+                }
+                ProxyList {
+                    ID
+                    Name
+                }
+                ProfileGroup {
+                    ID
+                    Name
+                }
+            }
+        }
+        
+    }
+`
+
 const getGroup = async (groupId: string): Promise<Group> => {
-  return {} as Group;
+  return await integrationClient().request(GET_GROUP, {
+      taskGroupID: groupId
+  });
 };
 
 export default getGroup;

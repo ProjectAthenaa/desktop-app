@@ -3,10 +3,10 @@ import updateTaskRequest from '../../../../graphql/integration/handlers/tasks/up
 
 type UpdatedTask = {
   StartTime?: string;
-  ProductID: string;
-  ProxyListID: string;
-  ProfileGroupID: string;
-  TaskGroupID: string;
+  ProductID?: string;
+  ProxyListID?: string;
+  ProfileGroupID?: string;
+  TaskGroupID?: string;
 };
 
 const updateTask = async (event: Electron.IpcMainInvokeEvent, taskId: string, updatedPayload: UpdatedTask): Promise<Task> => {

@@ -1,8 +1,6 @@
-import {gql, request} from 'graphql-request';
+import {gql} from 'graphql-request';
 import {TaskGroup} from '../../../../types/task';
 import {integrationClient} from '../../index';
-
-
 
 const GET_TASK_GROUPS = gql`
     {

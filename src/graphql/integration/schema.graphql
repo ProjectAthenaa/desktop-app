@@ -119,7 +119,7 @@ type Mutation {
 
 input NewAddress {
     AddressLine: String!
-    AdressLine2: String
+    AddressLine2: String
     Country: String!
     State: String!
     StateCode: String
@@ -241,7 +241,9 @@ type ProxyList {
 }
 
 enum ProxyListType {
-    Test
+    Residential
+    Datacenter
+    ISP
 }
 
 type ProxyTest {
@@ -399,3 +401,4 @@ type User {
 }
 
 scalar UUID
+
