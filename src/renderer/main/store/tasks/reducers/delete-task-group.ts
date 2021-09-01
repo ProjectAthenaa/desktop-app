@@ -8,7 +8,7 @@ type DeletedTaskGroup = {
 };
 
 export const deleteTaskGroupRequest = createAsyncThunk(
-  'tasks/deleteTaskGroup',
+  'tasks/deleteProfileGroup',
   async ({ taskGroupId }: DeletedTaskGroup): Promise<string> => {
     await ipcRenderer.invoke('deleteTaskGroup', taskGroupId);
     return taskGroupId;

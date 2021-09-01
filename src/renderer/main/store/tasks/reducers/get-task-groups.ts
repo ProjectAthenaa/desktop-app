@@ -4,7 +4,7 @@ import {TaskGroup} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 
 const getTaskGroups = createAsyncThunk(
-  'tasks/getTaskGroups',
+  'tasks/getProfileGroups',
   async (): Promise<TaskGroup[]> => {
     const response = await ipcRenderer.invoke('getTaskGroups') as TaskGroup[];
     console.log(response);

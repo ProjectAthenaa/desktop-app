@@ -4,7 +4,7 @@ import {Task} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 
 const getTask = createAsyncThunk(
-  'tasks/getTask',
+  'tasks/getProfile',
   async (taskId: string): Promise<Task> => {
     return await ipcRenderer.invoke('getTask', taskId) as Task;
   }

@@ -37,8 +37,37 @@ export interface Profile {
   Shipping: Shipping;
 }
 
+
+export interface ProfileGroupCreation {
+  Name: string;
+}
 export interface ProfileGroup {
   ID: string;
   Name: string;
   Profiles: Profile[];
+}
+
+export interface NewAddress {
+  FirstName: string;
+  LastName: string;
+  PhoneNumber: string;
+  BillingIsShipping: boolean;
+  ShippingAddress?: Address;
+  BillingAddress: Address;
+}
+
+export interface NewBilling {
+  CardHolderName: string;
+  CardNumber: string;
+  ExpiryMonth: string;
+  ExpiryYear: string;
+  CVV: string;
+}
+
+export interface ProfileCreation {
+  GroupID: string;
+  Name: string;
+  Email: string;
+  Shipping: NewAddress;
+  Billing: NewBilling;
 }

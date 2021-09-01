@@ -9,7 +9,7 @@ type UpdatedTaskGroup = {
 };
 
 const updateTaskGroup = createAsyncThunk(
-  'tasks/updateTaskGroup',
+  'tasks/updateProfileGroup',
   async ({ taskGroupId, ...updatedPayload }: UpdatedTaskGroup): Promise<TaskGroup> => {
     return await ipcRenderer.invoke('updateTaskGroup', taskGroupId, updatedPayload) as TaskGroup;
   }

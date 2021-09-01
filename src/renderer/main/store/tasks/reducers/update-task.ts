@@ -13,7 +13,7 @@ type UpdatedTask = {
 };
 
 const updateTask = createAsyncThunk(
-  'tasks/updateTask',
+  'tasks/updateProfile',
   async ({ taskId, ...updatedPayload }: UpdatedTask): Promise<Task> => {
     return await ipcRenderer.invoke('updateTask', taskId, updatedPayload) as Task;
   }

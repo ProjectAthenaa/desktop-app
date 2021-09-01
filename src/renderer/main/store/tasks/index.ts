@@ -77,10 +77,10 @@ export const {
   clearTask,
   setStatus,
   // createTask,
-  // updateTask,
-  // deleteTask,
+  // updateProfile,
+  // deleteProfile,
   // getGroup,
-  // getTask,
-  // getTaskGroups,
+  // getProfile,
+  // getProfileGroups,
   // createTaskGroupRequest
 } = tasksSlice.actions;

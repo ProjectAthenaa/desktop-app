@@ -8,7 +8,7 @@ type DeletedTask = {
 };
 
 const deleteTask = createAsyncThunk(
-  'tasks/deleteTask',
+  'tasks/deleteProfile',
   async ({ taskId }: DeletedTask): Promise<string> => {
     return await ipcRenderer.invoke('deleteTask', taskId) as string;
   }
