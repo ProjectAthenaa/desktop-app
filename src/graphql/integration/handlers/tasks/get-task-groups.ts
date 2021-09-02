@@ -12,16 +12,9 @@ const GET_TASK_GROUPS = gql`
 `;
 
 const getTaskGroups = async (): Promise<TaskGroup[]> => {
-  try {
-    const response = await integrationClient()
-      .request<{ getAllTaskGroups: TaskGroup[] }>(GET_TASK_GROUPS);
+  const response = await integrationClient().request<{ getAllTaskGroups: TaskGroup[] }>(GET_TASK_GROUPS);
 
-    return response.getAllTaskGroups;
-
-  } catch (error) {
-    console.log('error' , JSON.stringify(error));
-    console.log('response', JSON.stringify(error.response));
-  }
+  return response.getAllTaskGroups;
 };
 
 export default getTaskGroups;

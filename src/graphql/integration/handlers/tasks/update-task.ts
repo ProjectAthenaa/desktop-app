@@ -42,7 +42,7 @@ const UPDATE_TASK = gql`
 `;
 
 const updateTask = async (taskId: string, updatedPayload: UpdatedTask): Promise<Task> => {
-  return await integrationClient().request(UPDATE_TASK, {
+  const response = await integrationClient().request<{ updateTask: Task }>(UPDATE_TASK, {
     taskID: taskId,
     updatedTask: {
       StartTime: updatedPayload.StartTime
@@ -61,7 +61,9 @@ const updateTask = async (taskId: string, updatedPayload: UpdatedTask): Promise<
         ? updatedPayload.TaskGroupID
         : undefined,
     }
-  })
+  });
+
+  return response.updateTask;
 };
 
 export default updateTask;

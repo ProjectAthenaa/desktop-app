@@ -48,9 +48,11 @@ const GET_TASK = gql`
 `
 
 const getTask = async (taskId: string): Promise<RetrievedTask> => {
-  return await integrationClient().request(GET_TASK, {
+  const response = await integrationClient().request<{ getTask: RetrievedTask }>(GET_TASK, {
     taskID: taskId
   });
+
+  return response.getTask;
 };
 
 export default getTask;

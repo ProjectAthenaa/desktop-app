@@ -8,9 +8,11 @@ const DELETE_TASK = gql`
 `;
 
 const deleteTask = async (taskId: string): Promise<boolean> => {
-  return await integrationClient().request(DELETE_TASK, {
+  const response = await integrationClient().request<{ deleteTask: boolean }>(DELETE_TASK, {
     taskID: taskId,
   });
+
+  return response.deleteTask;
 };
 
 export default deleteTask;

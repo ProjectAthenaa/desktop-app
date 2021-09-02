@@ -32,10 +32,12 @@ const UPDATE_TASK = gql`
 `;
 
 const updateTaskGroup = async (taskGroupId: string, updatedTaskGroup: UpdatedTaskGroup): Promise<TaskGroup> => {
-  return await integrationClient().request(UPDATE_TASK, {
+  const response = await integrationClient().request<{ updateTaskGroup: TaskGroup }>(UPDATE_TASK, {
     taskGroupID: taskGroupId,
     updatedTaskGroup
   });
+
+  return response.updateTaskGroup;
 };
 
 export default updateTaskGroup;
