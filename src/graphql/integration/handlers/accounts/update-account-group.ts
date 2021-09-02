@@ -1,4 +1,4 @@
-import {AccountGroup} from '../../../../types/account';
+import {AccountGroup, AccountGroupInput} from '../../../../types/account';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
 
@@ -12,7 +12,7 @@ const UPDATE_GROUP = gql`
     }
 `;
 
-const updateAccountGroup = async (accountGroupId: string, updatedAccountGroup: AccountGroup): Promise<AccountGroup> => {
+const updateAccountGroup = async (accountGroupId: string, updatedAccountGroup: AccountGroupInput): Promise<AccountGroup> => {
   const response = await integrationClient().request<{ updateAccountGroup: AccountGroup }>(UPDATE_GROUP, {
     accountGroupID: accountGroupId,
     updatedAccountGroup
