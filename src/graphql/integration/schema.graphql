@@ -114,6 +114,7 @@ type Mutation {
         updatedTaskGroup: NewTaskGroup!
     ): TaskGroup!
     deleteTaskGroup(taskGroupID: UUID!): Boolean!
+    deleteAccountGroup(accountGroupID: UUID!): Boolean!
     updateProduct(productID: UUID!, updatedProduct: ProductIn!): Product!
 }
 

@@ -40,10 +40,12 @@ const UPDATE_PROFILE = gql`
 `;
 
 const updateProfile = async (profileId: string, updatedPayload: ProfileCreation): Promise<Profile> => {
-  return await integrationClient().request(UPDATE_PROFILE, {
+  const response = await integrationClient().request<{ updateProfile: Profile }>(UPDATE_PROFILE, {
     profileID: profileId,
     updatedProfile: updatedPayload,
-  })
+  });
+
+  return response.updateProfile;
 };
 
 export default updateProfile;

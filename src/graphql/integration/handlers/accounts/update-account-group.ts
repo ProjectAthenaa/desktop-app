@@ -7,6 +7,7 @@ const UPDATE_GROUP = gql`
         updateAccountGroup(accountGroupID: $accountGroupID, updatedAccountGroup: $updatedAccountGroup) {
             ID
             Name
+            Accounts
         }
     }
 `;
@@ -21,8 +22,3 @@ const updateAccountGroup = async (accountGroupId: string, updatedAccountGroup: A
 };
 
 export default updateAccountGroup;
-
-
-
-
-

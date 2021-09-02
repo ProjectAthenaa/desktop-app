@@ -17,6 +17,7 @@ export const createProfileGroup = async (taskGroup: ProfileGroupCreation): Promi
     .request<{ createProfileGroup: ProfileGroup }>(CREATE_PROFILE_GROUP, {
       newProfileGroup: taskGroup
     });
+
   return response.createProfileGroup;
 };
 

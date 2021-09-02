@@ -40,9 +40,11 @@ const GET_TASK = gql`
 `;
 
 const getProfile = async (profileId: string): Promise<Profile> => {
-  return await integrationClient().request(GET_TASK, {
+  const response = await integrationClient().request<{ getProfile: Profile }>(GET_TASK, {
     profileID: profileId
   });
+
+  return response.getProfile;
 };
 
 export default getProfile;

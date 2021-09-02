@@ -16,10 +16,12 @@ const UPDATE_GROUP = gql`
 `;
 
 const updateProfileGroup = async (profileGroupId: string, updatedProfileGroup: UpdatedProfileGroup): Promise<ProfileGroup> => {
-  return await integrationClient().request(UPDATE_GROUP, {
+  const response = await integrationClient().request<{ updateProfileGroup: ProfileGroup }>(UPDATE_GROUP, {
     profileGroupID: profileGroupId,
     updatedProfileGroup
   });
+
+  return response.updateProfileGroup;
 };
 
 export default updateProfileGroup;

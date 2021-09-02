@@ -8,9 +8,11 @@ const DELETE_PROFILE = gql`
 `;
 
 const deleteProfile = async (profileId: string): Promise<boolean> => {
-  return await integrationClient().request(DELETE_PROFILE, {
+  const response = await integrationClient().request<{ deleteProfile: boolean }>(DELETE_PROFILE, {
     taskID: profileId,
   });
+
+  return response.deleteProfile;
 };
 
 export default deleteProfile;
