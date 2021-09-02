@@ -1,5 +1,5 @@
-import {TaskGroup} from '../../../../types/task';
-import updateTaskGroupRequest from '../../../../graphql/integration/handlers/tasks/update-task-group';
+import {TaskGroup} from '../../../../../types/task';
+import updateTaskGroupRequest from '../../../../../graphql/integration/handlers/tasks/update-task-group';
 
 type UpdatedTaskGroup = {
   Name: string;

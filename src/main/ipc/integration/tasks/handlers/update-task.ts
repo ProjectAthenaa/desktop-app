@@ -1,5 +1,5 @@
-import {Task} from '../../../../types/task';
-import updateTaskRequest from '../../../../graphql/integration/handlers/tasks/update-task';
+import {Task} from '../../../../../types/task';
+import updateTaskRequest from '../../../../../graphql/integration/handlers/tasks/update-task';
 
 type UpdatedTask = {
   StartTime?: string;

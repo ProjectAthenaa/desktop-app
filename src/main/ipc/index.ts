@@ -1,3 +1,5 @@
-import './tasks';
+import './integration/tasks';
 import './auth';
-import './accounts';
+import './integration/accounts';
+import './integration/profiles';
+import './integration/proxies'
