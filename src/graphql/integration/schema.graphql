@@ -48,6 +48,12 @@ enum DeviceType {
     Laptop
 }
 
+enum FieldType {
+    KEYWORDS
+    TEXT
+    NUMBER
+}
+
 type License {
     ID: UUID!
     CreatedAt: Time!
@@ -83,6 +89,18 @@ type Metadata {
     DiscordDiscriminator: String!
 }
 
+type Module {
+    Name: String!
+    Status: Status!
+    Fields: [ModuleField!]!
+}
+
+type ModuleField {
+    Validation: String!
+    Type: FieldType!
+    FieldKey: String
+}
+
 type Mutation {
     setSuccessWebhook(Webhook: String!): Boolean!
     setDeclineWebhook(Webhook: String!): Boolean!
@@ -114,7 +132,6 @@ type Mutation {
         updatedTaskGroup: NewTaskGroup!
     ): TaskGroup!
     deleteTaskGroup(taskGroupID: UUID!): Boolean!
-    deleteAccountGroup(accountGroupID: UUID!): Boolean!
     updateProduct(productID: UUID!, updatedProduct: ProductIn!): Product!
 }
 
@@ -264,7 +281,9 @@ type Query {
     testDeclineWebhook: Boolean!
     getAllAccountGroups: [AccountGroup!]
     getAccountGroup(accountGroupID: UUID!): AccountGroup!
+    deleteAccountGroup(accountGroupID: UUID!): Boolean!
     getApp: App!
+    getModules: [Module!]!
     getProfile(profileID: UUID!): Profile!
     getProfileGroup(profileGroupID: UUID!): ProfileGroup!
     getProfileGroups: [ProfileGroup!]!
@@ -352,6 +371,12 @@ enum StatType {
     RECAPTCHA_USAGE
     TASKS_RUNNING
     MONEY_SPENT
+}
+
+enum Status {
+    FUNCTIONAL
+    DEGRADED
+    DOWN
 }
 
 type Stripe {
