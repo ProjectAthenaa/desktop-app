@@ -19,3 +19,16 @@ export interface ProxyList {
   Type: ProxyListType;
   Proxies: Proxy
 }
+
+export interface NewProxy {
+  Username: string;
+  Password: string;
+  IP: string;
+  Port: string;
+}
+
+export interface NewProxyList {
+  Name: string;
+  Type: ProxyListType;
+  Proxies: NewProxy[];
+}

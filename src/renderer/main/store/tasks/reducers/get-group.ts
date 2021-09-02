@@ -7,7 +7,7 @@ interface Group extends TaskGroup {
   Tasks: Task[];
 }
 const getGroup = createAsyncThunk(
-  'tasks/getGroup',
+  'tasks/getProxyList',
   async (groupId: string): Promise<Group> => {
     return await ipcRenderer.invoke('getGroup', groupId) as Group;
   }

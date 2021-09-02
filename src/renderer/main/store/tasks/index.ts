@@ -79,7 +79,7 @@ export const {
   // createTask,
   // updateProfile,
   // deleteProfile,
-  // getGroup,
+  // getProxyList,
   // getProfile,
   // getProfileGroups,
   // createTaskGroupRequest
