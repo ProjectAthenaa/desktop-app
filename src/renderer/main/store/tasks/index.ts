@@ -18,6 +18,12 @@ import setSelectedTaskGroupReducer from './reducers/set-selected-task-group';
 import setStatusReducer, {Status} from '../util/set-status';
 import {isFulfilledAction, isPendingAction, isRejectedAction} from '../util/async-action-types';
 import {deleteTaskGroup, deleteTaskGroupRequest, tempDeleteTaskGroup} from './reducers/delete-task-group';
+import {
+  tempUpdateTaskGroup,
+  undoUpdateTaskGroup,
+  updateTaskGroupReducer,
+  updateTaskGroupRequest
+} from './reducers/update-task-group';
 
 export enum TaskStatusType {
   taskCreation = 'taskCreation'
@@ -28,9 +34,12 @@ export interface TasksState {
   selectedTask: Task | null;
   taskGroups: TaskGroup[];
   tasks: Task[];
+  prevTaskGroup: TaskGroup | null;
+  prevTask: Task | null;
   statuses: {
     taskGroupCreation: Status;
     taskGroupDeletion: Status;
+    taskGroupUpdating: Status;
   };
 }
 
@@ -39,9 +48,12 @@ const initialState: TasksState = {
   selectedTask: null,
   taskGroups: [],
   tasks: [],
+  prevTaskGroup: null,
+  prevTask: null,
   statuses: {
     taskGroupCreation: Status.IDLE,
-    taskGroupDeletion: Status.IDLE
+    taskGroupDeletion: Status.IDLE,
+    taskGroupUpdating: Status.IDLE,
   },
 };
 
@@ -67,6 +79,14 @@ const tasksSlice = createSlice({
     [deleteTaskGroupRequest.pending.type]: tempDeleteTaskGroup,
     [deleteTaskGroupRequest.rejected.type]: undoTaskGroup,
     [deleteTaskGroupRequest.fulfilled.type]: createTaskGroup,
+
+    // Task Group Modification
+    [updateTaskGroupRequest.pending.type]: tempUpdateTaskGroup,
+    [updateTaskGroupRequest.rejected.type]: undoUpdateTaskGroup,
+    [updateTaskGroupRequest.fulfilled.type]: updateTaskGroupReducer,
+
+
+
   }
 });
 
@@ -76,11 +96,4 @@ export const {
   setSelectedTaskGroup,
   clearTask,
   setStatus,
-  // createTask,
-  // updateProfile,
-  // deleteProfile,
-  // getProxyList,
-  // getProfile,
-  // getProfileGroups,
-  // createTaskGroupRequest
 } = tasksSlice.actions;

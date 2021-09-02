@@ -96,8 +96,9 @@ type Module {
 }
 
 type ModuleField {
-    Validation: String!
     Type: FieldType!
+    Label: String!
+    Validation: String
     FieldKey: String
 }
 
@@ -111,6 +112,7 @@ type Mutation {
         accountGroupID: UUID!
         updatedAccountGroup: AccountGroupInput!
     ): AccountGroup!
+    deleteAccountGroup(accountGroupID: UUID!): Boolean!
     createProfile(newProfile: NewProfile!): Profile!
     updateProfile(profileID: UUID!, updatedProfile: NewProfile!): Profile!
     deleteProfile(profileID: UUID!): Boolean!
@@ -281,7 +283,6 @@ type Query {
     testDeclineWebhook: Boolean!
     getAllAccountGroups: [AccountGroup!]
     getAccountGroup(accountGroupID: UUID!): AccountGroup!
-    deleteAccountGroup(accountGroupID: UUID!): Boolean!
     getApp: App!
     getModules: [Module!]!
     getProfile(profileID: UUID!): Profile!

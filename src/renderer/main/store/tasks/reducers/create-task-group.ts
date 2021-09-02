@@ -10,6 +10,13 @@ type TaskGroupCreation = {
   Name?: string;
 };
 
+export const createTaskGroupRequest = createAsyncThunk(
+  'tasks/createTaskGroup',
+  async (taskGroup: TaskGroupCreation) => {
+    return await ipcRenderer.invoke('createTaskGroup', taskGroup);
+  }
+);
+
 export const createTempTaskGroup = (state: Draft<TasksState>, action: PendingAction): Draft<TasksState> => {
   const pendingBody: TaskGroupCreation = action.meta.arg;
 
@@ -32,14 +39,6 @@ export const undoTaskGroup = (state: Draft<TasksState>, action: PayloadAction<Ta
   return state;
 };
 
-export const createTaskGroupRequest = createAsyncThunk(
-  'tasks/createTaskGroup',
-  async (taskGroup: TaskGroupCreation) => {
-    return await ipcRenderer.invoke('createTaskGroup', taskGroup);
-  }
-);
-
-
 export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>): Draft<TasksState> => {
   state.taskGroups = state.taskGroups.map(taskGroup => {
     if (taskGroup.ID === 'temp') {
@@ -51,7 +50,7 @@ export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<
 
   state.statuses.taskGroupCreation = Status.FULFILLED;
   toast.success('Task group created.');
-  
+
   state.selectedTaskGroup = {
     ID: action.payload.ID,
     Name: action.payload.Name,
