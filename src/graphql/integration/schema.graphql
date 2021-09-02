@@ -262,6 +262,7 @@ type Query {
     testSuccessWebhook: Boolean!
     testDeclineWebhook: Boolean!
     getAllAccountGroups: [AccountGroup!]
+    getAccountGroup(accountGroupID: UUID!): AccountGroup!
     getApp: App!
     getProfile(profileID: UUID!): Profile!
     getProfileGroup(profileGroupID: UUID!): ProfileGroup!

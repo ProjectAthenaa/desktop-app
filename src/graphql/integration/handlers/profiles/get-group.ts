@@ -48,9 +48,11 @@ const GET_GROUP = gql`
 `
 
 const getGroup = async (groupId: string): Promise<Group> => {
-  return await integrationClient().request(GET_GROUP, {
-      profileGroupID: groupId
+  const response = await integrationClient().request<{ getProfileGroup: Group }>(GET_GROUP, {
+    profileGroupID: groupId
   });
+
+  return response.getProfileGroup;
 };
 
 export default getGroup;
