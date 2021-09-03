@@ -13,7 +13,7 @@ ipcMain.handle('createProfile', createProfile);
 ipcMain.handle('createProfileGroup', createProfileGroup);
 ipcMain.handle('deleteProfile', deleteProfile);
 ipcMain.handle('deleteProfileGroup', deleteProfileGroup);
-ipcMain.handle('getGroup', getGroup);
+ipcMain.handle('getProfileGroup', getGroup);
 ipcMain.handle('getProfile', getProfile);
 ipcMain.handle('getProfileGroups', getProfileGroups);
 ipcMain.handle('updateProfile', updateProfile);
