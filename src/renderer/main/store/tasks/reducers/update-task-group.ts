@@ -12,7 +12,7 @@ type UpdatedTaskGroup = {
 };
 
 export const updateTaskGroupRequest = createAsyncThunk(
-  'tasks/updateProfileGroup',
+  'tasks/updateTaskGroup',
   async ({ taskGroupId, ...updatedPayload }: UpdatedTaskGroup): Promise<TaskGroup> => {
     return await ipcRenderer.invoke('updateTaskGroup', taskGroupId, updatedPayload) as TaskGroup;
   }
@@ -45,7 +45,7 @@ export const updateTaskGroup = (state: Draft<TasksState>, action: PayloadAction<
 
   toast.error('Task group updated.');
 
-  state.prevTask = null;
+  state.prevTaskGroup = null;
   state.statuses.taskGroupUpdating = Status.IDLE;
 };
 

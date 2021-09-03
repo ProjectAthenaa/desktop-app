@@ -8,5 +8,5 @@ import updateAccountGroup from './handlers/update-account-group';
 ipcMain.handle('createAccountGroup', createAccountGroup)
 ipcMain.handle('deleteAccountGroup', deleteAccountGroup);
 ipcMain.handle('getAccountGroups', getAccountGroups);
-ipcMain.handle('getGroup', getGroup);
+ipcMain.handle('getAccountGroup', getGroup);
 ipcMain.handle('updateAccountGroup', updateAccountGroup);
