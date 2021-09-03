@@ -1,9 +1,10 @@
 import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {TaskGroup} from '../../../../../types/task';
+import {Task, TaskGroup} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {PendingAction} from '../../util/async-action-types';
 import {Status} from '../../util/set-status';
+import {toast} from 'react-toastify';
 
 type UpdatedTaskGroup = {
   taskGroupId: string;
@@ -31,7 +32,7 @@ export const tempUpdateTaskGroup = (state: Draft<TasksState>, action: PendingAct
   );
 };
 
-export const updateTaskGroupReducer = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>) => {
+export const updateTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>) => {
   state.statuses.taskGroupUpdating = Status.FULFILLED;
 
   state.taskGroups = state.taskGroups.map(taskGroup => {
@@ -41,6 +42,8 @@ export const updateTaskGroupReducer = (state: Draft<TasksState>, action: Payload
       Name: action.payload.Name,
     };
   });
+
+  toast.error('Task group updated.');
 
   state.prevTask = null;
   state.statuses.taskGroupUpdating = Status.IDLE;
@@ -54,6 +57,8 @@ export const undoUpdateTaskGroup = (state: Draft<TasksState>, action: PayloadAct
       ? state.prevTaskGroup
       : taskGroup
   );
+
+  toast.error('Task group update failed.');
 
   state.statuses.taskGroupUpdating = Status.IDLE;
 };

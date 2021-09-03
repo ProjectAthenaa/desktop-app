@@ -1,5 +1,5 @@
 import {TasksState} from '../index';
-import {createAction, createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
+import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
 import {TaskGroup} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {PendingAction} from '../../util/async-action-types';
@@ -30,23 +30,21 @@ export const createTempTaskGroup = (state: Draft<TasksState>, action: PendingAct
   return state;
 };
 
-export const undoTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>): Draft<TasksState> => {
+export const undoTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>) => {
   state.taskGroups = state.taskGroups.filter(taskGroup => taskGroup.ID !== "temp");
 
   state.statuses.taskGroupCreation = Status.REJECTED;
   toast.error('There was an issue creating the task group at this time.');
 
-  return state;
+  state.statuses.taskGroupCreation = Status.IDLE;
 };
 
-export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>): Draft<TasksState> => {
-  state.taskGroups = state.taskGroups.map(taskGroup => {
-    if (taskGroup.ID === 'temp') {
-      return action.payload;
-    }
-
-    return taskGroup;
-  });
+export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>) => {
+  state.taskGroups = state.taskGroups.map(taskGroup =>
+    taskGroup.ID === 'temp'
+      ? action.payload
+      : taskGroup
+  );
 
   state.statuses.taskGroupCreation = Status.FULFILLED;
   toast.success('Task group created.');
@@ -55,7 +53,8 @@ export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<
     ID: action.payload.ID,
     Name: action.payload.Name,
   };
-  return state;
+
+  state.statuses.taskGroupCreation = Status.IDLE;
 };
 
 // export default createTaskGroup;

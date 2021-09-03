@@ -1,11 +1,6 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import createTask, {createTaskReducer} from './reducers/create-task';
-import updateTask, {updateTaskReducer} from './reducers/update-task';
-import deleteTask, {deleteTaskReducer} from './reducers/delete-task';
-import getGroup, {getGroupReducer} from './reducers/get-group';
-import getTask, {getTaskReducer} from './reducers/get-task';
+import {createSlice} from '@reduxjs/toolkit';
 import clearTaskReducer from './reducers/clear-task';
-import getTaskGroups, {getTaskGroupsReducer} from './reducers/get-task-groups';
+import {failedGetTaskGroups, fetchingTaskGroups, getTaskGroups, getTaskGroupsRequest} from './reducers/get-task-groups';
 import {
   createTaskGroup,
   createTaskGroupRequest,
@@ -16,14 +11,18 @@ import {Task, TaskGroup} from '../../../../types/task';
 import setSelectedTaskReducer from './reducers/set-selected-task';
 import setSelectedTaskGroupReducer from './reducers/set-selected-task-group';
 import setStatusReducer, {Status} from '../util/set-status';
-import {isFulfilledAction, isPendingAction, isRejectedAction} from '../util/async-action-types';
 import {deleteTaskGroup, deleteTaskGroupRequest, tempDeleteTaskGroup} from './reducers/delete-task-group';
 import {
   tempUpdateTaskGroup,
   undoUpdateTaskGroup,
-  updateTaskGroupReducer,
+  updateTaskGroup,
   updateTaskGroupRequest
 } from './reducers/update-task-group';
+import {fetchingTask, getTask, getTaskRequest} from './reducers/get-task';
+import {createTask, createTaskRequest, createTempTask} from './reducers/create-task';
+import {deleteTask, deleteTaskRequest, restoreDeletedTask, tempDeleteTask} from './reducers/delete-task';
+import {undoUpdateTask, updateTask, updateTaskRequest, updatingTask} from './reducers/update-task';
+import {failedGetGroup, fetchingGroup, getGroup, getGroupRequest} from './reducers/get-group';
 
 export enum TaskStatusType {
   taskCreation = 'taskCreation'
@@ -37,9 +36,14 @@ export interface TasksState {
   prevTaskGroup: TaskGroup | null;
   prevTask: Task | null;
   statuses: {
+    taskGroupFetching: Status;
     taskGroupCreation: Status;
     taskGroupDeletion: Status;
     taskGroupUpdating: Status;
+    taskFetching: Status;
+    taskCreation: Status;
+    taskDeletion: Status;
+    taskUpdating: Status;
   };
 }
 
@@ -51,9 +55,14 @@ const initialState: TasksState = {
   prevTaskGroup: null,
   prevTask: null,
   statuses: {
+    taskGroupFetching: Status.IDLE,
     taskGroupCreation: Status.IDLE,
     taskGroupDeletion: Status.IDLE,
     taskGroupUpdating: Status.IDLE,
+    taskFetching: Status.IDLE,
+    taskCreation: Status.IDLE,
+    taskDeletion: Status.IDLE,
+    taskUpdating: Status.IDLE,
   },
 };
 
@@ -67,8 +76,15 @@ const tasksSlice = createSlice({
     setStatus: setStatusReducer,
   },
   extraReducers: {
-    // Todo: Reducers for failed and maybe pending?
-    [getTaskGroups.fulfilled.type]: getTaskGroupsReducer,
+    // Task Groups Fetching
+    [getTaskGroupsRequest.pending.type]: fetchingTaskGroups,
+    [getTaskGroupsRequest.rejected.type]: failedGetTaskGroups,
+    [getTaskGroupsRequest.fulfilled.type]: getTaskGroups,
+
+    // Task Group Fetching
+    [getGroupRequest.pending.type]: fetchingGroup,
+    [getGroupRequest.rejected.type]: failedGetGroup,
+    [getGroupRequest.fulfilled.type]: getGroup,
 
     // Task Group Creation
     [createTaskGroupRequest.pending.type]: createTempTaskGroup,
@@ -78,15 +94,32 @@ const tasksSlice = createSlice({
     // Task Group Deletion
     [deleteTaskGroupRequest.pending.type]: tempDeleteTaskGroup,
     [deleteTaskGroupRequest.rejected.type]: undoTaskGroup,
-    [deleteTaskGroupRequest.fulfilled.type]: createTaskGroup,
+    [deleteTaskGroupRequest.fulfilled.type]: deleteTaskGroup,
 
     // Task Group Modification
     [updateTaskGroupRequest.pending.type]: tempUpdateTaskGroup,
     [updateTaskGroupRequest.rejected.type]: undoUpdateTaskGroup,
-    [updateTaskGroupRequest.fulfilled.type]: updateTaskGroupReducer,
+    [updateTaskGroupRequest.fulfilled.type]: updateTaskGroup,
 
+    // Task Fetching
+    [getTaskRequest.pending.type]: fetchingTask,
+    [getTaskRequest.rejected.type]: fetchingTask,
+    [getTaskRequest.fulfilled.type]: getTask,
 
+    // Task Creation
+    [createTaskRequest.pending.type]: createTempTask,
+    [createTaskRequest.rejected.type]: fetchingTask,
+    [createTaskRequest.fulfilled.type]: createTask,
 
+    // Task Deletion
+    [deleteTaskRequest.pending.type]: tempDeleteTask,
+    [deleteTaskRequest.rejected.type]: restoreDeletedTask,
+    [deleteTaskRequest.fulfilled.type]: deleteTask,
+
+    // Task Modification
+    [updateTaskRequest.pending.type]: updatingTask,
+    [updateTaskRequest.rejected.type]: undoUpdateTask,
+    [updateTaskRequest.fulfilled.type]: updateTask,
   }
 });
 

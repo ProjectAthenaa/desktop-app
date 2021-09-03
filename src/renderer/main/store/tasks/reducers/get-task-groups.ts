@@ -1,23 +1,33 @@
 import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {TaskGroup} from '../../../../../types/task';
+import {Task, TaskGroup} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
+import {Status} from '../../util/set-status';
+import {toast} from 'react-toastify';
 
-const getTaskGroups = createAsyncThunk(
-  'tasks/getProfileGroups',
+export const getTaskGroupsRequest = createAsyncThunk(
+  'tasks/getTaskGroups',
   async (): Promise<TaskGroup[]> => {
-    const response = await ipcRenderer.invoke('getTaskGroups') as TaskGroup[];
-    console.log(response);
-    return response;
+    return await ipcRenderer.invoke('getTaskGroups');
   }
 );
 
-export const getTaskGroupsReducer = (state: Draft<TasksState>, action: PayloadAction<TaskGroup[]>): Draft<TasksState> => {
-  console.log(action);
-  return {
-    ...state,
-    taskGroups: action.payload
-  };
+export const fetchingTaskGroups = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>) => {
+  state.statuses.taskGroupFetching = Status.PENDING;
 };
 
-export default getTaskGroups;
+export const getTaskGroups = (state: Draft<TasksState>, action: PayloadAction<TaskGroup[]>) => {
+  state.statuses.taskGroupFetching = Status.FULFILLED;
+  state.taskGroups = action.payload;
+  state.statuses.taskGroupFetching = Status.IDLE;
+};
+
+export const failedGetTaskGroups = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+  state.statuses.taskGroupFetching = Status.REJECTED;
+
+  toast.error(`Failed to load your task groups at this time.`);
+
+  state.statuses.taskGroupFetching = Status.IDLE;
+};
+
+
