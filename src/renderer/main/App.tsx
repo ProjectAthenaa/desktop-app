@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {HashRouter} from 'react-router-dom';
 import Global from './templates/global';
 import {useDispatch} from 'react-redux';
-import getTaskGroups from './store/tasks/reducers/get-task-groups';
+import {getTaskGroupsRequest} from './store/tasks/reducers/get-task-groups';
 import { ToastContainer } from 'react-toastify';
 
 const App: React.FC = () => {
@@ -11,7 +11,7 @@ const App: React.FC = () => {
   // As soon as the component is mounted, fetch all
   // available information to initialize the app.
   useEffect(() => {
-    dispatch(getTaskGroups());
+    dispatch(getTaskGroupsRequest());
   }, []);
 
   return (

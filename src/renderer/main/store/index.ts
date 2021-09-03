@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import { reducer as tasksReducer } from './tasks';
 import { reducer as profilesReducer } from './profiles';
 import { reducer as accountsReducer } from './accounts';
+import { reducer as proxiesReducer } from './proxies';
 
 export const store = configureStore({
   reducer: {
     tasks: tasksReducer,
     profiles: profilesReducer,
     accounts: accountsReducer,
+    proxies: proxiesReducer
   }
 });
 

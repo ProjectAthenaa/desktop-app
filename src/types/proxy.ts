@@ -17,7 +17,7 @@ export interface ProxyList {
   ID: string;
   Name: string;
   Type: ProxyListType;
-  Proxies: Proxy
+  Proxies: Proxy[];
 }
 
 export interface NewProxy {
