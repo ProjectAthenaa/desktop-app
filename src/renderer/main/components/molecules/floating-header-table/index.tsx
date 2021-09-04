@@ -33,7 +33,7 @@ const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions}) => {
               {column.render('Header')}
             </th>
           ))}
-          <th className={'actions'}>
+          <th className={`actions count-${actions.length}`}>
             <div className="actions-layout">
               {actions.map((action, index) => (
                 <button
@@ -58,7 +58,7 @@ const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions}) => {
                 {cell.render('Cell')}
               </td>
             ))}
-            <td className={'actions'}>
+            <td className={`actions count-${actions.length}`}>
               <div className="actions-layout">
                 {actions.map((action, index) => (
                   <button

@@ -7,6 +7,7 @@
   justify-content: space-between;
   border-bottom: 1px solid rgba(230, 230, 230, 0);
   transition: padding 300ms ease, border-bottom 300ms ease;
+  overflow-y: hidden;
 
   h1 {
     font-style: normal;

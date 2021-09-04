@@ -4,6 +4,7 @@ import Global from './templates/global';
 import {useDispatch} from 'react-redux';
 import {getTaskGroupsRequest} from './store/tasks/reducers/get-task-groups';
 import { ToastContainer } from 'react-toastify';
+import {getProfileGroupsRequest} from './store/profiles/reducers/get-profile-groups';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ const App: React.FC = () => {
   // available information to initialize the app.
   useEffect(() => {
     dispatch(getTaskGroupsRequest());
+    dispatch(getProfileGroupsRequest());
   }, []);
 
   return (

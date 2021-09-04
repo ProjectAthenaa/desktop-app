@@ -7,6 +7,7 @@ import NotificationPanel from '../../molecules/notification-panel';
 import DefaultProfileImage from '../../../assets/images/profile.svg';
 import Profile from '../../molecules/profile';
 import Shadow from '../../../assets/images/overflow-shadow.png'
+import TextTransition, { presets } from 'react-text-transition';
 const Header: React.FC = () => {
   const { pathname } = useLocation();
 
@@ -17,7 +18,9 @@ const Header: React.FC = () => {
 
   return (
     <div className={`header${title !== 'Dashboard' ? ' slim' : ''}`}>
-      <h1>{title}</h1>
+      <h1>
+        <TextTransition text={title} inline springConfig={presets.stiff}/>
+      </h1>
       <div className="right">
         <Clock />
         <NotificationPanel />

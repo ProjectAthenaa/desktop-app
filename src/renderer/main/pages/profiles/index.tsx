@@ -1,24 +1,16 @@
 import React, {useState} from 'react';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import './styles.scss';
-import TaskGroupHeader from '../../components/organisms/task-group-header';
 import FloatingHeaderTable, {ActionColor} from '../../components/molecules/floating-header-table';
-import PlayIcon from '../../assets/images/icons/play';
 import EditIcon from '../../assets/images/icons/edit';
 import DeleteIcon from '../../assets/images/icons/delete';
-import OverlayScrollbars from 'overlayscrollbars';
-import ipcRenderer from '../../util/ipc-renderer';
 import {useDispatch, useSelector} from 'react-redux';
-import {TaskGroup} from '../../../../types/task';
-import {setSelectedTaskGroup, TasksState} from '../../store/tasks';
+import {setSelectedProfileGroup} from '../../store/profiles';
 import Button from '../../components/atoms/button';
 import {RootState} from '../../store';
 import {toast} from 'react-toastify';
-import {createTaskGroupRequest} from '../../store/tasks/reducers/create-task-group';
 import SideModal from '../../components/molecules/side-modal';
-
-
-// TODO Create Task Status enum
+import {createProfileGroupRequest} from '../../store/profiles/reducers/create-profile-group';
 
 export type Task = {
   id: string;
@@ -35,15 +27,17 @@ type Props = {
 
 }
 
-const Tasks: React.FC<Props> = () => {
+const Profiles: React.FC<Props> = () => {
   const dispatch = useDispatch();
-  const selectedTaskGroup = useSelector((state: RootState) => state.tasks.selectedTaskGroup);
-  const taskGroups = useSelector((state: RootState) => state.tasks.taskGroups);
+  const selectedProfileGroup = useSelector((state: RootState) => state.profiles.selectedProfileGroup);
+  const profileGroups = useSelector((state: RootState) => state.profiles.profileGroups);
   const [xIsScrollable, setXIsScrollable] = useState(true);
   const onOverflowChanged = (e: { xScrollable: boolean }) => setXIsScrollable(e.xScrollable);
   const [contextShown, setContextShown] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+
+  console.log(profileGroups)
 
   const createGroup = async () => {
     setContextShown(false);
@@ -53,31 +47,31 @@ const Tasks: React.FC<Props> = () => {
       return toast.warn('The group name cannot be empty.');
     }
 
-    const groupAlreadyExists = taskGroups.find(taskGroup => taskGroup.Name === newGroupName.trim());
+    const groupAlreadyExists = profileGroups.find(profileGroup => profileGroup.Name === newGroupName.trim());
     if (groupAlreadyExists) {
       setContextShown(true);
       return toast.warn(`A group with the name ${newGroupName.trim()} already exists.`);
     }
 
     setNewGroupName('');
-    dispatch(createTaskGroupRequest({ Name: newGroupName.trim() }));
+    dispatch(createProfileGroupRequest({ Name: newGroupName.trim() }));
   };
 
   return (
     <div className={'task-page'}>
       <div className={'task-groups'}>
         <div className="top">
-          <Button white onClick={() => setIsOpen(true)}>Create Task</Button>
+          <Button white onClick={() => setIsOpen(true)}>Create Profile</Button>
         </div>
         <div className="groups">
-          {taskGroups.map(taskGroup => (
+          {(profileGroups || []).map(profileGroup => (
             <div
-              className={`task-group${selectedTaskGroup.ID === taskGroup.ID ? ' active' : ''}`}
-              onClick={() => dispatch(setSelectedTaskGroup(taskGroup))}
-              key={taskGroup.ID}>
-              <h3>{taskGroup.Name}</h3>
+              className={`task-group${selectedProfileGroup.ID === profileGroup.ID ? ' active' : ''}`}
+              onClick={() => dispatch(setSelectedProfileGroup(profileGroup))}
+              key={profileGroup.ID}>
+              <h3>{profileGroup.Name}</h3>
               <div className="meta">
-                <span>12 Tasks</span>
+                <span>12 Profiles</span>
                 <div className="actions">
 
                 </div>
@@ -89,7 +83,7 @@ const Tasks: React.FC<Props> = () => {
           <div className={`context${contextShown ? ' shown' : ''}`}>
             <input
               type="text"
-              placeholder={"New Task Group"}
+              placeholder={"New Profile Group"}
               value={newGroupName}
               onChange={e => setNewGroupName(e.target.value)}
             />
@@ -103,7 +97,7 @@ const Tasks: React.FC<Props> = () => {
               <Button onClick={createGroup}>Save</Button>
             </div>
           </div>
-          <Button white onClick={() => setContextShown(true)}>Create Task Group</Button>
+          <Button white onClick={() => setContextShown(true)}>Create Profile Group</Button>
         </div>
       </div>
       <SideModal isOpen={isOpen} onCloseClick={() => setIsOpen(false)}>
@@ -116,23 +110,14 @@ const Tasks: React.FC<Props> = () => {
         <div className={`task-table${xIsScrollable ? ' x-can-scroll' : ''}`}>
           <FloatingHeaderTable
             columns={[
-              { Header: 'Product', accessor: 'product' },
-              { Header: 'Site', accessor: 'site' },
-              { Header: 'Size', accessor: 'size' },
-              { Header: 'Profile Group', accessor: 'profileGroup' },
-              { Header: 'Proxy Group', accessor: 'proxyGroup' },
-              { Header: 'Account Group', accessor: 'accountGroup' },
-              { Header: 'Status', accessor: 'status' },
+              { Header: 'Name', accessor: 'name' },
+              { Header: 'Email', accessor: 'email' },
+              { Header: 'First Name', accessor: 'firstName' },
+              { Header: 'ZIP', accessor: 'zip' },
+              { Header: 'Card', accessor: 'card' },
             ]}
             data={[]}
             actions={[
-              {
-                onClick: async () => {
-                  console.log('login invoked')
-                },
-                icon: PlayIcon,
-                color: ActionColor.GREEN
-              },
               {
                 onClick: async () => {
                   console.log('login invoked')
@@ -151,4 +136,4 @@ const Tasks: React.FC<Props> = () => {
   );
 };
 
-export default Tasks;
+export default Profiles;
