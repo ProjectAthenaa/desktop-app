@@ -1,6 +1,165 @@
 @import '../../assets/styles/vars';
 
 .task-page {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+
+  .task-groups {
+    border-right: 1px solid #E6E6E6;
+    .top {
+      height: 53px;
+      border-bottom: 1px solid #E6E6E6;
+      position: relative;
+      padding: 9px;
+      &::after {
+        content: '';
+        left: 0;
+        background-image: url('../../assets/images/overflow-shadow.png');
+        background-repeat: repeat-x;
+        pointer-events: none;
+        height: 15px;
+        width: 100%;
+        position: absolute;
+        bottom: -15px;
+        z-index: 99;
+      }
+      button {
+        width: 100%;
+      }
+    }
+
+    .bottom {
+      height: 53px;
+      border-top: 1px solid #E6E6E6;
+      position: relative;
+      padding: 9px;
+      &::after {
+        content: '';
+        left: 0;
+        background-image: url('../../assets/images/overflow-shadow.png');
+        transform: scaleY(-1);
+        background-repeat: repeat-x;
+        pointer-events: none;
+        height: 15px;
+        width: 100%;
+        position: absolute;
+        top: -15px;
+        z-index: 99;
+      }
+      button {
+        width: 100%;
+      }
+    }
+
+    .context {
+      position: absolute;
+      bottom: -199px;
+      left: 0;
+      transition: bottom 300ms ease;
+      width: 100%;
+      padding: 9px;
+      background-color: #fff;
+      border-top: 1px solid #E6E6E6;
+      z-index: 100;
+      .buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 9px;
+      }
+      input {
+        width: 100%;
+        margin-bottom: 9px;
+        border: none;
+        outline: none;
+        background-color: #fff;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 17px;
+        color: #000000;
+      }
+      &.shown {
+        bottom: 0;
+      }
+    }
+
+    .groups {
+      padding: 12px;
+      position: relative;
+      height: calc(100vh - 215px);
+      overflow: auto;
+    }
+
+    .task-group {
+      display: block;
+      background: #fff;
+      border: 1px solid #E6E6E6;
+      box-sizing: border-box;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 200ms ease;
+
+      h3 {
+        padding: 15px 20px;
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 17px;
+        color: #808080;
+        position: relative;
+        z-index: 2;
+        transition: color 200ms ease;
+      }
+      .meta {
+        background: #E6E6E6;
+        border-radius: 9px;
+        padding: 7px 20px;
+        position: relative;
+        z-index: 2;
+        transition: background 200ms ease;
+        span {
+          font-weight: bold;
+          font-size: 12px;
+          line-height: 15px;
+          color: #808080;
+          transition: color 200ms ease;
+        }
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(115.06deg, #16407F -52.21%, #060E35 84.07%), linear-gradient(180deg, #C4C4C4 0%, rgba(196, 196, 196, 0) 100%);
+        transition: top 200ms ease;
+      }
+      &.active {
+        box-shadow: 0 4px 15px rgba(22, 64, 127, 0.25);
+        border: 1px solid rgba(0,0,0,0);
+        &::after {
+          //opacity: 1;
+          top: 0;
+        }
+
+        h3 {
+          color: #fff;
+        }
+
+        .meta {
+          background: rgba(255, 255, 255, .1);
+          span {
+            color: rgba(255, 255, 255, .8);
+          }
+        }
+      }
+    }
+  }
+
   .os-scrollbar {
     &.os-scrollbar-vertical {
       top: 53px;

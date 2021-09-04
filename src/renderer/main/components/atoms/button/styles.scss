@@ -1,0 +1,34 @@
+.button {
+  background-color: #E3E8F0;
+  border-radius: 8px;
+  text-align: center;
+  padding: 9px;
+  cursor: pointer;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 17px;
+  outline: none;
+  border: none;
+  color: #16407F;
+  transition: background-color 200ms ease, color 200ms ease;
+
+  &.secondary {
+    background-color: #fff;
+    color: #808080;
+    border: 1px solid #E6E6E6;
+    transition: background-color 200ms ease;
+    &:hover {
+      background-color: #E6E6E6;
+    }
+  }
+
+  &.white {
+    background-color: #fff;
+    color: #808080;
+    &:hover {
+      background-color: #E3E8F0;
+      color: #16407F;
+    }
+  }
+}

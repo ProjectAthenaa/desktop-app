@@ -19,6 +19,9 @@ export const fetchingTaskGroups = (state: Draft<TasksState>, action: PayloadActi
 export const getTaskGroups = (state: Draft<TasksState>, action: PayloadAction<TaskGroup[]>) => {
   state.statuses.taskGroupFetching = Status.FULFILLED;
   state.taskGroups = action.payload;
+  if (action.payload.length > 0) {
+    state.selectedTaskGroup = action.payload[0];
+  }
   state.statuses.taskGroupFetching = Status.IDLE;
 };
 

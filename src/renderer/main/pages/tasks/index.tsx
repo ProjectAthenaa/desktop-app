@@ -8,9 +8,11 @@ import EditIcon from '../../assets/images/icons/edit';
 import DeleteIcon from '../../assets/images/icons/delete';
 import OverlayScrollbars from 'overlayscrollbars';
 import ipcRenderer from '../../util/ipc-renderer';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {TaskGroup} from '../../../../types/task';
-import {TasksState} from '../../store/tasks';
+import {setSelectedTaskGroup, TasksState} from '../../store/tasks';
+import Button from '../../components/atoms/button';
+import {RootState} from '../../store';
 
 
 // TODO Create Task Status enum
@@ -31,25 +33,50 @@ type Props = {
 }
 
 const Tasks: React.FC<Props> = () => {
-  // const { tasks, taskGroups, selectedTaskGroup, selectedTask } = useSelector((state: TasksState) => state);
+  const dispatch = useDispatch();
+  const selectedTaskGroup = useSelector((state: RootState) => state.tasks.selectedTaskGroup);
+  const taskGroups = useSelector((state: RootState) => state.tasks.taskGroups);
   const [xIsScrollable, setXIsScrollable] = useState(true);
-
   const onOverflowChanged = (e: { xScrollable: boolean }) => setXIsScrollable(e.xScrollable);
+  const [contextShown, setContextShown] = useState(false);
 
   return (
     <div className={'task-page'}>
-      <TaskGroupHeader />
+      {/*<TaskGroupHeader />*/}
+      <div className={'task-groups'}>
+        <div className="top">
+          <Button white>Create Task</Button>
+        </div>
+        <div className="groups">
+          {taskGroups.map(taskGroup => (
+            <div
+              className={`task-group${selectedTaskGroup.ID === taskGroup.ID ? ' active' : ''}`}
+              onClick={() => dispatch(setSelectedTaskGroup(taskGroup))}
+              key={taskGroup.ID}>
+              <h3>{taskGroup.Name}</h3>
+              <div className="meta">
+                <span>12 Tasks</span>
+                <div className="actions">
+
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="bottom">
+          <div className={`context${contextShown ? ' shown' : ''}`}>
+            <input type="text" placeholder={"New Task Group"}/>
+            <div className="buttons">
+              <Button>Save</Button>
+              <Button secondary onClick={() => setContextShown(false)}>Cancel</Button>
+            </div>
+          </div>
+          <Button white onClick={() => setContextShown(true)}>Create Task Group</Button>
+        </div>
+      </div>
       <OverlayScrollbarsComponent
-        style={{
-          height: 'calc(100vh - 175px)',
-          width: 'calc(100vw - 275px)'
-        }}
-        options={{
-          scrollbars: { autoHide: 'never'},
-          callbacks: {
-            onOverflowChanged
-          }
-        }}
+        style={{ height: 'calc(100vh - 108px)', width: 'calc(100vw - 475px)' }}
+        options={{ scrollbars: { autoHide: 'never'}, callbacks: { onOverflowChanged } }}
       >
         <div className={`task-table${xIsScrollable ? ' x-can-scroll' : ''}`}>
           <FloatingHeaderTable

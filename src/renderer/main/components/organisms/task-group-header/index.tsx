@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './styles.scss';
-import {Link, useLocation} from 'react-router-dom';
 import Plus from '../../../assets/images/icons/plus';
 import Check from '../../../assets/images/icons/check';
 import {useDispatch, useSelector} from 'react-redux';
@@ -13,6 +12,7 @@ import EditIcon from '../../../assets/images/icons/edit';
 import DeleteIcon from '../../../assets/images/icons/delete';
 import {deleteTaskGroupRequest} from '../../../store/tasks/reducers/delete-task-group';
 import {toast} from 'react-toastify';
+import Button from '../../atoms/button';
 
 const TaskGroupItem: React.FC<{ taskGroup: TaskGroup }> = ({ taskGroup }) => {
   const dispatch = useDispatch();
@@ -131,6 +131,9 @@ const TaskGroupHeader: React.FC = () => {
           className='search'
           placeholder={'Search Tasks'}
         />
+        <div className="creation-area">
+          <Button white>Create Task</Button>
+        </div>
       </div>
     </div>
   );

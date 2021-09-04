@@ -2,16 +2,20 @@
 
 .task-group-header {
   display: flex;
-  padding: 0 30px;
   padding-left: 15px;
+  padding-right: 0;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #E6E6E6;
+  flex-flow: row;
   .group-list {
     padding: 15px 0;
     min-height: 36px;
+    //flex: 1;
     display: flex;
     flex-direction: row;
+    width: calc(100% - 416px);
+    overflow: auto;
 
     .group {
       padding: 9px 15px;
@@ -24,6 +28,7 @@
       color: #808080;
       transition: color 200ms ease, padding 200ms ease, background-color 200ms ease, width 200ms ease, opacity 200ms ease;
       position: relative;
+      white-space: nowrap;
 
 
       &:hover {
@@ -113,6 +118,9 @@
       cursor: pointer;
       transition: color 200ms ease;
       padding: 9px 15px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
       svg {
         margin-right: 11px;
         transition: transform 400ms ease;
@@ -194,6 +202,13 @@
     }
   }
 
+
+  .right {
+    display: flex;
+    align-items: center;
+    position: sticky;
+    right: 0;
+  }
   input.search {
     background-image: url('../../../assets/images/icons/search.svg');
     background-repeat: no-repeat;
@@ -211,5 +226,18 @@
     font-size: 14px;
     line-height: 17px;
     color: #808080;
+  }
+
+  .creation-area {
+    width: 185px;
+    height: 67px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 15px 0 15px;
+
+    .button {
+      width: 100%;
+    }
   }
 }
