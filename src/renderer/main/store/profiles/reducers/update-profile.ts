@@ -4,34 +4,50 @@ import {Profile} from '../../../../../types/profile';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {Status} from '../../util/set-status';
 import {toast} from 'react-toastify';
+import {FetchedProfile} from '../../../../../graphql/integration/handlers/profiles/get-profile';
 
 
 export const updateProfileRequest = createAsyncThunk(
   'profiles/updateProfile',
-  async ({ ID, ...updatedPayload }: Profile): Promise<Profile> => {
-    return await ipcRenderer.invoke('updateProfile', ID, updatedPayload) as Profile;
+  async ({ ID, ...updatedPayload }: Profile) => {
+    return await ipcRenderer.invoke('updateProfile', ID, updatedPayload);
   }
 );
 
-export const updateProfile = (state: Draft<ProfilesState>, action: PayloadAction<Profile>) => {
+export const updateProfile = (state: Draft<ProfilesState>, action: PayloadAction<FetchedProfile>): void => {
   state.statuses.profileUpdating = Status.FULFILLED;
 
+  state.selectedProfile = action.payload;
   state.profiles = state.profiles.map(profile =>
     profile.ID !== action.payload.ID
     ? profile
-    : action.payload
+    : {
+      ID: action.payload.ID,
+      Name: action.payload.Name,
+      Email: action.payload.Email,
+      Shipping: {
+        ID: action.payload.Shipping.ID,
+        FirstName: action.payload.Shipping.FirstName,
+        LastName: action.payload.Shipping.LastName,
+        PhoneNumber: action.payload.Shipping.PhoneNumber,
+        ShippingAddress: {
+          AddressLine: action.payload.Shipping.ShippingAddress.AddressLine,
+        },
+        BillingIsShipping: action.payload.Shipping.BillingIsShipping,
+      }
+    }
   );
 
-  toast.success('Profile updated.')
+  toast.success('Profile updated.');
 
   state.statuses.profileUpdating = Status.IDLE;
 };
 
-export const updatingProfile = (state: Draft<ProfilesState>, action: PayloadAction<Profile>) => {
+export const updatingProfile = (state: Draft<ProfilesState>): void => {
   state.statuses.profileUpdating = Status.PENDING;
-}
+};
 
-export const undoUpdateProfile = (state: Draft<ProfilesState>, action: PayloadAction<Profile>) => {
+export const undoUpdateProfile = (state: Draft<ProfilesState>): void => {
   state.statuses.profileUpdating = Status.REJECTED;
 
   toast.error('Profile update failed.');

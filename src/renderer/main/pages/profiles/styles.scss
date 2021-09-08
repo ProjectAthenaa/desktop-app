@@ -109,7 +109,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      transition: box-shadow 200ms ease, border 200ms ease;
+      transition: box-shadow 200ms ease;
 
       h3 {
         padding: 15px 20px;
@@ -119,7 +119,7 @@
         color: #808080;
         position: relative;
         z-index: 2;
-        transition: color 200ms ease;
+        transition: color 200ms ease, padding 200ms ease;
       }
       .meta {
         background: #E6E6E6;
@@ -141,23 +141,23 @@
         content: "";
         position: absolute;
         z-index: 1;
-        top: 100%;
+        top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         background: linear-gradient(115.06deg, #16407F -52.21%, #060E35 84.07%), linear-gradient(180deg, #C4C4C4 0%, rgba(196, 196, 196, 0) 100%);
-        transition: top 200ms ease;
+        opacity: 0;
+        transition: opacity 200ms ease;
       }
       &.active {
         box-shadow: 0 4px 15px rgba(22, 64, 127, 0.25);
-        border: 1px solid #16407F;
         &::after {
-          //opacity: 1;
-          top: 0;
+          opacity: 1;
         }
 
         h3 {
           color: #fff;
+          padding: 15px 20px;
         }
 
         .meta {

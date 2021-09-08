@@ -1,6 +1,6 @@
-import getGroupRequest, {Group} from '../../../../../graphql/integration/handlers/profiles/get-group';
+import getGroupRequest, {FetchedProfileGroup} from '../../../../../graphql/integration/handlers/profiles/get-group';
 
-const getGroup = async (event: Electron.IpcMainInvokeEvent, groupId: string): Promise<Group> => {
+const getGroup = async (event: Electron.IpcMainInvokeEvent, groupId: string): Promise<FetchedProfileGroup> => {
   return await getGroupRequest(groupId);
 };
 

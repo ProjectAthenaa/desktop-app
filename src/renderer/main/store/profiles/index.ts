@@ -7,7 +7,6 @@ import {
   createTempProfileGroup,
   undoProfileGroup
 } from './reducers/create-profile-group';
-import {Profile, ProfileGroup} from '../../../../types/profile';
 import setSelectedProfileReducer from './reducers/set-selected-profile';
 import setSelectedProfileGroupReducer from './reducers/set-selected-profile-group';
 import setStatusReducer, {Status} from '../util/set-status';
@@ -23,18 +22,24 @@ import {createProfile, createProfileRequest, createTempProfile} from './reducers
 import {deleteProfile, deleteProfileRequest, restoreDeletedProfile, tempDeleteProfile} from './reducers/delete-profile';
 import {undoUpdateProfile, updateProfile, updateProfileRequest, updatingProfile} from './reducers/update-profile';
 import {failedGetGroup, fetchingGroup, getGroup, getGroupRequest} from './reducers/get-group';
+import {FetchedProfileGroups} from '../../../../graphql/integration/handlers/profiles/get-profile-groups';
+import {
+  FetchedProfileGroup,
+  FetchedProfileGroupsProfile
+} from '../../../../graphql/integration/handlers/profiles/get-group';
+import {FetchedProfile} from '../../../../graphql/integration/handlers/profiles/get-profile';
 
 export enum ProfileStatusType {
   profileCreation = 'profileCreation'
 }
 
 export interface ProfilesState {
-  selectedProfileGroup: ProfileGroup | null;
-  selectedProfile: Profile | null;
-  profileGroups: ProfileGroup[];
-  profiles: Profile[];
-  prevProfileGroup: ProfileGroup | null;
-  prevProfile: Profile | null;
+  selectedProfileGroup: FetchedProfileGroup | null;
+  selectedProfile: FetchedProfile | null;
+  profileGroups: FetchedProfileGroups;
+  profiles: FetchedProfileGroupsProfile[];
+  prevProfileGroup: FetchedProfileGroup | null;
+  prevProfile: FetchedProfile | null;
   statuses: {
     profileGroupFetching: Status;
     profileGroupCreation: Status;

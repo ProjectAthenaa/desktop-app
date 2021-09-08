@@ -1,10 +1,10 @@
 import {ProfilesState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {ProfileGroup} from '../../../../../types/profile';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {PendingAction} from '../../util/async-action-types';
 import {Status} from '../../util/set-status';
 import { toast } from 'react-toastify';
+import {FetchedProfileGroup} from '../../../../../graphql/integration/handlers/profiles/get-group';
 
 type ProfileGroupCreation = {
   Name?: string;
@@ -17,7 +17,7 @@ export const createProfileGroupRequest = createAsyncThunk(
   }
 );
 
-export const createTempProfileGroup = (state: Draft<ProfilesState>, action: PendingAction): Draft<ProfilesState> => {
+export const createTempProfileGroup = (state: Draft<ProfilesState>, action: PendingAction): void => {
   const pendingBody: ProfileGroupCreation = action.meta.arg;
 
   state.statuses.profileGroupCreation = Status.PENDING;
@@ -27,11 +27,9 @@ export const createTempProfileGroup = (state: Draft<ProfilesState>, action: Pend
     Name: pendingBody.Name,
     Profiles: [],
   });
-
-  return state;
 };
 
-export const undoProfileGroup = (state: Draft<ProfilesState>, action: PayloadAction<ProfileGroup>) => {
+export const undoProfileGroup = (state: Draft<ProfilesState>): void => {
   state.profileGroups = state.profileGroups.filter(profileGroup => profileGroup.ID !== "temp");
 
   state.statuses.profileGroupCreation = Status.REJECTED;
@@ -40,7 +38,7 @@ export const undoProfileGroup = (state: Draft<ProfilesState>, action: PayloadAct
   state.statuses.profileGroupCreation = Status.IDLE;
 };
 
-export const createProfileGroup = (state: Draft<ProfilesState>, action: PayloadAction<ProfileGroup>) => {
+export const createProfileGroup = (state: Draft<ProfilesState>, action: PayloadAction<FetchedProfileGroup>): void => {
   state.profileGroups = state.profileGroups.map(profileGroup =>
     profileGroup.ID === 'temp'
       ? action.payload

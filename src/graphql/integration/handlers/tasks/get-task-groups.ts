@@ -7,6 +7,22 @@ const GET_TASK_GROUPS = gql`
         getAllTaskGroups {
             ID
             Name
+            Tasks {
+                ID
+                StartTime
+                Product {
+                    ID
+                    Name
+                }
+                ProxyList {
+                  ID
+                  Name
+                }
+                ProfileGroup {
+                  ID
+                  Name
+                }
+            }
         }
     }
 `;

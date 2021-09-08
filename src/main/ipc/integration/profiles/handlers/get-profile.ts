@@ -1,7 +1,6 @@
-import {Profile} from '../../../../../types/profile';
-import getProfileRequest from '../../../../../graphql/integration/handlers/profiles/get-profile';
+import getProfileRequest, {FetchedProfile} from '../../../../../graphql/integration/handlers/profiles/get-profile';
 
-const getProfile = async (event: Electron.IpcMainInvokeEvent, profileId: string): Promise<Profile> => {
+const getProfile = async (event: Electron.IpcMainInvokeEvent, profileId: string): Promise<FetchedProfile> => {
   return await getProfileRequest(profileId);
 };
 

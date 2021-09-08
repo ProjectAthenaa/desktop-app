@@ -5,6 +5,8 @@ import {useDispatch} from 'react-redux';
 import {getTaskGroupsRequest} from './store/tasks/reducers/get-task-groups';
 import { ToastContainer } from 'react-toastify';
 import {getProfileGroupsRequest} from './store/profiles/reducers/get-profile-groups';
+import {getAccountGroupsRequest} from './store/accounts/reducers/get-account-groups';
+import {getProxyListsRequest} from './store/proxies/reducers/get-proxy-lists';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -14,6 +16,8 @@ const App: React.FC = () => {
   useEffect(() => {
     dispatch(getTaskGroupsRequest());
     dispatch(getProfileGroupsRequest());
+    dispatch(getAccountGroupsRequest());
+    dispatch(getProxyListsRequest());
   }, []);
 
   return (

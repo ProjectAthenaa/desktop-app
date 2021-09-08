@@ -1,6 +1,7 @@
-import {Profile, ProfileCreation} from '../../../../types/profile';
+import {ProfileCreation} from '../../../../types/profile';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
+import {FetchedProfile} from './get-profile';
 
 const UPDATE_PROFILE = gql`
     mutation UpdateProfile($profileID: UUID!, $updatedProfile: NewProfile!) {
@@ -39,8 +40,8 @@ const UPDATE_PROFILE = gql`
     }
 `;
 
-const updateProfile = async (profileId: string, updatedPayload: ProfileCreation): Promise<Profile> => {
-  const response = await integrationClient().request<{ updateProfile: Profile }>(UPDATE_PROFILE, {
+const updateProfile = async (profileId: string, updatedPayload: ProfileCreation): Promise<FetchedProfile> => {
+  const response = await integrationClient().request<{ updateProfile: FetchedProfile }>(UPDATE_PROFILE, {
     profileID: profileId,
     updatedProfile: updatedPayload,
   });

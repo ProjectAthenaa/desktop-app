@@ -15,11 +15,11 @@ export const deleteProfileRequest = createAsyncThunk(
   }
 );
 
-export const tempDeleteProfile = (state: Draft<ProfilesState>, action: PayloadAction<string>) => {
+export const tempDeleteProfile = (state: Draft<ProfilesState>): void => {
   state.statuses.profileDeletion = Status.PENDING;
 };
 
-export const restoreDeletedProfile = (state: Draft<ProfilesState>, action: PayloadAction<string>) => {
+export const restoreDeletedProfile = (state: Draft<ProfilesState>): void => {
   state.statuses.profileDeletion = Status.REJECTED;
 
   toast.error('There was an issue deleting the profile at this time.');

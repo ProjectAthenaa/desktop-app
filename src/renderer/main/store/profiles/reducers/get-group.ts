@@ -1,26 +1,22 @@
 import {ProfilesState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {Profile, ProfileGroup} from '../../../../../types/profile';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {toast} from 'react-toastify';
 import {Status} from '../../util/set-status';
-
-interface Group extends ProfileGroup {
-  Profiles: Profile[];
-}
+import {FetchedProfileGroup} from '../../../../../graphql/integration/handlers/profiles/get-group';
 
 export const getGroupRequest = createAsyncThunk(
   'profiles/getGroup',
-  async (groupId: string): Promise<Group> => {
-    return await ipcRenderer.invoke('getProfileGroup', groupId) as Group;
+  async (groupId: string): Promise<FetchedProfileGroup> => {
+    return await ipcRenderer.invoke('getProfileGroup', groupId);
   }
 );
 
-export const fetchingGroup = (state: Draft<ProfilesState>, action: PayloadAction<Group>) => {
+export const fetchingGroup = (state: Draft<ProfilesState>): void => {
   state.statuses.profileGroupFetching = Status.PENDING;
 };
 
-export const getGroup = (state: Draft<ProfilesState>, action: PayloadAction<Group>) => {
+export const getGroup = (state: Draft<ProfilesState>, action: PayloadAction<FetchedProfileGroup>): void => {
   state.profiles = action.payload.Profiles;
   state.statuses.profileGroupFetching = Status.FULFILLED;
 
@@ -35,7 +31,7 @@ export const getGroup = (state: Draft<ProfilesState>, action: PayloadAction<Grou
   state.statuses.profileGroupFetching = Status.IDLE;
 };
 
-export const failedGetGroup = (state: Draft<ProfilesState>, action: PayloadAction<Group>) => {
+export const failedGetGroup = (state: Draft<ProfilesState>): void => {
   state.statuses.profileGroupFetching = Status.REJECTED;
 
   toast.error(`Failed to load your profile group at this time.`);

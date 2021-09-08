@@ -1,8 +1,7 @@
-import getProfileGroupsRequest from '../../../../../graphql/integration/handlers/profiles/get-profile-groups';
-import {ProfileGroup} from '../../../../../types/profile';
+import getProfileGroupsRequest, {FetchedProfileGroups} from '../../../../../graphql/integration/handlers/profiles/get-profile-groups';
 
-const getProfileGroups = async (event: Electron.IpcMainInvokeEvent): Promise<ProfileGroup[]> => {
-  return getProfileGroupsRequest();
+const getProfileGroups = async (event: Electron.IpcMainInvokeEvent): Promise<FetchedProfileGroups> => {
+  return await getProfileGroupsRequest();
 };
 
 export default getProfileGroups;

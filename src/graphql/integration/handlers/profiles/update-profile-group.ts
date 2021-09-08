@@ -1,6 +1,6 @@
-import {ProfileGroup} from '../../../../types/profile';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
+import {FetchedProfileGroup} from './get-group';
 
 type UpdatedProfileGroup = {
   Name: string;
@@ -11,12 +11,27 @@ const UPDATE_GROUP = gql`
         updateProfileGroup(groupID: $profileGroupID, updatedGroup: $updatedProfileGroup) {
             ID
             Name
+            Profiles {
+                ID
+                Name
+                Email
+                Shipping {
+                    ID
+                    FirstName
+                    LastName
+                    PhoneNumber
+                    ShippingAddress {
+                        AddressLine
+                    }
+                    BillingIsShipping
+                }
+            }
         }
     }
 `;
 
-const updateProfileGroup = async (profileGroupId: string, updatedProfileGroup: UpdatedProfileGroup): Promise<ProfileGroup> => {
-  const response = await integrationClient().request<{ updateProfileGroup: ProfileGroup }>(UPDATE_GROUP, {
+const updateProfileGroup = async (profileGroupId: string, updatedProfileGroup: UpdatedProfileGroup): Promise<FetchedProfileGroup> => {
+  const response = await integrationClient().request<{ updateProfileGroup: FetchedProfileGroup }>(UPDATE_GROUP, {
     profileGroupID: profileGroupId,
     updatedProfileGroup
   });

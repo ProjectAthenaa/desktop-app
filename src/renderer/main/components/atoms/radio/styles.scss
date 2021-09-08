@@ -1,0 +1,55 @@
+@import '../button/styles';
+
+.radio {
+  @extend .button;
+  //@extend .secondary;
+
+  width: auto;
+  text-align: left;
+  font-weight: initial;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  // remove me
+  margin-bottom: 10px;
+  .control {
+    height: 14px;
+    width: 14px;
+    margin-right: 12px;
+    vertical-align: center;
+    border-radius: 7px;
+    border: 1px solid #e6e6e6;
+    position: relative;
+
+    &::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background-color: #16407F;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: 4px;
+      transform: translateX(-50%) translateY(-50%) scale(0);
+      transition: transform 200ms ease;
+    }
+  }
+
+  &.checked {
+    @extend .button;
+    text-align: left;
+
+    .control {
+      border: 2px solid #fff;
+
+      &::after {
+        transform: translateX(-50%) translateY(-50%) scale(1);
+      }
+    }
+  }
+
+  &.unchecked {
+    @extend .secondary;
+  }
+}

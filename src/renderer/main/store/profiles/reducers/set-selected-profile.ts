@@ -1,8 +1,8 @@
 import {ProfilesState} from '../index';
 import {Draft, PayloadAction} from '@reduxjs/toolkit';
-import {Profile} from '../../../../../types/profile';
+import {FetchedProfile} from '../../../../../graphql/integration/handlers/profiles/get-profile';
 
-const setSelectedProfile = (state: Draft<ProfilesState>, action: PayloadAction<Profile>): Draft<ProfilesState> => {
+const setSelectedProfile = (state: Draft<ProfilesState>, action: PayloadAction<FetchedProfile>): Draft<ProfilesState> => {
   return {
     ...state,
     selectedProfile: action.payload

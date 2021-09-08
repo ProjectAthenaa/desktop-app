@@ -1,6 +1,7 @@
 import {gql} from 'graphql-request';
-import {Profile, ProfileCreation} from '../../../../types/profile';
+import {ProfileCreation} from '../../../../types/profile';
 import {integrationClient} from '../../index';
+import {FetchedProfileGroupsProfile} from './get-group';
 
 const CREATE_PROFILE = gql`
     mutation CreateProfile($newProfile: NewProfile!){
@@ -13,34 +14,17 @@ const CREATE_PROFILE = gql`
                 FirstName
                 LastName
                 PhoneNumber
-                BillingIsShipping
-                BillingAddress {
-                    ID
-                    AddressLine
-                    AddressLine2
-                    Country
-                    State
-                    City
-                    ZIP
-                    StateCode
-                }
                 ShippingAddress {
-                    ID
                     AddressLine
-                    AddressLine2
-                    Country
-                    State
-                    City
-                    ZIP
-                    StateCode
                 }
+                BillingIsShipping
             }
         }
     }
 `;
 
-const createProfile = async (newProfile: ProfileCreation): Promise<Profile> => {
-  const response = await integrationClient().request<{ createProfile: Profile }>(CREATE_PROFILE, {
+const createProfile = async (newProfile: ProfileCreation): Promise<FetchedProfileGroupsProfile> => {
+  const response = await integrationClient().request<{ createProfile: FetchedProfileGroupsProfile }>(CREATE_PROFILE, {
     newProfile
   });
   return response.createProfile;

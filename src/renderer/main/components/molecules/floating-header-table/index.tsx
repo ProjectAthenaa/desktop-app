@@ -7,8 +7,8 @@ export enum ActionColor {
   GREEN = 'green'
 }
 
-type Action = {
-  onClick: () => void;
+export type Action = {
+  onClick: (id?: string) => void;
   icon: JSX.Element;
   color?: ActionColor;
 }
@@ -39,7 +39,7 @@ const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions}) => {
                 <button
                   key={index}
                   className={action.color ? action.color : ''}
-                  onClick={action.onClick}>
+                  onClick={() => action.onClick()}>
                   {action.icon}
                 </button>
               ))}
@@ -49,7 +49,7 @@ const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions}) => {
       ))}
       </thead>
       <tbody>
-      {rows.map(row => {
+      {rows.map((row, rowIndex) => {
         prepareRow(row);
         return (
           <tr {...row.getRowProps()}>
@@ -64,7 +64,7 @@ const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions}) => {
                   <button
                     key={index}
                     className={action.color ? action.color : ''}
-                    onClick={action.onClick}>
+                    onClick={() => action.onClick(data[rowIndex].id as string)}>
                     {action.icon}
                   </button>
                 ))}

@@ -16,6 +16,7 @@ import {RootState} from '../../store';
 import {toast} from 'react-toastify';
 import {createTaskGroupRequest} from '../../store/tasks/reducers/create-task-group';
 import SideModal from '../../components/molecules/side-modal';
+import GroupTable from '../../components/organisms/group-table';
 
 
 // TODO Create Task Status enum
@@ -42,111 +43,44 @@ const Tasks: React.FC<Props> = () => {
   const [xIsScrollable, setXIsScrollable] = useState(true);
   const onOverflowChanged = (e: { xScrollable: boolean }) => setXIsScrollable(e.xScrollable);
   const [contextShown, setContextShown] = useState(false);
-  const [newGroupName, setNewGroupName] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
-  const createGroup = async () => {
+  const createGroup = async (groupName: string) => {
     setContextShown(false);
 
-    if (newGroupName.trim() === "") {
+    if (groupName.trim() === "") {
       setContextShown(true);
       return toast.warn('The group name cannot be empty.');
     }
 
-    const groupAlreadyExists = taskGroups.find(taskGroup => taskGroup.Name === newGroupName.trim());
+    const groupAlreadyExists = taskGroups.find(taskGroup => taskGroup.Name === groupName.trim());
     if (groupAlreadyExists) {
       setContextShown(true);
-      return toast.warn(`A group with the name ${newGroupName.trim()} already exists.`);
+      return toast.warn(`A group with the name ${groupName.trim()} already exists.`);
     }
 
-    setNewGroupName('');
-    dispatch(createTaskGroupRequest({ Name: newGroupName.trim() }));
+    dispatch(createTaskGroupRequest({ Name: groupName.trim() }));
   };
 
   return (
     <div className={'task-page'}>
-      <div className={'task-groups'}>
-        <div className="top">
-          <Button white onClick={() => setIsOpen(true)}>Create Task</Button>
-        </div>
-        <div className="groups">
-          {taskGroups.map(taskGroup => (
-            <div
-              className={`task-group${selectedTaskGroup.ID === taskGroup.ID ? ' active' : ''}`}
-              onClick={() => dispatch(setSelectedTaskGroup(taskGroup))}
-              key={taskGroup.ID}>
-              <h3>{taskGroup.Name}</h3>
-              <div className="meta">
-                <span>12 Tasks</span>
-                <div className="actions">
-
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="bottom">
-          <div className={`context${contextShown ? ' shown' : ''}`}>
-            <input
-              type="text"
-              placeholder={"New Task Group"}
-              value={newGroupName}
-              onChange={e => setNewGroupName(e.target.value)}
-            />
-            <div className="buttons">
-              <Button secondary onClick={() => {
-                setContextShown(false);
-                setTimeout(() => {
-                  setNewGroupName('');
-                }, 200);
-              }}>Cancel</Button>
-              <Button onClick={createGroup}>Save</Button>
-            </div>
-          </div>
-          <Button white onClick={() => setContextShown(true)}>Create Task Group</Button>
-        </div>
-      </div>
-      <SideModal isOpen={isOpen} onCloseClick={() => setIsOpen(false)}>
-          <h3>Hello</h3>
-      </SideModal>
-      <OverlayScrollbarsComponent
-        style={{ height: 'calc(100vh - 108px)', width: 'calc(100vw - 475px)' }}
-        options={{ scrollbars: { autoHide: 'never'}, callbacks: { onOverflowChanged } }}
-      >
-        <div className={`task-table${xIsScrollable ? ' x-can-scroll' : ''}`}>
-          <FloatingHeaderTable
-            columns={[
-              { Header: 'Product', accessor: 'product' },
-              { Header: 'Site', accessor: 'site' },
-              { Header: 'Size', accessor: 'size' },
-              { Header: 'Profile Group', accessor: 'profileGroup' },
-              { Header: 'Proxy Group', accessor: 'proxyGroup' },
-              { Header: 'Account Group', accessor: 'accountGroup' },
-              { Header: 'Status', accessor: 'status' },
-            ]}
-            data={[]}
-            actions={[
-              {
-                onClick: async () => {
-                  console.log('login invoked')
-                },
-                icon: PlayIcon,
-                color: ActionColor.GREEN
-              },
-              {
-                onClick: async () => {
-                  console.log('login invoked')
-                },
-                icon: EditIcon
-              },
-              {
-                onClick: () => console.log('click'),
-                icon: DeleteIcon,
-                color: ActionColor.RED
-              },
-            ]} />
-        </div>
-      </OverlayScrollbarsComponent>
+      <GroupTable
+        type={'Task'}
+        groups={taskGroups}
+        items={[]}
+        selectedGroup={selectedTaskGroup}
+        headerItems={[]}
+        createItem={() => console.log('')}
+        createGroup={groupName => createGroup(groupName)}
+        deleteItem={() => console.log('')}
+        deleteGroup={() => console.log('')}
+        editItem={() => console.log('')}
+        editGroup={() => console.log('')}
+        getItems={() => console.log('')}
+        openModal={() => console.log('')}
+        setSelectedGroup={group => setSelectedTaskGroup(group)}
+        actions={[]}
+      />
     </div>
   );
 };

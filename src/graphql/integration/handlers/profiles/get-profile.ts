@@ -1,4 +1,4 @@
-import {Profile} from '../../../../types/profile';
+import {Address, Profile} from '../../../../types/profile';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
 
@@ -39,7 +39,22 @@ const GET_TASK = gql`
     }
 `;
 
-const getProfile = async (profileId: string): Promise<Profile> => {
+export interface FetchedProfile {
+    ID: string;
+    Name: string;
+    Email: string;
+    Shipping: {
+        ID: string;
+        FirstName: string;
+        LastName: string;
+        PhoneNumber: string;
+        BillingIsShipping: boolean;
+        BillingAddress: Address;
+        ShippingAddress?: Address;
+    }
+}
+
+const getProfile = async (profileId: string): Promise<FetchedProfile> => {
   const response = await integrationClient().request<{ getProfile: Profile }>(GET_TASK, {
     profileID: profileId
   });

@@ -1,26 +1,5 @@
-import {Profile, ProfileGroup} from '../../../../types/profile';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
-
-export interface Group {
-  ID: string;
-  Name: string;
-  Profiles: {
-    ID: string;
-    Name: string;
-    Email: string;
-    Shipping: {
-      ID: string;
-      FirstName: string;
-      LastName: string;
-      PhoneNumber: string;
-      ShippingAddress: {
-        AddressLine: string;
-      }
-      BillingIsShipping: boolean;
-    }
-  }
-}
 
 const GET_GROUP = gql`
     query GetGroup ($profileGroupID: UUID!){
@@ -45,10 +24,33 @@ const GET_GROUP = gql`
         }
         
     }
-`
+`;
 
-const getGroup = async (groupId: string): Promise<Group> => {
-  const response = await integrationClient().request<{ getProfileGroup: Group }>(GET_GROUP, {
+export interface FetchedProfileGroupsProfile {
+  ID: string;
+  Name: string;
+  Email: string;
+  Shipping: {
+    ID: string;
+    FirstName: string;
+    LastName: string;
+    PhoneNumber: string;
+    ShippingAddress: {
+      AddressLine: string;
+    }
+    BillingIsShipping: boolean;
+  }
+}
+
+export interface FetchedProfileGroup {
+  ID: string;
+  Name: string;
+  Profiles: FetchedProfileGroupsProfile[];
+}
+
+
+const getGroup = async (groupId: string): Promise<FetchedProfileGroup> => {
+  const response = await integrationClient().request<{ getProfileGroup: FetchedProfileGroup }>(GET_GROUP, {
     profileGroupID: groupId
   });
 
