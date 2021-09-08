@@ -1,5 +1,12 @@
 @import '../../../assets/styles/vars';
 
+.table-loader {
+  width: 100%;
+  height: calc(100vh - 108px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 table.floating-header-table {
   width: 100%;

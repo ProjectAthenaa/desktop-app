@@ -15,30 +15,36 @@ const GET_PROFILE_GROUPS = gql`
 `;
 
 const GET_FIRST_PROFILE_GROUP = gql`
-    query GetFirstProfileGroup($profileID: UUID!) {
-        getProfile(profileID: $profileID) {
+    query GetFirstProfileGroup($profileGroupID: UUID!) {
+        getProfileGroup(profileGroupID: $profileGroupID) {
             ID
             Name
-            Email
-            Shipping {
+            Profiles {
                 ID
-                FirstName
-                LastName
-                PhoneNumber
-                ShippingAddress {
-                    AddressLine
+                Name
+                Email
+                Shipping {
+                    ID
+                    FirstName
+                    LastName
+                    PhoneNumber
+                    ShippingAddress {
+                        AddressLine
+                    }
+                    BillingIsShipping
                 }
-                BillingIsShipping
             }
         }
     }
 `;
 
-export type FetchedProfileGroups = Array<{
+export interface FetchedProfileGroupSlim {
   ID: string;
   Name: string;
   Profiles: { ID: string; }[];
-}>
+}
+
+export type FetchedProfileGroups = Array<FetchedProfileGroupSlim>
 
 const getProfileGroups = async (): Promise<{ groups: FetchedProfileGroups, selectedProfileGroup: FetchedProfileGroupsProfile | null }> => {
   const response = await integrationClient()
@@ -50,11 +56,13 @@ const getProfileGroups = async (): Promise<{ groups: FetchedProfileGroups, selec
   }
 
   const firstProfileResponse = await integrationClient()
-    .request<{ getProfile: FetchedProfileGroupsProfile }>(GET_FIRST_PROFILE_GROUP);
+    .request<{ getProfileGroup: FetchedProfileGroupsProfile }>(GET_FIRST_PROFILE_GROUP, {
+      profileGroupID: response.getProfileGroups[0].ID
+    });
 
   return {
     groups: response.getProfileGroups,
-    selectedProfileGroup: firstProfileResponse.getProfile,
+    selectedProfileGroup: firstProfileResponse.getProfileGroup,
   };
 };
 

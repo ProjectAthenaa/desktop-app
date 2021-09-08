@@ -1,6 +1,7 @@
 import React from 'react';
 import './styles.scss';
 import {useTable} from 'react-table';
+import LogoLoadingIndicator from '../../atoms/logo-loading-indicator';
 
 export enum ActionColor {
   RED = 'red',
@@ -17,11 +18,18 @@ type Props = {
   columns: { Header: string; accessor: string }[];
   data: Record<string, unknown>[];
   actions: Action[];
+  loadingContent: boolean;
 }
 
-const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions}) => {
+const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions, loadingContent}) => {
   const table = useTable({columns, data});
   const {headerGroups, rows, prepareRow} = table;
+
+  if (loadingContent) return (
+    <div className={'table-loader'}>
+      <LogoLoadingIndicator/>
+    </div>
+  )
 
   return (
     <table className={'floating-header-table'}>

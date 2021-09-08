@@ -18,6 +18,7 @@ export const createProfileGroupRequest = createAsyncThunk(
 );
 
 export const createTempProfileGroup = (state: Draft<ProfilesState>, action: PendingAction): void => {
+  console.log(action.payload)
   const pendingBody: ProfileGroupCreation = action.meta.arg;
 
   state.statuses.profileGroupCreation = Status.PENDING;

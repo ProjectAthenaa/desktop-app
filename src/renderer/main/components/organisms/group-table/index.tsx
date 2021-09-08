@@ -3,12 +3,18 @@ import './styles.scss';
 import Button from '../../atoms/button';
 import FloatingHeaderTable, {Action} from '../../molecules/floating-header-table';
 import {OverlayScrollbarsComponent} from 'overlayscrollbars-react';
+import {Status} from '../../../store/util/set-status';
+import {toast} from 'react-toastify';
 
-type Props<I, G> = {
+type Props<Item, GroupItem> = {
   type: string;
-  groups: G[];
-  items: I[];
-  selectedGroup: G;
+  groups: Group[];
+  items: Item[];
+  profileGroupFetching: Status;
+  profileGroupCreation: Status;
+  profileGroupDeletion: Status;
+  profileGroupUpdating: Status;
+  selectedGroup: Group | null;
   headerItems: { Header: string, accessor: string }[];
   createItem: () => unknown;
   createGroup: (name: string) => unknown;
@@ -18,12 +24,17 @@ type Props<I, G> = {
   editGroup: () => unknown;
   getItems: () => unknown;
   openModal: () => unknown;
-  setSelectedGroup: (group: G) => unknown;
+  setSelectedGroup: (group: Group) => unknown;
   actions: Action[];
 }
 
+type Group = {
+  ID: string;
+  Name: string;
+  Items: { ID: string; }[];
+}
 
-function GroupTable <I, G extends { ID: string; Name: string; }>({ type, createGroup, openModal, headerItems, actions, selectedGroup, groups, setSelectedGroup }: Props<I, G>): JSX.Element {
+function GroupTable <Item, GroupItem>({ type, createGroup, openModal, headerItems, actions, selectedGroup, groups, setSelectedGroup , profileGroupFetching }: Props<Item, GroupItem>): JSX.Element {
   const [xIsScrollable, setXIsScrollable] = useState(true);
   const [contextShown, setContextShown] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
@@ -38,7 +49,18 @@ function GroupTable <I, G extends { ID: string; Name: string; }>({ type, createG
   };
 
   const handleGroupCreation = () => {
-    createGroup(newGroupName)
+    const groupName = newGroupName.trim();
+
+    if (groupName.trim() === "") {
+      return toast.warn('The group name cannot be empty.');
+    }
+
+    const groupAlreadyExists = groups.find(group => group.Name === groupName);
+    if (groupAlreadyExists) {
+      return toast.warn(`A group with the name ${groupName} already exists.`);
+    }
+
+    createGroup(groupName);
 
     setContextShown(false);
     setTimeout(() => {
@@ -64,12 +86,12 @@ function GroupTable <I, G extends { ID: string; Name: string; }>({ type, createG
         <div className="group-list">
           {groups.map(group => (
             <div
-              className={`group${selectedGroup.ID === group.ID ? ' active' : ''}`}
+              className={`group${selectedGroup && selectedGroup.ID === group.ID ? ' active' : ''}`}
               onClick={() => setSelectedGroup(group)}
               key={group.ID}>
               <h3>{group.Name}</h3>
               <div className="meta">
-                <span>12 { type }s</span>
+                <span>{ group.Items.length } { type }s</span>
                 <div className="actions">
                   {/* Edit / Delete */}
                 </div>
@@ -98,10 +120,18 @@ function GroupTable <I, G extends { ID: string; Name: string; }>({ type, createG
         style={{ height: 'calc(100vh - 108px)', width: 'calc(100vw - 475px)' }}
         options={{ scrollbars: { autoHide: 'never'}, callbacks: { onOverflowChanged } }}>
         <div className={`item-table${xIsScrollable ? ' x-can-scroll' : ''}`}>
-          <FloatingHeaderTable
-            columns={headerItems}
-            data={[]}
-            actions={actions} />
+          {selectedGroup
+            ? (
+              <FloatingHeaderTable
+                loadingContent={profileGroupFetching === Status.PENDING}
+                columns={headerItems}
+                data={[]}
+                actions={actions} />
+            )
+            : <div>
+              <h3>{groups.length === 0 ? 'No groups have been created yet.' : 'No group selected.' }</h3>
+            </div>
+          }
         </div>
       </OverlayScrollbarsComponent>
     </>

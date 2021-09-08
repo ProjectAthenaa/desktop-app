@@ -64,23 +64,23 @@ const Tasks: React.FC<Props> = () => {
 
   return (
     <div className={'task-page'}>
-      <GroupTable
-        type={'Task'}
-        groups={taskGroups}
-        items={[]}
-        selectedGroup={selectedTaskGroup}
-        headerItems={[]}
-        createItem={() => console.log('')}
-        createGroup={groupName => createGroup(groupName)}
-        deleteItem={() => console.log('')}
-        deleteGroup={() => console.log('')}
-        editItem={() => console.log('')}
-        editGroup={() => console.log('')}
-        getItems={() => console.log('')}
-        openModal={() => console.log('')}
-        setSelectedGroup={group => setSelectedTaskGroup(group)}
-        actions={[]}
-      />
+      {/*<GroupTable*/}
+      {/*  type={'Task'}*/}
+      {/*  groups={taskGroups}*/}
+      {/*  items={[]}*/}
+      {/*  selectedGroup={selectedTaskGroup}*/}
+      {/*  headerItems={[]}*/}
+      {/*  createItem={() => console.log('')}*/}
+      {/*  createGroup={groupName => createGroup(groupName)}*/}
+      {/*  deleteItem={() => console.log('')}*/}
+      {/*  deleteGroup={() => console.log('')}*/}
+      {/*  editItem={() => console.log('')}*/}
+      {/*  editGroup={() => console.log('')}*/}
+      {/*  getItems={() => console.log('')}*/}
+      {/*  openModal={() => console.log('')}*/}
+      {/*  setSelectedGroup={group => setSelectedTaskGroup(group)}*/}
+      {/*  actions={[]}*/}
+      {/*/>*/}
     </div>
   );
 };
