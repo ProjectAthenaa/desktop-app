@@ -16,11 +16,11 @@ export const deleteProfileGroupRequest = createAsyncThunk(
   }
 );
 
-export const tempDeleteProfileGroup = (state: Draft<ProfilesState>, action: PayloadAction<string>) => {
+export const tempDeleteProfileGroup = (state: Draft<ProfilesState>): void => {
   state.statuses.profileGroupDeletion = Status.PENDING;
 };
 
-export const restoreDeletedProfileGroup = (state: Draft<ProfilesState>, action: PayloadAction<string>) => {
+export const restoreDeletedProfileGroup = (state: Draft<ProfilesState>): void => {
   state.statuses.profileGroupDeletion = Status.REJECTED;
 
   toast.error('There was an issue deleting the profile group at this time.');
@@ -28,11 +28,13 @@ export const restoreDeletedProfileGroup = (state: Draft<ProfilesState>, action: 
   state.statuses.profileGroupDeletion = Status.IDLE;
 };
 
-export const deleteProfileGroup = (state: Draft<ProfilesState>, action: PayloadAction<string>) => {
+export const deleteProfileGroup = (state: Draft<ProfilesState>, action: PayloadAction<string>): void => {
   state.statuses.profileGroupDeletion = Status.FULFILLED;
 
   toast.success('Profile group deleted.');
 
   state.profileGroups = state.profileGroups.filter(profileGroup => profileGroup.ID !== action.payload);
+
+  state.selectedProfileGroup = null;
 };
 

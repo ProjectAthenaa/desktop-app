@@ -5,6 +5,8 @@ import FloatingHeaderTable, {Action} from '../../molecules/floating-header-table
 import {OverlayScrollbarsComponent} from 'overlayscrollbars-react';
 import {Status} from '../../../store/util/set-status';
 import {toast} from 'react-toastify';
+import AreYouSure from '../../molecules/dialogues/are-you-sure';
+import {DeleteWhite} from '../../../assets/images/icons/delete';
 
 type Props<Item, GroupItem> = {
   type: string;
@@ -34,7 +36,7 @@ type Group = {
   Items: { ID: string; }[];
 }
 
-function GroupTable <Item, GroupItem>({ type, createGroup, openModal, headerItems, actions, selectedGroup, groups, setSelectedGroup , profileGroupFetching }: Props<Item, GroupItem>): JSX.Element {
+function GroupTable <Item, GroupItem>({ type, createGroup, openModal, headerItems, actions, selectedGroup, groups, setSelectedGroup , profileGroupFetching, deleteGroup }: Props<Item, GroupItem>): JSX.Element {
   const [xIsScrollable, setXIsScrollable] = useState(true);
   const [contextShown, setContextShown] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
@@ -77,6 +79,11 @@ function GroupTable <Item, GroupItem>({ type, createGroup, openModal, headerItem
     }
   };
 
+  const handleSetSelectedGroup = (group: Group) => {
+    if (selectedGroup && group.ID === selectedGroup.ID) return;
+    setSelectedGroup(group);
+  }
+
   return (
     <>
       <div className={'groups'}>
@@ -87,13 +94,20 @@ function GroupTable <Item, GroupItem>({ type, createGroup, openModal, headerItem
           {groups.map(group => (
             <div
               className={`group${selectedGroup && selectedGroup.ID === group.ID ? ' active' : ''}`}
-              onClick={() => setSelectedGroup(group)}
+              onClick={() => handleSetSelectedGroup(group)}
               key={group.ID}>
               <h3>{group.Name}</h3>
               <div className="meta">
                 <span>{ group.Items.length } { type }s</span>
                 <div className="actions">
-                  {/* Edit / Delete */}
+                  <button
+                    onClick={() =>
+                      toast.warn(
+                        <AreYouSure yesCallback={deleteGroup} doThis={'delete this group'} />
+                      )
+                    }>
+                    { DeleteWhite }
+                  </button>
                 </div>
               </div>
             </div>

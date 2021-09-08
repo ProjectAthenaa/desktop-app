@@ -20,6 +20,7 @@ import {
 import {FetchedProfileGroupSlim} from '../../../../graphql/integration/handlers/profiles/get-profile-groups';
 import {getGroup, getGroupRequest} from '../../store/profiles/reducers/get-group';
 import {Status} from '../../store/util/set-status';
+import {deleteProfileGroupRequest} from '../../store/profiles/reducers/delete-profile-group';
 
 export type Task = {
   id: string;
@@ -52,19 +53,20 @@ const Profiles: React.FC<Props> = () => {
           Items: profileGroup.Profiles,
         }))}
         items={[]}
-        selectedGroup={selectedProfileGroup
-          ? {
-            ID: selectedProfileGroup.ID,
-            Name: selectedProfileGroup.Name,
-            Items: selectedProfileGroup.Profiles
-          }
-          : null
+        selectedGroup={
+          selectedProfileGroup
+            ? {
+              ID: selectedProfileGroup.ID,
+              Name: selectedProfileGroup.Name,
+              Items: selectedProfileGroup.Profiles
+            }
+            : null
         }
         headerItems={[]}
         createItem={() => console.log('')}
         createGroup={groupName => dispatch(createProfileGroupRequest({ Name: groupName }))}
         deleteItem={() => console.log('')}
-        deleteGroup={() => console.log('')}
+        deleteGroup={() => dispatch(deleteProfileGroupRequest({ profileGroupId: selectedProfileGroup.ID }))}
         editItem={() => console.log('')}
         editGroup={() => console.log('')}
         getItems={() => console.log('')}

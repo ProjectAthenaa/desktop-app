@@ -117,6 +117,7 @@
       z-index: 2;
       transition: color 200ms ease, padding 200ms ease;
     }
+
     .meta {
       background: #E6E6E6;
       border-radius: 9px;
@@ -124,12 +125,37 @@
       position: relative;
       z-index: 2;
       transition: background 200ms ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
       span {
         font-weight: bold;
         font-size: 12px;
         line-height: 15px;
         color: #808080;
         transition: color 200ms ease;
+      }
+
+      .actions {
+        display: none;
+        button {
+          background-color: transparent;
+          outline: none;
+          border: none;
+          width: 10px;
+          cursor: pointer;
+
+          svg {
+            opacity: .8;
+            transition: opacity 200ms ease;
+          }
+          &:hover {
+            svg {
+              opacity: 1;
+            }
+          }
+        }
       }
     }
 
@@ -145,8 +171,11 @@
       opacity: 0;
       transition: opacity 200ms ease;
     }
+
     &.active {
+      cursor: initial;
       box-shadow: 0 4px 15px rgba(22, 64, 127, 0.25);
+
       &::after {
         opacity: 1;
       }
@@ -158,8 +187,13 @@
 
       .meta {
         background: rgba(255, 255, 255, .1);
+
         span {
           color: rgba(255, 255, 255, .8);
+        }
+
+        .actions {
+          display: inline-block;
         }
       }
     }
