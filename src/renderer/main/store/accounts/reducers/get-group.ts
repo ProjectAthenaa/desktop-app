@@ -29,7 +29,8 @@ export const getGroup = (state: Draft<AccountsState>, action: PayloadAction<Acco
   state.selectedAccountGroup = {
     ID: action.payload.ID,
     Name: action.payload.Name,
-    Accounts: action.payload.Accounts
+    Accounts: action.payload.Accounts,
+    Site: action.payload.Site
   };
 
   state.statuses.accountGroupFetching = Status.IDLE;

@@ -29,6 +29,11 @@ const routes: Route[] = [
     title: 'Proxies',
     route: '/proxies',
     icon: Proxies
+  },
+  {
+    title: 'Accounts',
+    route: '/accounts',
+    icon: Profiles
   }
 ];
 

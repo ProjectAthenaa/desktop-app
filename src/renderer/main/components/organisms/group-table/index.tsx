@@ -6,7 +6,7 @@ import {OverlayScrollbarsComponent} from 'overlayscrollbars-react';
 import {Status} from '../../../store/util/set-status';
 import {toast} from 'react-toastify';
 import AreYouSure from '../../molecules/dialogues/are-you-sure';
-import {DeleteWhite} from '../../../assets/images/icons/delete';
+import Group from '../../molecules/group';
 
 type Props<Item, GroupItem> = {
   type: string;
@@ -36,7 +36,7 @@ type Group = {
   Items: { ID: string; }[];
 }
 
-function GroupTable <Item, GroupItem>({ type, createGroup, openModal, headerItems, actions, selectedGroup, groups, setSelectedGroup , profileGroupFetching, deleteGroup }: Props<Item, GroupItem>): JSX.Element {
+function GroupTable <Item, GroupItem>({ type, createGroup, openModal, items, headerItems, actions, selectedGroup, groups, setSelectedGroup , profileGroupFetching, deleteGroup }: Props<Item, GroupItem>): JSX.Element {
   const [xIsScrollable, setXIsScrollable] = useState(true);
   const [contextShown, setContextShown] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
@@ -82,7 +82,13 @@ function GroupTable <Item, GroupItem>({ type, createGroup, openModal, headerItem
   const handleSetSelectedGroup = (group: Group) => {
     if (selectedGroup && group.ID === selectedGroup.ID) return;
     setSelectedGroup(group);
-  }
+  };
+
+  const handleDelete = () => {
+    toast.warn(
+      <AreYouSure yesCallback={deleteGroup} doThis={'delete this group'} />
+    );
+  };
 
   return (
     <>
@@ -92,25 +98,15 @@ function GroupTable <Item, GroupItem>({ type, createGroup, openModal, headerItem
         </div>
         <div className="group-list">
           {groups.map(group => (
-            <div
-              className={`group${selectedGroup && selectedGroup.ID === group.ID ? ' active' : ''}`}
-              onClick={() => handleSetSelectedGroup(group)}
-              key={group.ID}>
-              <h3>{group.Name}</h3>
-              <div className="meta">
-                <span>{ group.Items.length } { type }s</span>
-                <div className="actions">
-                  <button
-                    onClick={() =>
-                      toast.warn(
-                        <AreYouSure yesCallback={deleteGroup} doThis={'delete this group'} />
-                      )
-                    }>
-                    { DeleteWhite }
-                  </button>
-                </div>
-              </div>
-            </div>
+            <Group
+              type={type}
+              selected={selectedGroup && selectedGroup.ID === group.ID}
+              group={group}
+              key={group.ID}
+              onDeleteGroup={handleDelete}
+              onSelectGroup={() => handleSetSelectedGroup(group)}
+              onSaveGroup={name => console.log('newName', name)}
+            />
           ))}
         </div>
         <div className="bottom">
@@ -139,12 +135,14 @@ function GroupTable <Item, GroupItem>({ type, createGroup, openModal, headerItem
               <FloatingHeaderTable
                 loadingContent={profileGroupFetching === Status.PENDING}
                 columns={headerItems}
-                data={[]}
+                data={items as Record<string, unknown>[]}
                 actions={actions} />
             )
-            : <div>
-              <h3>{groups.length === 0 ? 'No groups have been created yet.' : 'No group selected.' }</h3>
-            </div>
+            : (
+              <div>
+                <h3>{groups.length === 0 ? 'No groups have been created yet.' : 'No group selected.' }</h3>
+              </div>
+            )
           }
         </div>
       </OverlayScrollbarsComponent>

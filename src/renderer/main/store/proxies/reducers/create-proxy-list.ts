@@ -25,7 +25,7 @@ export const createTempProxyList = (state: Draft<ProxiesState>, action: PayloadA
 export const undoProxyListCreation = (state: Draft<ProxiesState>, action: PayloadAction<NewProxyList>) => {
   state.statuses.proxyListCreation = Status.REJECTED;
 
-  toast.error('There was an issue creating the proxy group at this time.');
+  toast.error('There was an issue creating the proxy list at this time.');
 
   state.proxyLists = state.proxyLists.filter(proxyList => proxyList.ID !== 'temp');
 
@@ -35,7 +35,7 @@ export const undoProxyListCreation = (state: Draft<ProxiesState>, action: Payloa
 export const createProxyList = (state: Draft<ProxiesState>, action: PayloadAction<ProxyList>) => {
   state.statuses.proxyListCreation = Status.FULFILLED;
 
-  toast.success('Proxy group created.');
+  toast.success('Proxy list created.');
 
   state.proxyLists = state.proxyLists.map(proxyList =>
     proxyList.ID === 'temp'

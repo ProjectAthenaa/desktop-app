@@ -9,6 +9,7 @@ const GET_GROUP = gql`
             ID
             Name
             Accounts
+            Site
         }
     }
 `

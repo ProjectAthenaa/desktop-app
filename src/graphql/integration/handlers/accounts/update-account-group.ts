@@ -8,6 +8,7 @@ const UPDATE_GROUP = gql`
             ID
             Name
             Accounts
+            Site
         }
     }
 `;

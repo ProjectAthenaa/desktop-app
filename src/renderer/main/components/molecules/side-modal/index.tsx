@@ -19,7 +19,9 @@ const SideModal: React.FC<Props> = ({ isOpen, onCloseClick, children }) => {
           className="close">
           &times;
         </button>
-        { children }
+        <div className="scrollable-region">
+          { children }
+        </div>
       </div>
     </div>
   );

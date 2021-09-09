@@ -36,6 +36,7 @@ export const updateAccountGroup = (state: Draft<AccountsState>, action: PayloadA
       ID: action.payload.ID,
       Name: action.payload.Name,
       Accounts: action.payload.Accounts,
+      Site: accountGroup.Site,
     };
   });
 

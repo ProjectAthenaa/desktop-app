@@ -24,6 +24,12 @@
     right: 0;
     top: 0;
     width: 650px;
+
+    .scrollable-region {
+      height: calc(100vh - 35px);
+      overflow: auto;
+    }
+
     button.close {
       position: absolute;
       top: 20px;

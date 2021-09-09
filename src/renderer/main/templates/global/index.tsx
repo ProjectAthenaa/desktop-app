@@ -7,6 +7,8 @@ import Tasks from '../../pages/tasks';
 import Frame from '../../components/organisms/frame';
 import Profiles from '../../pages/profiles';
 import Dashboard from '../../pages/dashboard';
+import Proxies from '../../pages/proxies';
+import Accounts from '../../pages/accounts';
 
 const Global: React.FC = () => {
   return (
@@ -25,6 +27,12 @@ const Global: React.FC = () => {
             </Route>
             <Route path={'/profiles'}>
               <Profiles />
+            </Route>
+            <Route path={'/proxies'}>
+              <Proxies />
+            </Route>
+            <Route path={'/accounts'}>
+              <Accounts />
             </Route>
           </Switch>
         </div>
