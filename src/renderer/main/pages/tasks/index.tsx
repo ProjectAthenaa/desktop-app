@@ -17,6 +17,12 @@ import {toast} from 'react-toastify';
 import {createTaskGroupRequest} from '../../store/tasks/reducers/create-task-group';
 import SideModal from '../../components/molecules/side-modal';
 import GroupTable from '../../components/organisms/group-table';
+import Label from '../../components/atoms/label';
+import {FetchedProfileGroupsProfile} from '../../../../graphql/integration/handlers/profiles/get-group';
+import {FetchedProfileGroupSlim} from '../../../../graphql/integration/handlers/profiles/get-profile-groups';
+import {useForm} from 'react-hook-form';
+import {NewProxyList} from '../../../../types/proxy';
+import DatePicker from '../../components/atoms/date-picker';
 
 
 // TODO Create Task Status enum
@@ -43,7 +49,9 @@ const Tasks: React.FC<Props> = () => {
   const [xIsScrollable, setXIsScrollable] = useState(true);
   const onOverflowChanged = (e: { xScrollable: boolean }) => setXIsScrollable(e.xScrollable);
   const [contextShown, setContextShown] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [modalShown, setModalShown] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
+  const { register, handleSubmit } = useForm<NewProxyList>();
 
   const createGroup = async (groupName: string) => {
     setContextShown(false);
@@ -64,23 +72,15 @@ const Tasks: React.FC<Props> = () => {
 
   return (
     <div className={'task-page'}>
-      {/*<GroupTable*/}
-      {/*  type={'Task'}*/}
-      {/*  groups={taskGroups}*/}
-      {/*  items={[]}*/}
-      {/*  selectedGroup={selectedTaskGroup}*/}
-      {/*  headerItems={[]}*/}
-      {/*  createItem={() => console.log('')}*/}
-      {/*  createGroup={groupName => createGroup(groupName)}*/}
-      {/*  deleteItem={() => console.log('')}*/}
-      {/*  deleteGroup={() => console.log('')}*/}
-      {/*  editItem={() => console.log('')}*/}
-      {/*  editGroup={() => console.log('')}*/}
-      {/*  getItems={() => console.log('')}*/}
-      {/*  openModal={() => console.log('')}*/}
-      {/*  setSelectedGroup={group => setSelectedTaskGroup(group)}*/}
-      {/*  actions={[]}*/}
-      {/*/>*/}
+      <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
+        <form onSubmit={handleSubmit(createProxyGroup)}>
+          <Label htmlFor={'Name'}>Start Date/Time</Label>
+          <DatePicker onDateChange={(d) => setStartDate(d.toJSDate())}/>
+
+          <Button type={'submit'}>Create Task</Button>
+        </form>
+      </SideModal>
+      <Button onClick={() => setModalShown(true)}>Create Proxy List</Button>
     </div>
   );
 };
