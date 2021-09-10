@@ -7,7 +7,6 @@ import {BrowserWindow} from 'electron';
 import {createAuthenticationWindow} from '../../../index';
 import loginRequest from './login';
 import {hostname, type} from 'os';
-import {handleTaskUpdates} from '../../tasks/handlers/task-updates';
 
 export const REFRESH_SESSION = gql`
     mutation RefreshSession($session: SessionInput!) {

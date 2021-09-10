@@ -149,3 +149,9 @@ export enum Status {
   CONTINUED = 'CONTINUED',
   RESTARTING = 'RESTARTING',
 }
+
+export enum Command {
+  STOP = 'STOP',
+  PAUSE = 'PAUSE',
+  CONTINUE = 'CONTINUE',
+}
