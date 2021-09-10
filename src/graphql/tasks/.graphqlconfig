@@ -1,10 +1,10 @@
 {
-  "name": "Integration Service",
+  "name": "Tasks Service",
   "schemaPath": "schema.graphql",
   "extensions": {
     "endpoints": {
       "Integration": {
-        "url": "https://api.athenabot.com/integration",
+        "url": "https://api.athenabot.com/tasks",
         "introspect": false
       }
     }
