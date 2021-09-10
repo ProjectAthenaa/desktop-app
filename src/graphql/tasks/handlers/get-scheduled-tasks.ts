@@ -1,4 +1,5 @@
 import {gql} from 'graphql-request';
+import { Status } from '../../../types/task';
 import {taskClient} from '../index';
 
 const GET_SCHEDULED_TASKS = gql`
@@ -17,6 +18,7 @@ export interface ScheduledTask {
     SubscriptionToken: string;
     ControlToken: string;
     StartTime: string;
+    Status?: Status;
 }
 
 export const getScheduledTasks = async (): Promise<ScheduledTask[]> => {

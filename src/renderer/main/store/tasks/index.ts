@@ -7,9 +7,10 @@ import {
   createTempTaskGroup,
   undoTaskGroup
 } from './reducers/create-task-group';
-import {Task, TaskGroup} from '../../../../types/task';
 import setSelectedTaskReducer from './reducers/set-selected-task';
 import setSelectedTaskGroupReducer from './reducers/set-selected-task-group';
+import updateScheduledTasksReducer from './reducers/update-scheduled-tasks';
+import updateScheduledTaskReducer from './reducers/update-scheduled-task';
 import setStatusReducer, {Status} from '../util/set-status';
 import {deleteTaskGroup, deleteTaskGroupRequest, tempDeleteTaskGroup} from './reducers/delete-task-group';
 import {
@@ -26,6 +27,7 @@ import {failedGetGroup, fetchingGroup, getGroup, getGroupRequest} from './reduce
 import {FetchedTaskGroup, FetchedTaskGroupsTask} from '../../../../graphql/integration/handlers/tasks/get-group';
 import {FetchedTask} from '../../../../graphql/integration/handlers/tasks/get-task';
 import {FetchedTaskGroups} from '../../../../graphql/integration/handlers/tasks/get-task-groups';
+import {ScheduledTask} from '../../../../graphql/tasks/handlers/get-scheduled-tasks';
 
 export enum TaskStatusType {
   taskCreation = 'taskCreation'
@@ -48,6 +50,7 @@ export interface TasksState {
     taskDeletion: Status;
     taskUpdating: Status;
   };
+  scheduledTasks: ScheduledTask[];
 }
 
 const initialState: TasksState = {
@@ -67,6 +70,7 @@ const initialState: TasksState = {
     taskDeletion: Status.IDLE,
     taskUpdating: Status.IDLE,
   },
+  scheduledTasks: [],
 };
 
 const tasksSlice = createSlice({
@@ -77,6 +81,8 @@ const tasksSlice = createSlice({
     setSelectedTaskGroup: setSelectedTaskGroupReducer,
     clearTask: clearTaskReducer,
     setStatus: setStatusReducer,
+    updateScheduledTasks: updateScheduledTasksReducer,
+    updateScheduledTask: updateScheduledTaskReducer,
   },
   extraReducers: {
     // Task Groups Fetching
@@ -132,4 +138,6 @@ export const {
   setSelectedTaskGroup,
   clearTask,
   setStatus,
+  updateScheduledTasks,
+  updateScheduledTask
 } = tasksSlice.actions;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './styles.scss';
 import SideNavigation from '../../components/organisms/side-navigation';
 import Header from '../../components/organisms/header';
@@ -9,8 +9,25 @@ import Profiles from '../../pages/profiles';
 import Dashboard from '../../pages/dashboard';
 import Proxies from '../../pages/proxies';
 import Accounts from '../../pages/accounts';
+import {useDispatch} from 'react-redux';
+import ipcRenderer from '../../util/ipc-renderer';
+import {updateScheduledTask, updateScheduledTasks} from '../../store/tasks';
+import {ScheduledTask} from '../../../../graphql/tasks/handlers/get-scheduled-tasks';
+import {TaskStatus} from '../../../../graphql/tasks/handlers/task-updates';
 
 const Global: React.FC = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    ipcRenderer.on('scheduled-tasks-updated', tasks => {
+      dispatch(updateScheduledTasks(tasks as unknown as ScheduledTask[]));
+    });
+
+    ipcRenderer.on('scheduled-tasks-updated', taskStatus => {
+      dispatch(updateScheduledTask(taskStatus as unknown as TaskStatus));
+    });
+  }, []);
+
   return (
     <div className={'global'}>
       <Frame />

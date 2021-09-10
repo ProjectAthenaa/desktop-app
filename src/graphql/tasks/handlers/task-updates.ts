@@ -2,9 +2,9 @@ import {createSubscriptionObservable} from '../../../main/util/subscriptions';
 import {WS_SERVICE_ENDPOINT} from '../index';
 import {gql} from 'graphql-request';
 import {DocumentNode} from 'apollo-link';
-import { Status } from '../../../types/task';
 import {getScheduledTasks} from './get-scheduled-tasks';
 import {ipcMain} from 'electron';
+import { Status } from '../../../types/task';
 
 const TASK_UPDATES = gql`
   subscription TaskUpdates($subscriptionTokens: [String!]!) {
@@ -16,8 +16,6 @@ const TASK_UPDATES = gql`
       }
   }
 `;
-
-
 
 export interface TaskStatus {
   TaskID: string;
