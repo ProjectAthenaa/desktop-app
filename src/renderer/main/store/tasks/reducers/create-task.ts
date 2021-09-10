@@ -4,15 +4,16 @@ import {Task, TaskCreation} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {Status} from '../../util/set-status';
 import {toast} from 'react-toastify';
+import {FetchedTask} from '../../../../../graphql/integration/handlers/tasks/get-task';
 
 export const createTaskRequest = createAsyncThunk(
   'tasks/createTask',
-  async (task: TaskCreation): Promise<Task> => {
-    return await ipcRenderer.invoke('createTask', task) as Task;
+  async (task: TaskCreation): Promise<FetchedTask> => {
+    return await ipcRenderer.invoke('createTask', task);
   }
 );
 
-export const createTempTask = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+export const createTempTask = (state: Draft<TasksState>, action: PayloadAction<FetchedTask>): void => {
   state.statuses.taskCreation = Status.PENDING;
 
   state.tasks.push({
@@ -21,7 +22,7 @@ export const createTempTask = (state: Draft<TasksState>, action: PayloadAction<T
   });
 };
 
-export const undoTaskCreation = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+export const undoTaskCreation = (state: Draft<TasksState>): void => {
   state.statuses.taskGroupCreation = Status.REJECTED;
 
   toast.error('There was an issue creating the task at this time.');
@@ -31,7 +32,7 @@ export const undoTaskCreation = (state: Draft<TasksState>, action: PayloadAction
   state.statuses.taskGroupCreation = Status.IDLE;
 };
 
-export const createTask = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+export const createTask = (state: Draft<TasksState>, action: PayloadAction<FetchedTask>): void => {
   state.statuses.taskCreation = Status.FULFILLED;
 
   toast.success('Task created.');

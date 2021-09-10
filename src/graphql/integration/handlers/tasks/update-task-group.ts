@@ -1,6 +1,7 @@
 import {TaskGroup} from '../../../../types/task';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
+import {FetchedTaskGroup} from './get-group';
 
 type UpdatedTaskGroup = {
   Name: string;
@@ -31,8 +32,8 @@ const UPDATE_TASK = gql`
     }
 `;
 
-const updateTaskGroup = async (taskGroupId: string, updatedTaskGroup: UpdatedTaskGroup): Promise<TaskGroup> => {
-  const response = await integrationClient().request<{ updateTaskGroup: TaskGroup }>(UPDATE_TASK, {
+const updateTaskGroup = async (taskGroupId: string, updatedTaskGroup: UpdatedTaskGroup): Promise<FetchedTaskGroup> => {
+  const response = await integrationClient().request<{ updateTaskGroup: FetchedTaskGroup }>(UPDATE_TASK, {
     taskGroupID: taskGroupId,
     updatedTaskGroup
   });

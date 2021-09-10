@@ -1,8 +1,8 @@
 import {TasksState} from '../index';
 import {Draft, PayloadAction} from '@reduxjs/toolkit';
-import {Task} from '../../../../../types/task';
+import {FetchedTask} from '../../../../../graphql/integration/handlers/tasks/get-task';
 
-const setSelectedTask = (state: Draft<TasksState>, action: PayloadAction<Task>): Draft<TasksState> => {
+const setSelectedTask = (state: Draft<TasksState>, action: PayloadAction<FetchedTask>): Draft<TasksState> => {
   return {
     ...state,
     selectedTask: action.payload

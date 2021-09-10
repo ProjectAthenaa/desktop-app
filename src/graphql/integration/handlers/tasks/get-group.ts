@@ -45,10 +45,33 @@ const GET_GROUP = gql`
         }
         
     }
-`
+`;
 
-const getGroup = async (groupId: string): Promise<Group> => {
-  const response = await integrationClient().request<{ getTaskGroup: Group }>(GET_GROUP, {
+export interface FetchedTaskGroupsTask {
+  ID: string;
+  StartTime: string;
+  Product: {
+    ID: string;
+    Name: string;
+  };
+  ProxyList: {
+    ID: string;
+    Name: string;
+  };
+  ProfileGroup: {
+    ID: string;
+    Name: string;
+  };
+}
+
+export interface FetchedTaskGroup {
+  ID: string;
+  Name: string;
+  Tasks: FetchedTaskGroupsTask[];
+}
+
+const getGroup = async (groupId: string): Promise<FetchedTaskGroup> => {
+  const response = await integrationClient().request<{ getTaskGroup: FetchedTaskGroup }>(GET_GROUP, {
     taskGroupID: groupId
   });
 

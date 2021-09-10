@@ -1,7 +1,6 @@
-import {Task} from '../../../../../types/task';
-import getTaskRequest, {RetrievedTask} from '../../../../../graphql/integration/handlers/tasks/get-task';
+import getTaskRequest, {FetchedTask} from '../../../../../graphql/integration/handlers/tasks/get-task';
 
-const getTask = async (event: Electron.IpcMainInvokeEvent, taskId: string): Promise<RetrievedTask> => {
+const getTask = async (event: Electron.IpcMainInvokeEvent, taskId: string): Promise<FetchedTask> => {
   return await getTaskRequest(taskId);
 };
 

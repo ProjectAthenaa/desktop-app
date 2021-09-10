@@ -69,6 +69,12 @@ const Tasks: React.FC<Props> = () => {
 
     dispatch(createTaskGroupRequest({ Name: groupName.trim() }));
   };
+  const closeAndResetModal = () => {
+    setModalShown(false);
+  };
+  const createProxyGroup = () => {
+
+  };
 
   return (
     <div className={'task-page'}>
@@ -80,7 +86,8 @@ const Tasks: React.FC<Props> = () => {
           <Button type={'submit'}>Create Task</Button>
         </form>
       </SideModal>
-      <Button onClick={() => setModalShown(true)}>Create Proxy List</Button>
+      <Button onClick={() => setModalShown(true)}>Create Task Group</Button>
+      <Button onClick={() => setModalShown(true)}>Create Task Group</Button>
     </div>
   );
 };

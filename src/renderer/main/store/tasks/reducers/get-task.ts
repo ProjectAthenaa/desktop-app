@@ -4,6 +4,7 @@ import {Task} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {Status} from '../../util/set-status';
 import {toast} from 'react-toastify';
+import {FetchedTask} from '../../../../../graphql/integration/handlers/tasks/get-task';
 
 export const getTaskRequest = createAsyncThunk(
   'tasks/getTask',
@@ -12,17 +13,17 @@ export const getTaskRequest = createAsyncThunk(
   }
 );
 
-export const fetchingTask = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+export const fetchingTask = (state: Draft<TasksState>): void => {
   state.statuses.taskFetching = Status.PENDING;
 };
 
-export const getTask = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+export const getTask = (state: Draft<TasksState>, action: PayloadAction<FetchedTask>): void => {
   state.statuses.taskFetching = Status.FULFILLED;
   state.selectedTask = action.payload;
   state.statuses.taskFetching = Status.IDLE;
 };
 
-export const failedGetTask = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+export const failedGetTask = (state: Draft<TasksState>): void => {
   state.statuses.taskFetching = Status.REJECTED;
 
   toast.error(`Failed to load your task at this time.`);

@@ -23,18 +23,21 @@ import {createTask, createTaskRequest, createTempTask} from './reducers/create-t
 import {deleteTask, deleteTaskRequest, restoreDeletedTask, tempDeleteTask} from './reducers/delete-task';
 import {undoUpdateTask, updateTask, updateTaskRequest, updatingTask} from './reducers/update-task';
 import {failedGetGroup, fetchingGroup, getGroup, getGroupRequest} from './reducers/get-group';
+import {FetchedTaskGroup, FetchedTaskGroupsTask} from '../../../../graphql/integration/handlers/tasks/get-group';
+import {FetchedTask} from '../../../../graphql/integration/handlers/tasks/get-task';
+import {FetchedTaskGroups} from '../../../../graphql/integration/handlers/tasks/get-task-groups';
 
 export enum TaskStatusType {
   taskCreation = 'taskCreation'
 }
 
 export interface TasksState {
-  selectedTaskGroup: TaskGroup | null;
-  selectedTask: Task | null;
-  taskGroups: TaskGroup[];
-  tasks: Task[];
-  prevTaskGroup: TaskGroup | null;
-  prevTask: Task | null;
+  selectedTaskGroup: FetchedTaskGroup | null;
+  selectedTask: FetchedTask | null;
+  taskGroups: FetchedTaskGroups;
+  tasks: FetchedTaskGroupsTask[];
+  prevTaskGroup: FetchedTaskGroup | null;
+  prevTask: FetchedTask | null;
   statuses: {
     taskGroupFetching: Status;
     taskGroupCreation: Status;

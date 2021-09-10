@@ -15,11 +15,11 @@ export const deleteTaskRequest = createAsyncThunk(
   }
 );
 
-export const tempDeleteTask = (state: Draft<TasksState>, action: PayloadAction<string>) => {
+export const tempDeleteTask = (state: Draft<TasksState>): void => {
   state.statuses.taskDeletion = Status.PENDING;
 };
 
-export const restoreDeletedTask = (state: Draft<TasksState>, action: PayloadAction<string>) => {
+export const restoreDeletedTask = (state: Draft<TasksState>): void => {
   state.statuses.taskDeletion = Status.REJECTED;
 
   toast.error('There was an issue deleting the task at this time.');
@@ -28,7 +28,7 @@ export const restoreDeletedTask = (state: Draft<TasksState>, action: PayloadActi
 
 };
 
-export const deleteTask = (state: Draft<TasksState>, action: PayloadAction<string>) => {
+export const deleteTask = (state: Draft<TasksState>, action: PayloadAction<string>): void => {
   state.statuses.taskDeletion = Status.FULFILLED;
 
   toast.success('Task deleted.');

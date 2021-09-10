@@ -1,6 +1,6 @@
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
-import {FetchedProfileGroupsProfile} from './get-group';
+import {FetchedProfileGroup, FetchedProfileGroupsProfile} from './get-group';
 
 const GET_PROFILE_GROUPS = gql`
     {
@@ -46,17 +46,17 @@ export interface FetchedProfileGroupSlim {
 
 export type FetchedProfileGroups = Array<FetchedProfileGroupSlim>
 
-const getProfileGroups = async (): Promise<{ groups: FetchedProfileGroups, selectedProfileGroup: FetchedProfileGroupsProfile | null }> => {
+const getProfileGroups = async (): Promise<{ groups: FetchedProfileGroups, selectedProfileGroup: FetchedProfileGroup | null }> => {
   const response = await integrationClient()
     .request<{ getProfileGroups: FetchedProfileGroups }>(GET_PROFILE_GROUPS);
 
   if (response.getProfileGroups.length === 0) return {
     groups: response.getProfileGroups,
     selectedProfileGroup: null
-  }
+  };
 
   const firstProfileResponse = await integrationClient()
-    .request<{ getProfileGroup: FetchedProfileGroupsProfile }>(GET_FIRST_PROFILE_GROUP, {
+    .request<{ getProfileGroup: FetchedProfileGroup }>(GET_FIRST_PROFILE_GROUP, {
       profileGroupID: response.getProfileGroups[0].ID
     });
 

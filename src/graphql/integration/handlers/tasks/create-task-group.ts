@@ -1,6 +1,7 @@
-import {TaskGroupCreation, TaskGroup} from '../../../../types/task';
+import {TaskGroupCreation} from '../../../../types/task';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
+import {FetchedTaskGroup} from './get-group';
 
 
 const CREATE_TASK_GROUP = gql`
@@ -12,9 +13,9 @@ const CREATE_TASK_GROUP = gql`
     }
 `;
 
-export const createTaskGroup = async (taskGroup: TaskGroupCreation): Promise<TaskGroup> => {
+export const createTaskGroup = async (taskGroup: TaskGroupCreation): Promise<FetchedTaskGroup> => {
   const response = await integrationClient()
-    .request<{ createTaskGroup: TaskGroup }>(CREATE_TASK_GROUP, {
+    .request<{ createTaskGroup: FetchedTaskGroup }>(CREATE_TASK_GROUP, {
       newTaskGroup: taskGroup
     });
   return response.createTaskGroup;

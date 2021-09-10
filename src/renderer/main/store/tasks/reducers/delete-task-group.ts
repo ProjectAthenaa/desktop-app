@@ -16,11 +16,11 @@ export const deleteTaskGroupRequest = createAsyncThunk(
   }
 );
 
-export const tempDeleteTaskGroup = (state: Draft<TasksState>, action: PayloadAction<string>) => {
+export const tempDeleteTaskGroup = (state: Draft<TasksState>): void => {
   state.statuses.taskGroupDeletion = Status.PENDING;
 };
 
-export const restoreDeletedTaskGroup = (state: Draft<TasksState>, action: PayloadAction<string>) => {
+export const restoreDeletedTaskGroup = (state: Draft<TasksState>): void => {
   state.statuses.taskGroupDeletion = Status.REJECTED;
 
   toast.error('There was an issue deleting the task group at this time.');
@@ -28,7 +28,7 @@ export const restoreDeletedTaskGroup = (state: Draft<TasksState>, action: Payloa
   state.statuses.taskGroupDeletion = Status.IDLE;
 };
 
-export const deleteTaskGroup = (state: Draft<TasksState>, action: PayloadAction<string>) => {
+export const deleteTaskGroup = (state: Draft<TasksState>, action: PayloadAction<string>): void => {
   state.statuses.taskGroupDeletion = Status.FULFILLED;
 
   toast.success('Task group deleted.');

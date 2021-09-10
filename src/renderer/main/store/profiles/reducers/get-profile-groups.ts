@@ -9,7 +9,7 @@ import { FetchedProfileGroup } from '../../../../../graphql/integration/handlers
 
 export const getProfileGroupsRequest = createAsyncThunk(
   'profiles/getProfileGroups',
-  async (): Promise<ProfileGroup[]> => {
+  async () => {
     return await ipcRenderer.invoke('getProfileGroups');
   }
 );

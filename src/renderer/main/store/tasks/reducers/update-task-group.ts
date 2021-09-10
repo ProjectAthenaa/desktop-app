@@ -5,6 +5,7 @@ import ipcRenderer from '../../../util/ipc-renderer';
 import {PendingAction} from '../../util/async-action-types';
 import {Status} from '../../util/set-status';
 import {toast} from 'react-toastify';
+import {FetchedTaskGroup} from '../../../../../graphql/integration/handlers/tasks/get-group';
 
 type UpdatedTaskGroup = {
   taskGroupId: string;
@@ -13,17 +14,17 @@ type UpdatedTaskGroup = {
 
 export const updateTaskGroupRequest = createAsyncThunk(
   'tasks/updateTaskGroup',
-  async ({ taskGroupId, ...updatedPayload }: UpdatedTaskGroup): Promise<TaskGroup> => {
-    return await ipcRenderer.invoke('updateTaskGroup', taskGroupId, updatedPayload) as TaskGroup;
+  async ({ taskGroupId, ...updatedPayload }: UpdatedTaskGroup): Promise<FetchedTaskGroup> => {
+    return await ipcRenderer.invoke('updateTaskGroup', taskGroupId, updatedPayload);
   }
 );
 
-export const tempUpdateTaskGroup = (state: Draft<TasksState>, action: PendingAction) => {
+export const tempUpdateTaskGroup = (state: Draft<TasksState>, action: PendingAction): void => {
   const pendingBody = action.meta.arg as UpdatedTaskGroup;
 
   state.statuses.taskGroupUpdating = Status.PENDING;
 
-  state.prevTaskGroup = state.taskGroups.find(taskGroup => taskGroup.ID === pendingBody.taskGroupId);
+  state.prevTaskGroup = state.selectedTaskGroup;
 
   state.taskGroups = state.taskGroups.map(taskGroup =>
     taskGroup.ID === pendingBody.taskGroupId
@@ -32,7 +33,7 @@ export const tempUpdateTaskGroup = (state: Draft<TasksState>, action: PendingAct
   );
 };
 
-export const updateTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>) => {
+export const updateTaskGroup = (state: Draft<TasksState>, action: PayloadAction<FetchedTaskGroup>): void => {
   state.statuses.taskGroupUpdating = Status.FULFILLED;
 
   state.taskGroups = state.taskGroups.map(taskGroup => {
@@ -40,6 +41,7 @@ export const updateTaskGroup = (state: Draft<TasksState>, action: PayloadAction<
     return {
       ID: action.payload.ID,
       Name: action.payload.Name,
+      Tasks: action.payload.Tasks
     };
   });
 
@@ -49,7 +51,7 @@ export const updateTaskGroup = (state: Draft<TasksState>, action: PayloadAction<
   state.statuses.taskGroupUpdating = Status.IDLE;
 };
 
-export const undoUpdateTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>) => {
+export const undoUpdateTaskGroup = (state: Draft<TasksState>): void => {
   state.statuses.taskGroupUpdating = Status.REJECTED;
 
   state.taskGroups = state.taskGroups.map(taskGroup =>

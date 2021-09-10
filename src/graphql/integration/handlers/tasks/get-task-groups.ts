@@ -1,10 +1,24 @@
 import {gql} from 'graphql-request';
 import {TaskGroup} from '../../../../types/task';
 import {integrationClient} from '../../index';
+import {FetchedTaskGroup, FetchedTaskGroupsTask} from './get-group';
+import {FetchedProfileGroupsProfile} from '../profiles/get-group';
 
 const GET_TASK_GROUPS = gql`
     {
         getAllTaskGroups {
+            ID
+            Name
+            Tasks {
+                ID
+            }
+        }
+    }
+`;
+
+const GET_FIRST_TASK_GROUP = gql`
+    query GetFirstTaskGroup($taskGroupID: UUID!) {
+        getTaskGroup(taskGroupID: $taskGroupID) {
             ID
             Name
             Tasks {
@@ -15,22 +29,44 @@ const GET_TASK_GROUPS = gql`
                     Name
                 }
                 ProxyList {
-                  ID
-                  Name
+                    ID
+                    Name
                 }
                 ProfileGroup {
-                  ID
-                  Name
+                    ID
+                    Name
                 }
             }
         }
     }
 `;
 
-const getTaskGroups = async (): Promise<TaskGroup[]> => {
-  const response = await integrationClient().request<{ getAllTaskGroups: TaskGroup[] }>(GET_TASK_GROUPS);
+export interface FetchedTaskGroupSlim {
+  ID: string;
+  Name: string;
+  Tasks: { ID: string; }[];
+}
 
-  return response.getAllTaskGroups;
+export type FetchedTaskGroups = Array<FetchedTaskGroupSlim>
+
+const getTaskGroups = async (): Promise<{ groups: FetchedTaskGroups, selectedTaskGroup: FetchedTaskGroup | null }> => {
+  const response = await integrationClient()
+    .request<{ getAllTaskGroups: FetchedTaskGroups }>(GET_TASK_GROUPS);
+
+  if (response.getAllTaskGroups.length === 0) return {
+    groups: response.getAllTaskGroups,
+    selectedTaskGroup: null,
+  };
+
+  const firstTaskResponse = await integrationClient()
+    .request<{ getTaskGroup: FetchedTaskGroup }>(GET_FIRST_TASK_GROUP, {
+      taskGroupID: response.getAllTaskGroups[0].ID
+    });
+
+  return {
+    groups: response.getAllTaskGroups,
+    selectedTaskGroup: firstTaskResponse.getTaskGroup,
+  };
 };
 
 export default getTaskGroups;

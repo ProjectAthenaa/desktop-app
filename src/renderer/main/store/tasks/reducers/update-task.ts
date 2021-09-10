@@ -4,6 +4,8 @@ import {Task} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {Status} from '../../util/set-status';
 import {toast} from 'react-toastify';
+import {FetchedProfile} from '../../../../../graphql/integration/handlers/profiles/get-profile';
+import {FetchedTask} from '../../../../../graphql/integration/handlers/tasks/get-task';
 
 type UpdatedTask = {
   taskId: string;
@@ -16,12 +18,12 @@ type UpdatedTask = {
 
 export const updateTaskRequest = createAsyncThunk(
   'tasks/updateTask',
-  async ({ taskId, ...updatedPayload }: UpdatedTask): Promise<Task> => {
-    return await ipcRenderer.invoke('updateTask', taskId, updatedPayload) as Task;
+  async ({ taskId, ...updatedPayload }: UpdatedTask): Promise<FetchedTask> => {
+    return await ipcRenderer.invoke('updateTask', taskId, updatedPayload);
   }
 );
 
-export const updateTask = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+export const updateTask = (state: Draft<TasksState>, action: PayloadAction<FetchedTask>): void => {
   state.statuses.taskUpdating = Status.FULFILLED;
 
   state.tasks = state.tasks.map(task =>
@@ -35,11 +37,11 @@ export const updateTask = (state: Draft<TasksState>, action: PayloadAction<Task>
   state.statuses.taskUpdating = Status.IDLE;
 };
 
-export const updatingTask = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+export const updatingTask = (state: Draft<TasksState>): void => {
   state.statuses.taskUpdating = Status.PENDING;
 }
 
-export const undoUpdateTask = (state: Draft<TasksState>, action: PayloadAction<Task>) => {
+export const undoUpdateTask = (state: Draft<TasksState>): void => {
   state.statuses.taskUpdating = Status.REJECTED;
 
   toast.error('Task update failed.');

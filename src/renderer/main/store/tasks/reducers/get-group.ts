@@ -4,6 +4,7 @@ import {Task, TaskGroup} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {toast} from 'react-toastify';
 import {Status} from '../../util/set-status';
+import {FetchedTaskGroup} from '../../../../../graphql/integration/handlers/tasks/get-group';
 
 interface Group extends TaskGroup {
   Tasks: Task[];
@@ -20,7 +21,7 @@ export const fetchingGroup = (state: Draft<TasksState>, action: PayloadAction<Gr
   state.statuses.taskGroupFetching = Status.PENDING;
 };
 
-export const getGroup = (state: Draft<TasksState>, action: PayloadAction<Group>) => {
+export const getGroup = (state: Draft<TasksState>, action: PayloadAction<FetchedTaskGroup>) => {
   state.tasks = action.payload.Tasks;
   state.statuses.taskGroupFetching = Status.FULFILLED;
 
@@ -28,7 +29,8 @@ export const getGroup = (state: Draft<TasksState>, action: PayloadAction<Group>)
 
   state.selectedTaskGroup = {
     ID: action.payload.ID,
-    Name: action.payload.Name
+    Name: action.payload.Name,
+    Tasks: action.payload.Tasks,
   };
 
   state.statuses.taskGroupFetching = Status.IDLE;

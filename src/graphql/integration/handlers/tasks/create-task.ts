@@ -1,6 +1,7 @@
 import {gql} from 'graphql-request';
 import {Task, TaskCreation} from '../../../../types/task';
 import {integrationClient} from '../../index';
+import {FetchedTask} from './get-task';
 
 const CREATE_TASK = gql`
     mutation CreateTask($newTask: NewTask!){
@@ -21,12 +22,22 @@ const CREATE_TASK = gql`
                 Site
                 Metadata
             }
+            ProxyList {
+                ID
+                Name
+            }
+            ProfileGroup {
+                ID
+                Name
+            }
         }
     }
 `;
 
-const createTask = async (taskBody: TaskCreation): Promise<Task> => {
-  const response = await integrationClient().request<{ createTask: Task }>(CREATE_TASK, {
+
+
+const createTask = async (taskBody: TaskCreation): Promise<FetchedTask> => {
+  const response = await integrationClient().request<{ createTask: FetchedTask }>(CREATE_TASK, {
     taskBody
   });
   return response.createTask;

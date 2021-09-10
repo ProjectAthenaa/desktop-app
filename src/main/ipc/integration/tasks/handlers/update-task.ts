@@ -1,5 +1,5 @@
-import {Task} from '../../../../../types/task';
 import updateTaskRequest from '../../../../../graphql/integration/handlers/tasks/update-task';
+import {FetchedTask} from '../../../../../graphql/integration/handlers/tasks/get-task';
 
 type UpdatedTask = {
   StartTime?: string;
@@ -9,7 +9,7 @@ type UpdatedTask = {
   TaskGroupID?: string;
 };
 
-const updateTask = async (event: Electron.IpcMainInvokeEvent, taskId: string, updatedPayload: UpdatedTask): Promise<Task> => {
+const updateTask = async (event: Electron.IpcMainInvokeEvent, taskId: string, updatedPayload: UpdatedTask): Promise<FetchedTask> => {
   return await updateTaskRequest(taskId, updatedPayload);
 };
 

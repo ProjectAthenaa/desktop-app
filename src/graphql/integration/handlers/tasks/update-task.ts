@@ -1,6 +1,7 @@
 import {Task} from '../../../../types/task';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
+import {FetchedTask} from './get-task';
 
 type UpdatedTask = {
   StartTime?: string;
@@ -41,8 +42,8 @@ const UPDATE_TASK = gql`
     }
 `;
 
-const updateTask = async (taskId: string, updatedPayload: UpdatedTask): Promise<Task> => {
-  const response = await integrationClient().request<{ updateTask: Task }>(UPDATE_TASK, {
+const updateTask = async (taskId: string, updatedPayload: UpdatedTask): Promise<FetchedTask> => {
+  const response = await integrationClient().request<{ updateTask: FetchedTask }>(UPDATE_TASK, {
     taskID: taskId,
     updatedTask: {
       StartTime: updatedPayload.StartTime

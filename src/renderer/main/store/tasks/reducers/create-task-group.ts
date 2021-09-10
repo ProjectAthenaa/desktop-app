@@ -1,10 +1,10 @@
 import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {TaskGroup} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {PendingAction} from '../../util/async-action-types';
 import {Status} from '../../util/set-status';
 import { toast } from 'react-toastify';
+import {FetchedTaskGroup} from '../../../../../graphql/integration/handlers/tasks/get-group';
 
 type TaskGroupCreation = {
   Name?: string;
@@ -17,20 +17,19 @@ export const createTaskGroupRequest = createAsyncThunk(
   }
 );
 
-export const createTempTaskGroup = (state: Draft<TasksState>, action: PendingAction): Draft<TasksState> => {
+export const createTempTaskGroup = (state: Draft<TasksState>, action: PendingAction): void => {
   const pendingBody: TaskGroupCreation = action.meta.arg;
 
   state.statuses.taskGroupCreation = Status.PENDING;
 
   state.taskGroups.push({
     ID: 'temp',
-    Name: pendingBody.Name
+    Name: pendingBody.Name,
+    Tasks: [],
   });
-
-  return state;
 };
 
-export const undoTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>) => {
+export const undoTaskGroup = (state: Draft<TasksState>): void => {
   state.taskGroups = state.taskGroups.filter(taskGroup => taskGroup.ID !== "temp");
 
   state.statuses.taskGroupCreation = Status.REJECTED;
@@ -39,7 +38,7 @@ export const undoTaskGroup = (state: Draft<TasksState>, action: PayloadAction<Ta
   state.statuses.taskGroupCreation = Status.IDLE;
 };
 
-export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<TaskGroup>) => {
+export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<FetchedTaskGroup>): void => {
   state.taskGroups = state.taskGroups.map(taskGroup =>
     taskGroup.ID === 'temp'
       ? action.payload
@@ -52,6 +51,7 @@ export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<
   state.selectedTaskGroup = {
     ID: action.payload.ID,
     Name: action.payload.Name,
+    Tasks: action.payload.Tasks,
   };
 
   state.statuses.taskGroupCreation = Status.IDLE;

@@ -1,6 +1,8 @@
-import {Product, Task} from '../../../../types/task';
+import {LookupType, Product, Site, Task} from '../../../../types/task';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
+import {ProxyList} from '../../../../types/proxy';
+import {ProfileGroup} from '../../../../types/profile';
 
 export interface RetrievedTask {
   ID: string;
@@ -45,10 +47,31 @@ const GET_TASK = gql`
             }
         }
     }
-`
+`;
 
-const getTask = async (taskId: string): Promise<RetrievedTask> => {
-  const response = await integrationClient().request<{ getTask: RetrievedTask }>(GET_TASK, {
+export interface FetchedTask {
+  ID: string;
+  StartTime: string;
+  Product: {
+    ID: string;
+    Name: string;
+    Image?: string;
+    LookupType: LookupType;
+    PositiveKeywords: string[];
+    NegativeKeywords: string[];
+    Link?: string;
+    Quantity?: string;
+    Sizes: string[];
+    Colors: string[];
+    Site: Site;
+    Metadata: Record<string, unknown>;
+  };
+  ProxyList: { ID: string; Name: string; };
+  ProfileGroup: { ID: string; Name: string; };
+}
+
+const getTask = async (taskId: string): Promise<FetchedTask> => {
+  const response = await integrationClient().request<{ getTask: FetchedTask }>(GET_TASK, {
     taskID: taskId
   });
 
