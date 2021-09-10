@@ -18,14 +18,22 @@ import {TaskStatus} from '../../../../graphql/tasks/handlers/task-updates';
 const Global: React.FC = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    ipcRenderer.on('scheduled-tasks-updated', tasks => {
-      dispatch(updateScheduledTasks(tasks as unknown as ScheduledTask[]));
-    });
+  const scheduleTaskUpdated = (e: unknown, taskStatus: TaskStatus) => {
+    dispatch(updateScheduledTask(taskStatus));
+  };
 
-    ipcRenderer.on('scheduled-tasks-updated', taskStatus => {
-      dispatch(updateScheduledTask(taskStatus as unknown as TaskStatus));
-    });
+  const scheduleTasksUpdated = (e: unknown, tasks: ScheduledTask[]) => {
+    dispatch(updateScheduledTasks(tasks));
+  };
+
+  useEffect(() => {
+    ipcRenderer.on('scheduled-tasks-updated', scheduleTasksUpdated);
+    ipcRenderer.on('scheduled-task-updated', scheduleTaskUpdated);
+
+    return () => {
+      ipcRenderer.removeListener('scheduled-tasks-updated', scheduleTasksUpdated);
+      ipcRenderer.removeListener('scheduled-task-updated', scheduleTaskUpdated);
+    }
   }, []);
 
   return (

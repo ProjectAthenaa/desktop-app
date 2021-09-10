@@ -39,7 +39,7 @@ export const handleTaskUpdates = async (): Promise<{ unsubscribe: () => void }> 
   });
 
   const taskUpdatesSubscription = taskUpdatesClient.subscribe({
-    next: (e) => ipcMain.emit('task-update', e),
+    next: (e) => ipcMain.emit('scheduled-task-updated', e),
     error: () => {
       taskUpdatesSubscription.unsubscribe();
       handleTaskUpdates();
