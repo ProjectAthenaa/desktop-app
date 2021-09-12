@@ -11,7 +11,9 @@ type DeletedProfile = {
 export const deleteProfileRequest = createAsyncThunk(
   'profiles/deleteProfile',
   async ({ profileId }: DeletedProfile): Promise<string> => {
-    return await ipcRenderer.invoke('deleteProfile', profileId) as string;
+    await ipcRenderer.invoke('deleteProfile', profileId);
+
+    return profileId;
   }
 );
 
@@ -31,7 +33,20 @@ export const restoreDeletedProfile = (state: Draft<ProfilesState>): void => {
 export const deleteProfile = (state: Draft<ProfilesState>, action: PayloadAction<string>) => {
   state.statuses.profileDeletion = Status.FULFILLED;
 
-  toast.success('Profile deleted.');
-
+  toast.success(`Profile deleted. <=3 ${action.payload}`);
   state.profiles = state.profiles.filter(profile => profile.ID !== action.payload);
+
+  state.selectedProfileGroup.Profiles = state.selectedProfileGroup.Profiles.filter(profile => profile.ID !== action.payload);
+
+  state.profileGroups = state.profileGroups.map(profileGroup => {
+    if (profileGroup.ID === state.selectedProfileGroup.ID) {
+      return {
+        ...profileGroup,
+        Profiles: profileGroup.Profiles.filter(profile => profile.ID !== action.payload)
+      }
+    }
+    return profileGroup;
+  });
+
+  state.statuses.profileDeletion = Status.IDLE;
 };

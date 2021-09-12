@@ -3,7 +3,7 @@ import './styles.scss';
 
 const Select: React.FC<DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>> = ({ children, ...rest }) => {
   return (
-    <select {...rest} className={'select'}>
+    <select {...rest} className={`select ${rest.className}`}>
       { children }
     </select>
   );

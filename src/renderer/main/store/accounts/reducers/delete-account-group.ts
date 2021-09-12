@@ -4,13 +4,11 @@ import ipcRenderer from '../../../util/ipc-renderer';
 import {Status} from '../../util/set-status';
 import {toast} from 'react-toastify';
 
-type DeletedTaskGroup = {
-  taskGroupId: string;
-};
+
 
 export const deleteAccountGroupRequest = createAsyncThunk(
   'accounts/deleteAccountGroup',
-  async ({ taskGroupId }: DeletedTaskGroup): Promise<string> => {
+  async (taskGroupId: string): Promise<string> => {
     await ipcRenderer.invoke('deleteAccountGroup', taskGroupId);
     return taskGroupId;
   }
@@ -34,5 +32,11 @@ export const deleteAccountGroup = (state: Draft<AccountsState>, action: PayloadA
   toast.success('Task group deleted.');
 
   state.accountGroups = state.accountGroups.filter(accountGroup => accountGroup.ID !== action.payload);
+
+  if (state.accountGroups.length > 0) {
+    state.selectedAccountGroup = state.accountGroups[0];
+  } else {
+    state.selectedAccountGroup = null;
+  }
 };
 

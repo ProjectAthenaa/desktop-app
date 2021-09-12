@@ -2,6 +2,8 @@ import React, {useRef, useState} from 'react';
 import './styles.scss';
 import {DeleteWhite} from '../../../assets/images/icons/delete';
 import {EditWhite} from '../../../assets/images/icons/edit';
+import Save from '../../../assets/images/icons/save';
+import Close from '../../../assets/images/icons/close';
 
 type Props = {
   selected: boolean;
@@ -23,11 +25,18 @@ const Group: React.FC<Props> = ({ selected, type, onDeleteGroup, onSelectGroup, 
 
   const editGroup = () => {
     setEditing(true);
-    inputRef.current.focus();
+    setTimeout(() => inputRef.current.focus(), 10);
+  };
+  const cancelEdit = () => {
+    setEditing(false);
+    setGroupName(group.Name);
   };
   const selectGroup = () => onSelectGroup();
   const deleteGroup = () => onDeleteGroup();
-  const saveGroup = () => onSaveGroup(groupName);
+  const saveGroup = () => {
+    setEditing(false);
+    onSaveGroup(groupName)
+  };
 
   return (
     <div
@@ -44,15 +53,23 @@ const Group: React.FC<Props> = ({ selected, type, onDeleteGroup, onSelectGroup, 
       />
       <div className="meta">
         <span>{ group.Items.length } { type }{ group.Items.length !== 1 ? 's' : '' }</span>
-        <div className="actions">
-          <button
-            onClick={editGroup}>
-            { EditWhite }
-          </button>
-          <button
-            onClick={deleteGroup}>
-            { DeleteWhite }
-          </button>
+        <div className={`actions ${editing ? 'editing' : ''}`}>
+          <div className="main-actions">
+            <button onClick={editGroup}>
+              { EditWhite }
+            </button>
+            <button onClick={deleteGroup}>
+              { DeleteWhite }
+            </button>
+          </div>
+          <div className="sub-actions">
+            <button onClick={saveGroup}>
+              { Save }
+            </button>
+            <button onClick={cancelEdit}>
+              { Close }
+            </button>
+          </div>
         </div>
       </div>
     </div>

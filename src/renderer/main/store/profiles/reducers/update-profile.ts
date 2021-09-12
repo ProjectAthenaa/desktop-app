@@ -1,15 +1,17 @@
 import {ProfilesState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {Profile} from '../../../../../types/profile';
+import {ProfileCreation} from '../../../../../types/profile';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {Status} from '../../util/set-status';
 import {toast} from 'react-toastify';
 import {FetchedProfile} from '../../../../../graphql/integration/handlers/profiles/get-profile';
 
-
+export interface ProfileUpdate extends ProfileCreation {
+  ID: string;
+}
 export const updateProfileRequest = createAsyncThunk(
   'profiles/updateProfile',
-  async ({ ID, ...updatedPayload }: Profile) => {
+  async ({ ID, ...updatedPayload }: ProfileUpdate) => {
     return await ipcRenderer.invoke('updateProfile', ID, updatedPayload);
   }
 );

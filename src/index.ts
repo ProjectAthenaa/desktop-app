@@ -99,11 +99,11 @@ const onReady = async (): Promise<void> => {
   const hostName = hostname();
   const token: string | null = store.get('token');
 
-  await authClient.request(gql`
-      mutation {
-          reBindHardwareID(key: "ATH-7d8ed177-52d6-4b11-ac35-22da0712d3d0", newHardwareID: "${hardwareId}")
-      }
-  `);
+  // await authClient.request(gql`
+  //     mutation {
+  //         reBindHardwareID(key: "ATH-7d8ed177-52d6-4b11-ac35-22da0712d3d0", newHardwareID: "${hardwareId}")
+  //     }
+  // `);
 
   // If the token doesn't exist, open the auth window.
   if (!token) return await createAuthenticationWindow();

@@ -46,7 +46,7 @@ export const updateProfileGroup = (state: Draft<ProfilesState>, action: PayloadA
     }
   );
 
-  toast.error('Profile group updated.');
+  toast.success('Profile group updated.');
 
   state.prevProfileGroup = null;
   state.statuses.profileGroupUpdating = Status.IDLE;

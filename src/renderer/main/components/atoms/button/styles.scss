@@ -36,4 +36,14 @@
       color: #16407F;
     }
   }
+
+  &:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    background-color: #f5f5f5;
+    &:hover {
+      background-color: #f5f5f5;
+      color: #808080;
+    }
+  }
 }

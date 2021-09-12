@@ -43,5 +43,17 @@ export const createProfile = (state: Draft<ProfilesState>, action: PayloadAction
     : profile
   );
 
+  state.selectedProfileGroup.Profiles.push(action.payload);
+
+  state.profileGroups = state.profileGroups.map(profileGroup => {
+    if (profileGroup.ID === state.selectedProfileGroup.ID) {
+      return {
+        ...profileGroup,
+        Profiles: [...profileGroup.Profiles, { ID: action.payload.ID }]
+      }
+    }
+    return profileGroup;
+  });
+
   state.statuses.profileCreation = Status.IDLE;
 };

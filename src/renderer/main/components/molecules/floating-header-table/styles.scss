@@ -13,6 +13,25 @@ table.floating-header-table {
   border-collapse: separate;
   position: relative;
 
+
+  .floating-action-border {
+    width: 1px;
+    height: calc(100vh - 108px);
+    position: absolute;
+    z-index: 102;
+    background-color: #E6E6E6;
+    top: 0;
+    &.count-1 {
+      right: 69px;
+    }
+    &.count-2 {
+      right: 114px;
+    }
+    &.count-3 {
+      right: 184px;
+    }
+  }
+
   tr {
     td, th {
       padding: 17px 30px;
@@ -27,9 +46,9 @@ table.floating-header-table {
         background: #fff;
 
         &.count-1 {
-          width: 85px;
-          min-width: 85px;
-          max-width: 85px;
+          width: 70px;
+          min-width: 70px;
+          max-width: 70px;
         }
         &.count-2 {
           width: 115px;
@@ -82,8 +101,9 @@ table.floating-header-table {
   }
 
   tbody {
-    tr:last-child  td {
-      padding-bottom: 30px;
+    tr:last-child td{
+      //padding-bottom: 30px;
+      border-bottom: 1px solid #E6E6E6;
     }
   }
 

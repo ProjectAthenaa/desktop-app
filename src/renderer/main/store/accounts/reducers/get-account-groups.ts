@@ -18,7 +18,13 @@ export const fetchingAccountGroups = (state: Draft<AccountsState>, action: Paylo
 
 export const getAccountGroups = (state: Draft<AccountsState>, action: PayloadAction<AccountGroup[]>) => {
   state.statuses.accountGroupsFetching = Status.FULFILLED;
+
   state.accountGroups = action.payload;
+
+  if (state.accountGroups.length > 0) {
+    state.selectedAccountGroup = state.accountGroups[0];
+  }
+
   state.statuses.accountGroupsFetching = Status.IDLE;
 };
 

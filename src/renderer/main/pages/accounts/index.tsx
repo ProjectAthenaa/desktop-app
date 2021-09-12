@@ -1,89 +1,181 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import './styles.scss';
+import GroupTable, {Group} from '../../components/organisms/group-table';
 import {useDispatch, useSelector} from 'react-redux';
-import Button from '../../components/atoms/button';
 import {RootState} from '../../store';
+import Edit from '../../assets/images/icons/edit';
+import Delete from '../../assets/images/icons/delete';
+import {ActionColor} from '../../components/molecules/floating-header-table';
+import {updateAccountGroupRequest} from '../../store/accounts/reducers/update-account-group';
 import SideModal from '../../components/molecules/side-modal';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import Label from '../../components/atoms/label';
-import {NewProxyList} from '../../../../types/proxy';
-import {createProxyListRequest} from '../../store/proxies/reducers/create-proxy-list';
-import {AccountGroupInput} from '../../../../types/account';
 import {createAccountGroupRequest} from '../../store/accounts/reducers/create-account-group';
+import {Site} from '../../../../types/task';
+import {setSelectedAccountGroup} from '../../store/accounts';
+import {AccountGroup, AccountGroupInput} from '../../../../types/account';
+import TextArea from '../../components/atoms/text-area';
+import {SubmitHandler, useForm} from 'react-hook-form';
+import Button from '../../components/atoms/button';
 import {toast} from 'react-toastify';
+import base64 from 'base-64';
+import {deleteAccountGroupRequest} from '../../store/accounts/reducers/delete-account-group';
+
 
 const Accounts: React.FC = () => {
   const dispatch = useDispatch();
+  const profileFormMethods = useForm<AccountGroupInput>();
   const selectedAccountGroup = useSelector((state: RootState) => state.accounts.selectedAccountGroup);
   const accountGroups = useSelector((state: RootState) => state.accounts.accountGroups);
   const statuses = useSelector((state: RootState) => state.accounts.statuses);
-  const { register, handleSubmit } = useForm<AccountGroupInput>();
   const [modalShown, setModalShown] = useState(false);
-  const [accountsInput, setAccountsInput] = useState('');
+  const [accountsTextArea, setAccountsTextArea] = useState('');
+  const accountGroupsMemoized = useMemo(() => accountGroups.map(accountGroup => ({
+    ...accountGroup,
+    Items: accountGroup.Accounts ? Object.keys(accountGroup.Accounts).map((key, index) => ({
+      ID: index.toString(),
+    })) : []
+  })), [accountGroups]);
+  const itemsMemoized = useMemo(() => {
+    if (!selectedAccountGroup) return [];
+    return Object.keys(selectedAccountGroup.Accounts).map((key) => ({
+      ID: key,
+      Name: selectedAccountGroup.Name,
+      Site: selectedAccountGroup.Site,
+      Email: key,
+      Password: selectedAccountGroup.Accounts[key],
+    }));
+  }, [accountGroups]);
 
-  const createProxyGroup: SubmitHandler<AccountGroupInput> = data => {
-    const siteAlreadyBeingUsed = accountGroups.find(accountGroup => accountGroup.Site === data.Site);
-    if (siteAlreadyBeingUsed) return toast.error('An account group already exists for the selected site.');
+  const createGroup = (groupName: string, site: Site) => {
+    dispatch(createAccountGroupRequest({
+      Name: groupName, Site: site, Accounts: {}
+    }));
+  };
 
-    const Accounts: Record<string, string> = {};
-    accountsInput.split('\n').forEach(account => {
-      const [email, password] = account.split(':');
+  const launchEditor = () => {
+    let inputString = '';
 
-      Accounts[btoa(email)] = password;
+    Object.keys(selectedAccountGroup.Accounts).forEach((key, index) => {
+      inputString += `${key}:${selectedAccountGroup.Accounts[key]}`;
+      if (index + 1 !== Object.keys(selectedAccountGroup.Accounts).length) {
+        inputString += '\n';
+      }
     });
 
-    // Insert validation here
-    dispatch(createAccountGroupRequest({
-      ...data,
-      Accounts,
-    }));
+    setAccountsTextArea(inputString);
+    setModalShown(true);
+  };
+
+  const deleteGroup = () => {
+    dispatch(deleteAccountGroupRequest(selectedAccountGroup.ID));
   };
 
   const closeAndResetModal = () => {
     setModalShown(false);
+  };
 
-    // Reset form
+  const deleteAccount = (id: string) => {
+    const accounts: Record<string, string> = {};
+
+    Object.keys(selectedAccountGroup.Accounts).forEach(key => {
+      if (key !== id) accounts[key] = selectedAccountGroup.Accounts[key];
+    });
+
+    console.log(accounts);
+
+    // dispatch(updateAccountGroupRequest({
+    //   ...selectedAccountGroup,
+    //   Accounts: accounts
+    // }));
+  };
+
+  const handleSubmission: SubmitHandler<AccountGroupInput> = () => {
+    const accountsText = accountsTextArea.trim().split('\n');
+    const accounts: Record<string, string> = {};
+
+    accountsText.forEach(accountText => {
+      const potentialAccount = accountText.trim();
+      console.log(potentialAccount)
+
+      if (!potentialAccount || potentialAccount === '') return;
+
+      console.log('hit')
+
+      const [username, password] = potentialAccount.split(':');
+
+      if (!username || !password) return toast.warn(`Invalid account pattern for: ${accountText}`);
+
+      accounts[base64.encode(username).split('=').join('')] = password;
+    });
+
+    console.log('accounts', accounts)
+
+    dispatch(updateAccountGroupRequest({
+      ...selectedAccountGroup,
+      Accounts: accounts
+    }));
+
+    closeAndResetModal();
+  }
+
+  const setSelectedGroup = (group: Group) => {
+    const accounts = group.Items.reduce((o, k: { ID: string; Email: string; Password: string; }) =>
+      Object.assign(o, {[k.Email]: k.Password}), {});
+
+    dispatch(setSelectedAccountGroup({...(group as unknown as AccountGroup), Accounts: accounts}))
   };
 
   return (
     <div className={'task-page'}>
       <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
-        <form onSubmit={handleSubmit(createProxyGroup)}>
-          <Label htmlFor={'Name'}>Group Name</Label>
-          <input type={'text'} {...register('Name')} id={'Name'} />
-
-          <Label htmlFor={'Site'}>Site</Label>
-          <select {...register('Site')} id="Site">
-            <option value={'FinishLine'}>FinishLine</option>
-            <option value={'JD_Sports'}>JD_Sports</option>
-            <option value={'YeezySupply'}>YeezySupply</option>
-            <option value={'Supreme'}>Supreme</option>
-            <option value={'Eastbay_US'}>Eastbay_US</option>
-            <option value={'Champs_US'}>Champs_US</option>
-            <option value={'Footaction_US'}>Footaction_US</option>
-            <option value={'Footlocker_US'}>Footlocker_US</option>
-            <option value={'Bestbuy'}>Bestbuy</option>
-            <option value={'Pokemon_Center'}>Pokemon_Center</option>
-            <option value={'Panini_US'}>Panini_US</option>
-            <option value={'Topss'}>Topss</option>
-            <option value={'Nordstorm'}>Nordstorm</option>
-            <option value={'End'}>End</option>
-            <option value={'Target'}>Target</option>
-            <option value={'Amazon'}>Amazon</option>
-            <option value={'Solebox'}>Solebox</option>
-            <option value={'Onygo'}>Onygo</option>
-            <option value={'Snipes'}>Snipes</option>
-            <option value={'Ssense'}>Ssense</option>
-            <option value={'Walmart'}>Walmart</option>
-            <option value={'Hibbet'}>Hibbet</option>
-          </select>
-          <Label htmlFor={'Accounts'}>Accounts</Label>
-          <textarea id={'Accounts'} value={accountsInput} onChange={e => setAccountsInput(e.target.value)} />
-
-          <Button type={'submit'}>Create Account Group</Button>
+        <form onSubmit={profileFormMethods.handleSubmit(handleSubmission)}>
+          <TextArea
+            placeholder={'email:password'}
+            onChange={e => setAccountsTextArea(e.target.value)}
+            value={accountsTextArea}
+          />
+          <Button type={'submit'}>Import Accounts</Button>
         </form>
       </SideModal>
-      <Button onClick={() => setModalShown(true)}>Create Account Group</Button>
+      <GroupTable
+        type={'Account'}
+        groups={accountGroupsMemoized}
+        items={itemsMemoized}
+        groupFetching={statuses.accountGroupFetching}
+        groupCreation={statuses.accountGroupCreation}
+        groupDeletion={statuses.accountGroupDeletion}
+        groupUpdating={statuses.accountGroupUpdating}
+        selectedGroup={selectedAccountGroup ? {
+          ...selectedAccountGroup,
+          Items: itemsMemoized,
+        } : null}
+        headerItems={[
+          {
+            Header: 'Name',
+            accessor: 'Name',
+          },
+          {
+            Header: 'Email',
+            accessor: 'Email',
+          },
+          {
+            Header: 'Site',
+            accessor: 'Site',
+          },
+        ]}
+        accounts
+        createGroup={createGroup}
+        deleteGroup={deleteGroup}
+        saveGroup={() => console.log('')}
+        openModal={launchEditor}
+        setSelectedGroup={setSelectedGroup}
+        actions={[
+          {
+            onClick: deleteAccount,
+            icon: Delete,
+            color: ActionColor.RED
+          }
+        ]}
+      />
     </div>
   );
 };

@@ -7,39 +7,39 @@ import {Status} from '../../../store/util/set-status';
 import {toast} from 'react-toastify';
 import AreYouSure from '../../molecules/dialogues/are-you-sure';
 import Group from '../../molecules/group';
+import {Site} from '../../../../../types/task';
+import Select from '../../atoms/select';
 
-type Props<Item, GroupItem> = {
+type Props<Item> = {
   type: string;
   groups: Group[];
   items: Item[];
-  profileGroupFetching: Status;
-  profileGroupCreation: Status;
-  profileGroupDeletion: Status;
-  profileGroupUpdating: Status;
+  groupFetching: Status;
+  groupCreation: Status;
+  groupDeletion: Status;
+  groupUpdating: Status;
   selectedGroup: Group | null;
   headerItems: { Header: string, accessor: string }[];
-  createItem: () => unknown;
-  createGroup: (name: string) => unknown;
-  deleteItem: () => unknown;
-  deleteGroup: () => unknown;
-  editItem: () => unknown;
-  editGroup: () => unknown;
-  getItems: () => unknown;
-  openModal: () => unknown;
-  setSelectedGroup: (group: Group) => unknown;
+  createGroup: (name: string, site?: Site) => void;
+  deleteGroup: () => void;
+  saveGroup: (name: string) => void;
+  openModal: () => void;
+  setSelectedGroup: (group: Group) => void;
   actions: Action[];
+  accounts?: boolean;
 }
 
-type Group = {
+export type Group = {
   ID: string;
   Name: string;
   Items: { ID: string; }[];
 }
 
-function GroupTable <Item, GroupItem>({ type, createGroup, openModal, items, headerItems, actions, selectedGroup, groups, setSelectedGroup , profileGroupFetching, deleteGroup }: Props<Item, GroupItem>): JSX.Element {
+function GroupTable <Item>({ type, createGroup, openModal, items, headerItems, accounts, actions, selectedGroup, groups, setSelectedGroup, groupFetching, deleteGroup, saveGroup }: Props<Item>): JSX.Element {
   const [xIsScrollable, setXIsScrollable] = useState(true);
   const [contextShown, setContextShown] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
+  const [selectedSite, setSelectedSite] = useState((Object.keys(Site) as Array<keyof typeof Site>)[0]);
   const contextInputRef: LegacyRef<HTMLInputElement> = useRef(null);
   const onOverflowChanged = (e: { xScrollable: boolean }) => setXIsScrollable(e.xScrollable);
 
@@ -62,7 +62,11 @@ function GroupTable <Item, GroupItem>({ type, createGroup, openModal, items, hea
       return toast.warn(`A group with the name ${groupName} already exists.`);
     }
 
-    createGroup(groupName);
+    if (accounts) {
+      createGroup(groupName, selectedSite as Site);
+    } else {
+      createGroup(groupName);
+    }
 
     setContextShown(false);
     setTimeout(() => {
@@ -94,7 +98,7 @@ function GroupTable <Item, GroupItem>({ type, createGroup, openModal, items, hea
     <>
       <div className={'groups'}>
         <div className="top">
-          <Button white onClick={openModal}>Create { type }</Button>
+          <Button white onClick={openModal} disabled={!selectedGroup}>{!accounts ? 'Create' : 'Update'} { type }{accounts ? 's' : ''}</Button>
         </div>
         <div className="group-list">
           {groups.map(group => (
@@ -105,7 +109,7 @@ function GroupTable <Item, GroupItem>({ type, createGroup, openModal, items, hea
               key={group.ID}
               onDeleteGroup={handleDelete}
               onSelectGroup={() => handleSetSelectedGroup(group)}
-              onSaveGroup={name => console.log('newName', name)}
+              onSaveGroup={name => saveGroup(name)}
             />
           ))}
         </div>
@@ -118,6 +122,16 @@ function GroupTable <Item, GroupItem>({ type, createGroup, openModal, items, hea
               ref={contextInputRef}
               onChange={e => setNewGroupName(e.target.value)}
             />
+            {accounts && (
+              <Select
+                value={selectedSite}
+                className={'site'}
+                onChange={e => setSelectedSite(e.target.value as any)}>
+                {(Object.keys(Site) as Array<keyof typeof Site>).map(key => (
+                  <option value={key}>{key.split('_').join(' ')}</option>
+                ))}
+              </Select>
+            )}
             <div className="buttons">
               <Button secondary onClick={handleCancel}>Cancel</Button>
               <Button onClick={handleGroupCreation}>Save</Button>
@@ -133,14 +147,16 @@ function GroupTable <Item, GroupItem>({ type, createGroup, openModal, items, hea
           {selectedGroup
             ? (
               <FloatingHeaderTable
-                loadingContent={profileGroupFetching === Status.PENDING}
+                loadingContent={groupFetching === Status.PENDING}
                 columns={headerItems}
                 data={items as Record<string, unknown>[]}
                 actions={actions} />
             )
             : (
-              <div>
-                <h3>{groups.length === 0 ? 'No groups have been created yet.' : 'No group selected.' }</h3>
+              <div style={{ height: 'calc(100vh - 108px)', width: 'calc(100vw - 475px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <h3>{groups.length === 0 ? 'No groups have been created yet.' : 'No group selected.' }</h3>
+                </div>
               </div>
             )
           }

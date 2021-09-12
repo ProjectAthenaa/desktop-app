@@ -10,9 +10,9 @@ type DeletedProfileGroup = {
 
 export const deleteProfileGroupRequest = createAsyncThunk(
   'profiles/deleteProfileGroupGroup',
-  async ({ profileGroupId }: DeletedProfileGroup, thunkAPI): Promise<string> => {
-    const deleted = await ipcRenderer.invoke('deleteProfileGroup', profileGroupId);
-    
+  async ({ profileGroupId }: DeletedProfileGroup): Promise<string> => {
+    await ipcRenderer.invoke('deleteProfileGroup', profileGroupId);
+
     return profileGroupId;
   }
 );

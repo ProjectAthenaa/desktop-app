@@ -17,11 +17,11 @@ export const getGroupRequest = createAsyncThunk(
   }
 );
 
-export const fetchingGroup = (state: Draft<AccountsState>, action: PayloadAction<AccountGroup>) => {
+export const fetchingGroup = (state: Draft<AccountsState>, action: PayloadAction<AccountGroup>): void => {
   state.statuses.accountGroupFetching = Status.PENDING;
 };
 
-export const getGroup = (state: Draft<AccountsState>, action: PayloadAction<AccountGroup>) => {
+export const getGroup = (state: Draft<AccountsState>, action: PayloadAction<AccountGroup>): void => {
   state.statuses.accountGroupFetching = Status.FULFILLED;
 
   toast.success(`${action.payload.Name} loaded.`);

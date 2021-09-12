@@ -72,7 +72,7 @@ const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions, loadingCo
                   <button
                     key={index}
                     className={action.color ? action.color : ''}
-                    onClick={() => action.onClick(data[rowIndex].id as string)}>
+                    onClick={() => action.onClick(data[rowIndex].ID as string)}>
                     {action.icon}
                   </button>
                 ))}

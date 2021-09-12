@@ -70,6 +70,10 @@
       grid-template-columns: 1fr 1fr;
       grid-gap: 9px;
     }
+    select.site {
+      margin-bottom: 9px;
+      width: 100%;
+    }
     input {
       width: 100%;
       margin-bottom: 9px;

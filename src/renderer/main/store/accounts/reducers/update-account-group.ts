@@ -13,12 +13,12 @@ export const updateAccountGroupRequest = createAsyncThunk(
   }
 );
 
-export const tempUpdateAccountGroup = (state: Draft<AccountsState>, action: PendingAction) => {
+export const tempUpdateAccountGroup = (state: Draft<AccountsState>, action: PendingAction): void => {
   const pendingBody = action.meta.arg as AccountGroup;
 
   state.statuses.accountGroupUpdating = Status.PENDING;
 
-  state.prevAccountGroup = state.accountGroups.find(accountGroup => accountGroup.ID === pendingBody.ID);
+  state.prevAccountGroup = action.payload;
 
   state.accountGroups = state.accountGroups.map(accountGroup =>
     accountGroup.ID === pendingBody.ID
@@ -27,7 +27,7 @@ export const tempUpdateAccountGroup = (state: Draft<AccountsState>, action: Pend
   );
 };
 
-export const updateAccountGroup = (state: Draft<AccountsState>, action: PayloadAction<AccountGroup>) => {
+export const updateAccountGroup = (state: Draft<AccountsState>, action: PayloadAction<AccountGroup>): void => {
   state.statuses.accountGroupUpdating = Status.FULFILLED;
 
   state.accountGroups = state.accountGroups.map(accountGroup => {
@@ -40,12 +40,14 @@ export const updateAccountGroup = (state: Draft<AccountsState>, action: PayloadA
     };
   });
 
-  toast.error('Account group updated.');
+  state.selectedAccountGroup = action.payload;
+
+  toast.success('Account group updated.');
 
   state.statuses.accountGroupUpdating = Status.IDLE;
 };
 
-export const undoUpdateAccountGroup = (state: Draft<AccountsState>, action: PayloadAction<AccountGroup>) => {
+export const undoUpdateAccountGroup = (state: Draft<AccountsState>): void => {
   state.statuses.accountGroupUpdating = Status.REJECTED;
 
   state.accountGroups = state.accountGroups.map(accountGroup =>

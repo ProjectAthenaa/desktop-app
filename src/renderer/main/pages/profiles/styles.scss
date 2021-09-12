@@ -69,6 +69,7 @@
       border-top: 1px solid #E6E6E6;
       z-index: 100;
       @extend .after-alt;
+
       .buttons {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -87,6 +88,7 @@
         padding-bottom: 9px;
         border-bottom: 1px solid #E6E6E6;
       }
+
       &.shown {
         bottom: 0;
       }

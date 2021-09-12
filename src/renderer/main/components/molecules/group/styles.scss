@@ -18,9 +18,10 @@
     color: #808080;
     position: relative;
     z-index: 2;
-    transition: color 200ms ease, padding 200ms ease;
+    transition: color 200ms ease, padding 200ms ease, border 200ms ease;
     background-color: transparent;
     border: none;
+    border-bottom: 2px solid transparent;
     width: 100%;
     outline: none;
 
@@ -50,6 +51,8 @@
 
     .actions {
       display: none;
+      position: relative;
+
       button {
         background-color: transparent;
         outline: none;
@@ -69,6 +72,35 @@
 
         &:not(:first-child) {
           margin-left: 8px;
+        }
+      }
+
+      .main-actions {
+        transition: opacity 300ms ease, transform 300ms ease;
+        opacity: 1;
+        position: relative;
+      }
+
+      .sub-actions {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        transform: scale(1.2);
+        transition: transform 300ms ease, opacity 300ms ease;
+        pointer-events: none;
+      }
+
+      &.editing {
+        .main-actions {
+          opacity: 0;
+          pointer-events: none;
+          transform: scale(.8);
+        }
+        .sub-actions {
+          opacity: 1;
+          transform: scale(1);
+          pointer-events: initial;
         }
       }
     }

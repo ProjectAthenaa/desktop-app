@@ -17,7 +17,7 @@ const AreYouSure: React.FC<Props> = ({ closeToast, yesCallback, doThis }) => {
   return (
     <div>
       Are you sure you want to {doThis}?
-      <div className="buttons">
+      <div className="buttons-dialogue">
         <Button secondary>Cancel</Button>
         <Button onClick={handleYes}>Yes</Button>
       </div>

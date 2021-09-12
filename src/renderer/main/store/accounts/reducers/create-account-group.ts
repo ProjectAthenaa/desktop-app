@@ -42,5 +42,7 @@ export const createAccountGroup = (state: Draft<AccountsState>, action: PayloadA
       : accountGroup
   );
 
+  state.selectedAccountGroup = action.payload;
+
   state.statuses.accountGroupCreation = Status.IDLE;
 };
