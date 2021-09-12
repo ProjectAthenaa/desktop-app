@@ -77,15 +77,13 @@ const Accounts: React.FC = () => {
     const accounts: Record<string, string> = {};
 
     Object.keys(selectedAccountGroup.Accounts).forEach(key => {
-      if (key !== id) accounts[key] = selectedAccountGroup.Accounts[key];
+      if (key !== id) accounts[base64.encode(key)] = selectedAccountGroup.Accounts[key];
     });
 
-    console.log(accounts);
-
-    // dispatch(updateAccountGroupRequest({
-    //   ...selectedAccountGroup,
-    //   Accounts: accounts
-    // }));
+    dispatch(updateAccountGroupRequest({
+      ...selectedAccountGroup,
+      Accounts: accounts
+    }));
   };
 
   const handleSubmission: SubmitHandler<AccountGroupInput> = () => {
@@ -106,8 +104,6 @@ const Accounts: React.FC = () => {
 
       accounts[base64.encode(username).split('=').join('')] = password;
     });
-
-    console.log('accounts', accounts)
 
     dispatch(updateAccountGroupRequest({
       ...selectedAccountGroup,
@@ -150,12 +146,12 @@ const Accounts: React.FC = () => {
         } : null}
         headerItems={[
           {
-            Header: 'Name',
-            accessor: 'Name',
-          },
-          {
             Header: 'Email',
             accessor: 'Email',
+          },
+          {
+            Header: 'Password',
+            accessor: 'Password',
           },
           {
             Header: 'Site',

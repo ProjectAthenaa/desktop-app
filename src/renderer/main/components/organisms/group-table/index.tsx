@@ -9,9 +9,11 @@ import AreYouSure from '../../molecules/dialogues/are-you-sure';
 import Group from '../../molecules/group';
 import {Site} from '../../../../../types/task';
 import Select from '../../atoms/select';
+import {ProxyListType} from '../../../../../types/proxy';
 
 type Props<Item> = {
   type: string;
+  plural?: string;
   groups: Group[];
   items: Item[];
   groupFetching: Status;
@@ -20,13 +22,14 @@ type Props<Item> = {
   groupUpdating: Status;
   selectedGroup: Group | null;
   headerItems: { Header: string, accessor: string }[];
-  createGroup: (name: string, site?: Site) => void;
+  createGroup: (name: string, extra?: Site | ProxyListType) => void;
   deleteGroup: () => void;
   saveGroup: (name: string) => void;
   openModal: () => void;
   setSelectedGroup: (group: Group) => void;
   actions: Action[];
   accounts?: boolean;
+  proxies?: boolean;
 }
 
 export type Group = {
@@ -35,11 +38,12 @@ export type Group = {
   Items: { ID: string; }[];
 }
 
-function GroupTable <Item>({ type, createGroup, openModal, items, headerItems, accounts, actions, selectedGroup, groups, setSelectedGroup, groupFetching, deleteGroup, saveGroup }: Props<Item>): JSX.Element {
+function GroupTable <Item>({ type, createGroup, openModal, plural, items, headerItems, accounts, proxies, actions, selectedGroup, groups, setSelectedGroup, groupFetching, deleteGroup, saveGroup }: Props<Item>): JSX.Element {
   const [xIsScrollable, setXIsScrollable] = useState(true);
   const [contextShown, setContextShown] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [selectedSite, setSelectedSite] = useState((Object.keys(Site) as Array<keyof typeof Site>)[0]);
+  const [selectedType, setSelectedType] = useState((Object.keys(ProxyListType) as Array<keyof typeof ProxyListType>)[0]);
   const contextInputRef: LegacyRef<HTMLInputElement> = useRef(null);
   const onOverflowChanged = (e: { xScrollable: boolean }) => setXIsScrollable(e.xScrollable);
 
@@ -64,6 +68,8 @@ function GroupTable <Item>({ type, createGroup, openModal, items, headerItems, a
 
     if (accounts) {
       createGroup(groupName, selectedSite as Site);
+    } else if (proxies) {
+      createGroup(groupName, selectedType as ProxyListType);
     } else {
       createGroup(groupName);
     }
@@ -98,7 +104,7 @@ function GroupTable <Item>({ type, createGroup, openModal, items, headerItems, a
     <>
       <div className={'groups'}>
         <div className="top">
-          <Button white onClick={openModal} disabled={!selectedGroup}>{!accounts ? 'Create' : 'Update'} { type }{accounts ? 's' : ''}</Button>
+          <Button white onClick={openModal} disabled={!selectedGroup}>{!accounts && !proxies ? 'Create' : 'Update'} { plural ? plural : `${type}${accounts ? 's' : ''}` }</Button>
         </div>
         <div className="group-list">
           {groups.map(group => (
@@ -126,9 +132,19 @@ function GroupTable <Item>({ type, createGroup, openModal, items, headerItems, a
               <Select
                 value={selectedSite}
                 className={'site'}
-                onChange={e => setSelectedSite(e.target.value as any)}>
+                onChange={e => setSelectedSite(e.target.value as never)}>
                 {(Object.keys(Site) as Array<keyof typeof Site>).map(key => (
                   <option value={key}>{key.split('_').join(' ')}</option>
+                ))}
+              </Select>
+            )}
+            {proxies && (
+              <Select
+                value={selectedType}
+                className={'site'}
+                onChange={e => setSelectedType(e.target.value as never)}>
+                {(Object.keys(ProxyListType) as Array<keyof typeof ProxyListType>).map(key => (
+                  <option value={key}>{key}</option>
                 ))}
               </Select>
             )}

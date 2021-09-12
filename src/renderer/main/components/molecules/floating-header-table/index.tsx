@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './styles.scss';
 import {useTable} from 'react-table';
 import LogoLoadingIndicator from '../../atoms/logo-loading-indicator';
@@ -23,6 +23,7 @@ type Props = {
 
 const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions, loadingContent}) => {
   const table = useTable({columns, data});
+  const [hiddenShown, setHiddenShown] = useState(false);
   const {headerGroups, rows, prepareRow} = table;
 
   if (loadingContent) return (
@@ -61,9 +62,9 @@ const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions, loadingCo
         prepareRow(row);
         return (
           <tr {...row.getRowProps()}>
-            {row.cells.map(cell => (
-              <td {...cell.getCellProps()}>
-                {cell.render('Cell')}
+            {row.cells.map((cell, index) => (
+              <td {...cell.getCellProps()} className={columns[index].accessor === 'Password' ? `hidden ${hiddenShown ? 'shown' : ''}` : ''} onClick={() => setHiddenShown(!hiddenShown)}>
+                <span>{cell.render('Cell')}</span>
               </td>
             ))}
             <td className={`actions count-${actions.length}`}>

@@ -18,7 +18,13 @@ export const fetchingProxyLists = (state: Draft<ProxiesState>, action: PayloadAc
 
 export const getProxyLists = (state: Draft<ProxiesState>, action: PayloadAction<ProxyList[]>) => {
   state.statuses.proxyListsFetching = Status.FULFILLED;
+
   state.proxyLists = action.payload;
+
+  if (state.proxyLists.length > 0) {
+    state.selectedProxyList = state.proxyLists[0];
+  }
+
   state.statuses.proxyListsFetching = Status.IDLE;
 };
 

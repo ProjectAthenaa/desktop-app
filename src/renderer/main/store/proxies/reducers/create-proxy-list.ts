@@ -43,5 +43,7 @@ export const createProxyList = (state: Draft<ProxiesState>, action: PayloadActio
       : proxyList
   );
 
+  state.selectedProxyList = action.payload;
+
   state.statuses.proxyListCreation = Status.IDLE;
 };

@@ -10,7 +10,7 @@ type DeletedTaskList = {
 
 export const deleteProxyListRequest = createAsyncThunk(
   'proxies/deleteProxyList',
-  async ({ taskListId }: DeletedTaskList): Promise<string> => {
+  async (taskListId: string): Promise<string> => {
     await ipcRenderer.invoke('deleteProxyList', taskListId);
     return taskListId;
   }
@@ -34,5 +34,9 @@ export const deleteProxyList = (state: Draft<ProxiesState>, action: PayloadActio
   toast.success('Task list deleted.');
 
   state.proxyLists = state.proxyLists.filter(proxyList => proxyList.ID !== action.payload);
+
+  if (state.proxyLists.length > 0) {
+    state.selectedProxyList = state.proxyLists[0];
+  }
 };
 
