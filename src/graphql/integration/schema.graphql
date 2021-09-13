@@ -5,11 +5,13 @@ type AccountGroup {
     Site: Site!
     Accounts: Map!
 }
+
 input AccountGroupInput {
     Name: String!
     Site: Site!
     Accounts: Map!
 }
+
 type Address {
     ID: UUID!
     AddressLine: String!
@@ -20,6 +22,7 @@ type Address {
     ZIP: String!
     StateCode: String
 }
+
 type App {
     ID: UUID!
     Settings: Settings!
@@ -28,6 +31,7 @@ type App {
     TaskGroups: [TaskGroup!]
     AccountGroups: [AccountGroup!]
 }
+
 type Billing {
     ID: UUID!
     CardHolderName: String!
@@ -36,6 +40,7 @@ type Billing {
     ExpiryYear: String!
     CVV: String!
 }
+
 enum DeviceType {
     Unknown
     Phone
@@ -43,6 +48,7 @@ enum DeviceType {
     PC
     Laptop
 }
+
 enum FieldType {
     KEYWORDS
     TEXT
@@ -51,6 +57,7 @@ enum FieldType {
     WIDTH
     SHOE_SIZE
 }
+
 type License {
     ID: UUID!
     CreatedAt: Time!
@@ -59,6 +66,7 @@ type License {
     MobileHardwareID: String
     Type: LicenseType!
 }
+
 enum LicenseType {
     Lifetime
     Renewal
@@ -66,12 +74,15 @@ enum LicenseType {
     Weekly
     FNF
 }
+
 enum LookupType {
     Keywords
     Link
     Other
 }
+
 scalar Map
+
 type Metadata {
     ID: UUID!
     FirstLogin: Boolean!
@@ -81,17 +92,20 @@ type Metadata {
     DiscordAvatar: String!
     DiscordDiscriminator: String!
 }
+
 type Module {
     Name: String!
     Status: Status!
     Fields: [ModuleField!]
 }
+
 type ModuleField {
     Type: FieldType!
     Label: String!
     Validation: String
     FieldKey: String
 }
+
 type Mutation {
     setSuccessWebhook(Webhook: String!): Boolean!
     setDeclineWebhook(Webhook: String!): Boolean!
@@ -126,6 +140,7 @@ type Mutation {
     deleteTaskGroup(taskGroupID: UUID!): Boolean!
     updateProduct(productID: UUID!, updatedProduct: ProductIn!): Product!
 }
+
 input NewAddress {
     AddressLine: String!
     AddressLine2: String
@@ -135,6 +150,7 @@ input NewAddress {
     City: String!
     ZIP: String!
 }
+
 input NewBilling {
     CardHolderName: String!
     CardNumber: String!
@@ -142,6 +158,7 @@ input NewBilling {
     ExpiryYear: String!
     CVV: String!
 }
+
 input NewProfile {
     GroupID: UUID!
     Name: String!
@@ -149,21 +166,25 @@ input NewProfile {
     Shipping: NewShipping!
     Billing: NewBilling!
 }
+
 input NewProfileGroup {
     Name: String!
     Profiles: [UUID!]
 }
+
 input NewProxy {
     Username: String
     Password: String
     IP: String!
     Port: String!
 }
+
 input NewProxyList {
     Name: String!
     Type: ProxyListType!
     Proxies: [NewProxy!]
 }
+
 input NewShipping {
     FirstName: String!
     LastName: String!
@@ -172,6 +193,7 @@ input NewShipping {
     BillingAddress: NewAddress
     BillingIsShipping: Boolean!
 }
+
 input NewTask {
     StartTime: Time
     Product: ProductIn!
@@ -179,10 +201,12 @@ input NewTask {
     ProfileGroupID: UUID!
     TaskGroupID: String! = "DEF_GROUP"
 }
+
 input NewTaskGroup {
     Name: String! = "DEF_GROUP"
     Tasks: [String!]
 }
+
 type Product {
     ID: UUID!
     Name: String!
@@ -197,6 +221,7 @@ type Product {
     Site: Site!
     Metadata: Map
 }
+
 input ProductIn {
     Name: String!
     Image: String
@@ -210,17 +235,20 @@ input ProductIn {
     Site: Site!
     Metadata: Map
 }
+
 type Profile {
     ID: UUID!
     Name: String!
     Email: String!
     Shipping: Shipping!
 }
+
 type ProfileGroup {
     ID: UUID!
     Name: String!
     Profiles: [Profile!]
 }
+
 type Proxy {
     ID: UUID!
     Username: String
@@ -228,26 +256,31 @@ type Proxy {
     IP: String!
     Port: String!
 }
+
 type ProxyList {
     ID: UUID!
     Name: String!
     Type: ProxyListType!
     Proxies: [Proxy!]
 }
+
 enum ProxyListType {
     Residential
     Datacenter
     ISP
 }
+
 type ProxyTest {
     Latency: Int!
     Status: ProxyTestStatus!
     ProxyID: String!
 }
+
 enum ProxyTestStatus {
     Pinging
     NotPinging
 }
+
 type Query {
     getSettings: Settings!
     testSuccessWebhook: Boolean!
@@ -255,6 +288,7 @@ type Query {
     getAllAccountGroups: [AccountGroup!]
     getAccountGroup(accountGroupID: UUID!): AccountGroup!
     getApp: App!
+    moduleInformation: [Module!]
     getProfile(profileID: UUID!): Profile!
     getProfileGroup(profileGroupID: UUID!): ProfileGroup!
     getProfileGroups: [ProfileGroup!]!
@@ -270,6 +304,7 @@ type Query {
     getUserStatistics: [Statistic!]!
     getUserLicense: License!
 }
+
 type Session {
     ID: UUID!
     DeviceName: String!
@@ -278,6 +313,7 @@ type Session {
     OS: String!
     Expired: Boolean!
 }
+
 type Settings {
     ID: UUID!
     SuccessWebhook: String!
@@ -285,6 +321,7 @@ type Settings {
     CheckoutDelay: Int!
     ATCDelay: Int!
 }
+
 type Shipping {
     ID: UUID!
     FirstName: String!
@@ -294,6 +331,7 @@ type Shipping {
     ShippingAddress: Address!
     BillingAddress: Address
 }
+
 enum Site {
     FinishLine
     JD_Sports
@@ -319,6 +357,7 @@ enum Site {
     Hibbet
     NewBalance
 }
+
 enum StatType {
     CHECKOUTS
     DECLINES
@@ -329,6 +368,7 @@ enum StatType {
     TASKS_RUNNING
     MONEY_SPENT
 }
+
 type Statistic {
     ID: UUID!
     Type: StatType!
@@ -337,20 +377,20 @@ type Statistic {
     Value: Int
     Spent: Float
 }
+
 enum Status {
     FUNCTIONAL
     DEGRADED
     DOWN
 }
+
 type Stripe {
     ID: UUID!
     CustomerID: String!
     SubscriptionID: String
     RenewalDate: Time
 }
-type Subscription {
-    moduleInformation: Module!
-}
+
 type Task {
     ID: UUID!
     StartTime: Time
@@ -358,19 +398,24 @@ type Task {
     ProxyList: ProxyList
     ProfileGroup: ProfileGroup
 }
+
 type TaskGroup {
     ID: UUID!
     Name: String!
     Tasks: [Task!]
 }
+
 enum Theme {
     Variation1
     Variation2
     Variation3
     Variation4
 }
+
 scalar Time
+
 scalar UUID
+
 input UpdatedTask {
     StartTime: Time
     ProductID: UUID
@@ -378,6 +423,7 @@ input UpdatedTask {
     ProfileGroupID: UUID
     TaskGroupID: UUID
 }
+
 type User {
     ID: UUID!
     Disabled: Boolean!

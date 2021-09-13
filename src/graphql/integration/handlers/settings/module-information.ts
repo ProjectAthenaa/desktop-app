@@ -1,24 +1,6 @@
-import {createSubscriptionObservable} from '../../../../main/util/subscriptions';
-import {WS_SERVICE_ENDPOINT} from '../../index';
 import {gql} from 'graphql-request';
-import {DocumentNode} from 'apollo-link';
-import {ipcMain} from 'electron';
-import store from '../../../../main/util/store';
-
-const MODULE_INFORMATION = gql`
-    subscription {
-        moduleInformation {
-            Name
-            Status
-            Fields {
-                FieldKey
-                Validation
-                Label
-                Type
-            }
-        }
-    }
-`;
+import {integrationClient} from '../../index';
+import {AccountGroup} from '../../../../types/account';
 
 export enum FieldType {
   KEYWORDS = 'KEYWORDS',
@@ -45,28 +27,26 @@ export interface ModuleInformation {
   Fields: ModuleField[];
 }
 
-const moduleInformationObservable = () => createSubscriptionObservable(
-  WS_SERVICE_ENDPOINT,
-  MODULE_INFORMATION as unknown as DocumentNode
-);
-
-export const moduleInformationSync = async (): Promise<{ unsubscribe: () => void }> => {
-  const moduleInformationClient = moduleInformationObservable();
-
-  const moduleInformationSubscription = moduleInformationClient.subscribe({
-    next: (e) => {
-      console.log(e);
-      // const modules: ModuleInformation[] = store.get('modules');
-      //
-      // const updatedModules = modules.map(module => ({
-      //
-      // }));
-    },
-    error: () => {
-      moduleInformationSubscription.unsubscribe();
-      moduleInformationSync();
+const GET_MODULE_INFORMATION = gql`
+    {
+        moduleInformation {
+            Name
+            Status
+            Fields {
+                FieldKey
+                Validation
+                Label
+                Type
+            }
+        }
     }
-  });
+`;
 
-  return moduleInformationSubscription;
+const getModuleInformation = async (): Promise<ModuleInformation[]> => {
+  const response = await integrationClient()
+    .request<{ moduleInformation: ModuleInformation[] }>(GET_MODULE_INFORMATION);
+
+  return response.moduleInformation;
 };
+
+export default getModuleInformation;

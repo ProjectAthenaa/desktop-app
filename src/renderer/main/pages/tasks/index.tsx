@@ -17,6 +17,10 @@ import {TaskCreation} from '../../../../types/task';
 import {getTaskRequest} from '../../store/tasks/reducers/get-task';
 import {deleteTaskRequest} from '../../store/tasks/reducers/delete-task';
 import {updateTaskGroupRequest} from '../../store/tasks/reducers/update-task-group';
+import {FieldType, ModuleInformation} from '../../../../graphql/integration/handlers/settings/module-information';
+import ipcRenderer from '../../util/ipc-renderer';
+import Select from '../../components/atoms/select';
+import TagInput from '../../components/atoms/tag-input';
 
 
 // TODO Create Task Status enum
@@ -42,10 +46,11 @@ const Tasks: React.FC<Props> = () => {
   const selectedTask = useSelector((state: RootState) => state.tasks.selectedTask);
   const taskGroups = useSelector((state: RootState) => state.tasks.taskGroups);
   const statuses = useSelector((state: RootState) => state.tasks.statuses);
+  const [moduleInformation, setModuleInformation] = useState<ModuleInformation[]>([]);
   const taskFormMethods = useForm<TaskCreation>();
   const [modalShown, setModalShown] = useState(false);
   const [editingTask, setEditingTask] = useState(false);
-
+  const [selectedModule, setSelectedModule] = useState(0);
   const handleSubmission: SubmitHandler<TaskCreation> = data =>
     !editingTask
       ? createTask(data)
@@ -96,16 +101,56 @@ const Tasks: React.FC<Props> = () => {
     // Reset form
   };
 
+  const openModal = async () => {
+    const modules = await ipcRenderer.invoke('getModuleInformation');
+    console.log(modules);
+    setModuleInformation(modules);
+    setModalShown(true);
+  };
+
+  const getFieldFor = (type: FieldType) => {
+    if (type === FieldType.GENDER) return (
+      <select>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    );
+    if (type === FieldType.KEYWORDS) return (
+      <>
+        <TagInput type={'positive'} handleAddition={e => console.log(e)} handleDelete={e => console.log(e)} />
+        <TagInput type={'negative'} handleAddition={e => console.log(e)} handleDelete={e => console.log(e)} />
+      </>
+    );
+    if (type === FieldType.NUMBER) return (
+      <input type="number" />
+    );
+    if (type === FieldType.SHOE_SIZE) return (
+      <select>
+        <option value="male">12.5</option>
+        <option value="female">13</option>
+      </select>
+    );
+    if (type === FieldType.WIDTH) return (
+      <select>
+        <option value="male">2in</option>
+        <option value="female">13in</option>
+      </select>
+    );
+
+    return <input type="text"/>
+  }
+
   return (
     <div className={'task-page'}>
       <FormProvider {...taskFormMethods}>
         <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
           <form onSubmit={taskFormMethods.handleSubmit(handleSubmission)}>
-            {/*{*/}
-            {/*  editingTask*/}
-            {/*    ? selectedTask ? <TaskForm /> : <></>*/}
-            {/*    : <TaskForm />*/}
-            {/*}*/}
+            <Select defaultValue={0} onChange={e => setSelectedModule(parseInt(e.target.value))}>
+              {moduleInformation.map((module, index) => (
+                <option value={index}>{ module.Name }</option>
+              ))}
+            </Select>
+            {/*{moduleInformation[selectedModule].Fields.map(field => getFieldFor(field.Type))}*/}
           </form>
         </SideModal>
       </FormProvider>
@@ -147,7 +192,7 @@ const Tasks: React.FC<Props> = () => {
         createGroup={groupName => dispatch(createTaskGroupRequest({ Name: groupName }))}
         deleteGroup={() => dispatch(deleteTaskGroupRequest({ taskGroupId: selectedTaskGroup.ID }))}
         saveGroup={editTaskGroup}
-        openModal={() => setModalShown(true)}
+        openModal={openModal}
         setSelectedGroup={group => dispatch(getGroupRequest(group.ID))}
         groupFetching={statuses.taskGroupFetching}
         groupCreation={statuses.taskGroupCreation}
