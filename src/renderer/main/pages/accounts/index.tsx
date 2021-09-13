@@ -18,6 +18,8 @@ import Button from '../../components/atoms/button';
 import {toast} from 'react-toastify';
 import base64 from 'base-64';
 import {deleteAccountGroupRequest} from '../../store/accounts/reducers/delete-account-group';
+import {updateProxyListRequest} from '../../store/proxies/reducers/update-proxy-list';
+import {Proxy} from '../../../../types/proxy';
 
 
 const Accounts: React.FC = () => {
@@ -120,6 +122,13 @@ const Accounts: React.FC = () => {
     dispatch(setSelectedAccountGroup({...(group as unknown as AccountGroup), Accounts: accounts}))
   };
 
+  const editGroup = (newName: string) => {
+    dispatch(updateAccountGroupRequest({
+      ...selectedAccountGroup,
+      Name: newName
+    }));
+  };
+
   return (
     <div className={'task-page'}>
       <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
@@ -161,7 +170,7 @@ const Accounts: React.FC = () => {
         accounts
         createGroup={createGroup}
         deleteGroup={deleteGroup}
-        saveGroup={() => console.log('')}
+        saveGroup={editGroup}
         openModal={launchEditor}
         setSelectedGroup={setSelectedGroup}
         actions={[

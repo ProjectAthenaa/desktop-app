@@ -109,7 +109,7 @@ function GroupTable <Item>({ type, createGroup, openModal, plural, items, header
         <div className="group-list">
           {groups.map(group => (
             <Group
-              type={type}
+              type={plural ? plural : type + 's'}
               selected={selectedGroup && selectedGroup.ID === group.ID}
               group={group}
               key={group.ID}

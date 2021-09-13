@@ -39,7 +39,9 @@ export const updateProxyList = (state: Draft<ProxiesState>, action: PayloadActio
     };
   });
 
-  toast.error('Proxy list updated.');
+  state.selectedProxyList = action.payload;
+
+  toast.success('Proxy list updated.');
 
   state.statuses.proxyListUpdating = Status.IDLE;
 };

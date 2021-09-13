@@ -9,12 +9,13 @@ import {updateProxyListRequest} from '../../store/proxies/reducers/update-proxy-
 import SideModal from '../../components/molecules/side-modal';
 import {createProxyListRequest} from '../../store/proxies/reducers/create-proxy-list';
 import {setSelectedProxyList} from '../../store/proxies';
-import {ProxyList, NewProxyList, NewProxy} from '../../../../types/proxy';
+import {ProxyList, NewProxyList, NewProxy, Proxy} from '../../../../types/proxy';
 import TextArea from '../../components/atoms/text-area';
 import {SubmitHandler, useForm} from 'react-hook-form';
 import Button from '../../components/atoms/button';
 import {deleteProxyListRequest} from '../../store/proxies/reducers/delete-proxy-list';
 import {ProxyListType} from '../../../../types/proxy';
+import {updateProfileGroupRequest} from '../../store/profiles/reducers/update-profile-group';
 
 
 const Proxies: React.FC = () => {
@@ -78,19 +79,33 @@ const Proxies: React.FC = () => {
   const deleteProxy = (id: string) => {
     dispatch(updateProxyListRequest({
       ...selectedProxyList,
-      Proxies: selectedProxyList.Proxies.filter(proxy => proxy.ID !== id)
+      Proxies: selectedProxyList.Proxies.filter(proxy => proxy.ID !== id).map(proxy => ({
+        IP: proxy.IP,
+        Port: proxy.Port,
+        Username: proxy.Username,
+        Password: proxy.Password
+      } as Proxy))
     }));
   };
 
   const handleSubmission: SubmitHandler<NewProxyList> = () => {
     const proxiesText = proxiesTextArea.trim().split('\n');
+    const proxies: Proxy[] = [];
 
-    // const newProxies: NewProxy[];
-    //
-    // dispatch(updateProxyListRequest({
-    //   ...selectedProxyList,
-    //   Proxies: newProxies
-    // }));
+    proxiesText.forEach(proxy => {
+      const [user, pass, ip, port] = proxy.split(":");
+      proxies.push({
+        IP: ip,
+        Username: user,
+        Password: pass,
+        Port: port,
+      } as Proxy)
+    })
+
+    dispatch(updateProxyListRequest({
+      ...selectedProxyList,
+      Proxies: proxies
+    }));
 
     closeAndResetModal();
   }
@@ -101,12 +116,25 @@ const Proxies: React.FC = () => {
     dispatch(setSelectedProxyList({...(group as unknown as ProxyList), Proxies: []}))
   };
 
+  const editGroup = (newName: string) => {
+    dispatch(updateProxyListRequest({
+      ...selectedProxyList,
+      Proxies: selectedProxyList.Proxies.map(proxy => ({
+        IP: proxy.IP,
+        Port: proxy.Port,
+        Username: proxy.Username,
+        Password: proxy.Password,
+      } as Proxy)),
+      Name: newName,
+    }));
+  };
+
   return (
     <div className={'task-page'}>
       <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
         <form onSubmit={proxyListMethods.handleSubmit(handleSubmission)}>
           <TextArea
-            placeholder={'email:password'}
+            placeholder={'username:password:ip:port'}
             onChange={e => setProxiesTextArea(e.target.value)}
             value={proxiesTextArea}
           />
@@ -144,7 +172,7 @@ const Proxies: React.FC = () => {
         proxies
         createGroup={createGroup}
         deleteGroup={deleteGroup}
-        saveGroup={() => console.log('')}
+        saveGroup={editGroup}
         openModal={launchEditor}
         setSelectedGroup={setSelectedGroup}
         actions={[

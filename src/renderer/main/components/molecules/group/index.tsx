@@ -52,7 +52,7 @@ const Group: React.FC<Props> = ({ selected, type, onDeleteGroup, onSelectGroup, 
         ref={inputRef}
       />
       <div className="meta">
-        <span>{ group.Items.length } { type }{ group.Items.length !== 1 ? 's' : '' }</span>
+        <span>{ group.Items.length } { type }</span>
         <div className={`actions ${editing ? 'editing' : ''}`}>
           <div className="main-actions">
             <button onClick={editGroup}>

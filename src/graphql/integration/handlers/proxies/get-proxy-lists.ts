@@ -7,6 +7,7 @@ const GET_PROXY_LISTS = gql`
         getAllProxyLists {
             ID
             Name
+            Type
             Proxies {
                 ID
                 IP
