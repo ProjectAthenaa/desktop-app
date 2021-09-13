@@ -11,7 +11,7 @@ export const getWsClient = (url: string): SubscriptionClient =>
       reconnect: true,
       async connectionParams() {
         const sessionId: string = store.get('sessionId');
-        return { headers: { Authorization: `Bearer ${sessionId}` } };
+        return { headers: { Authorization: `Bearer ${sessionId}`, pen15: "KN{F.a>Z42t8%(b" } };
       }
     },
     ws

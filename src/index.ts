@@ -11,6 +11,7 @@ import {hostname, type} from 'os';
 import installExtensions, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import {authClient} from './graphql/auth';
 import {gql} from 'graphql-request';
+import {moduleInformationSync} from './graphql/integration/handlers/settings/module-information';
 
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -88,6 +89,7 @@ export const createMainWindow = async (): Promise<void> => {
 
   // Refresh session every 15 min to receive updates on refresh token
   await refreshSessionHeartbeat(mainWindow);
+  await moduleInformationSync();
 };
 
 const onReady = async (): Promise<void> => {

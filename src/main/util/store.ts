@@ -6,6 +6,7 @@ const store = new Store({
     preferences: {},
     token: null,
     sessionId: null,
+    modules: [],
   }
 });
 

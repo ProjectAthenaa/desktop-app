@@ -9,6 +9,22 @@ const CREATE_TASK_GROUP = gql`
         createTaskGroup(newTaskGroup: $newTaskGroup) {
             ID
             Name
+            Tasks {
+                ID
+                StartTime
+                Product {
+                    ID
+                    Name
+                }
+                ProxyList {
+                    ID
+                    Name
+                }
+                ProfileGroup {
+                    ID
+                    Name
+                }
+            }
         }
     }
 `;

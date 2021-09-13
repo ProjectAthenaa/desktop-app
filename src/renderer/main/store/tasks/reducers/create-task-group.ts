@@ -48,11 +48,7 @@ export const createTaskGroup = (state: Draft<TasksState>, action: PayloadAction<
   state.statuses.taskGroupCreation = Status.FULFILLED;
   toast.success('Task group created.');
 
-  state.selectedTaskGroup = {
-    ID: action.payload.ID,
-    Name: action.payload.Name,
-    Tasks: action.payload.Tasks,
-  };
+  state.selectedTaskGroup = action.payload;
 
   state.statuses.taskGroupCreation = Status.IDLE;
 };
