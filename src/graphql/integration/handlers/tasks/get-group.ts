@@ -1,4 +1,4 @@
-import {Task, TaskGroup} from '../../../../types/task';
+import {Site, Task, TaskGroup} from '../../../../types/task';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
 
@@ -9,6 +9,7 @@ export interface Group extends TaskGroup {
     Product: {
       ID: string;
       Name: string;
+      Site: Site;
     };
     ProxyList: {
       ID: string;
@@ -32,6 +33,7 @@ const GET_GROUP = gql`
                 Product {
                     ID
                     Name
+                    Site
                 }
                 ProxyList {
                     ID

@@ -3,7 +3,7 @@ import {WS_SERVICE_ENDPOINT} from '../index';
 import {gql} from 'graphql-request';
 import {DocumentNode} from 'apollo-link';
 import {getScheduledTasks} from './get-scheduled-tasks';
-import {ipcMain} from 'electron';
+import {BrowserWindow, ipcMain} from 'electron';
 import { Status } from '../../../types/task';
 
 const TASK_UPDATES = gql`
@@ -30,19 +30,30 @@ const taskUpdatesObservable = (variables?: Record<string, unknown>) => createSub
   variables
 );
 
-export const handleTaskUpdates = async (): Promise<{ unsubscribe: () => void }> => {
+export const handleTaskUpdates = async (ids: { id?: string; windowId: number; }): Promise<{ unsubscribe: () => void }> => {
+
+  const window = BrowserWindow.fromId(ids.windowId);
+
   const scheduledTasks = await getScheduledTasks();
-  ipcMain.emit('scheduled-tasks-updated', scheduledTasks);
+
+  console.log(JSON.stringify(scheduledTasks), 's');
+
+  window.webContents.send('scheduled-tasks-updated', scheduledTasks);
 
   const taskUpdatesClient = taskUpdatesObservable({
-    subscriptionTokens: scheduledTasks.map(scheduledTask => scheduledTask.SubscriptionToken)
+    subscriptionTokens:
+      ids.id ? [ids.id, ...scheduledTasks.map(scheduledTask => scheduledTask.SubscriptionToken)]
+         : scheduledTasks.map(scheduledTask => scheduledTask.SubscriptionToken)
   });
 
   const taskUpdatesSubscription = taskUpdatesClient.subscribe({
-    next: (e) => ipcMain.emit('scheduled-task-updated', e),
+    next: (e) => {
+      console.log(JSON.stringify(e));
+      window.webContents.send('scheduled-task-updated', e.data.taskUpdates)
+    },
     error: () => {
       taskUpdatesSubscription.unsubscribe();
-      handleTaskUpdates();
+      handleTaskUpdates(ids);
     }
   });
 

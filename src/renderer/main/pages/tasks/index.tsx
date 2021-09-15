@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import './styles.scss';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store';
@@ -13,14 +13,23 @@ import {getGroupRequest} from '../../store/tasks/reducers/get-group';
 import Edit from '../../assets/images/icons/edit';
 import Delete from '../../assets/images/icons/delete';
 import {ActionColor} from '../../components/molecules/floating-header-table';
-import {TaskCreation} from '../../../../types/task';
+import {LookupType, TaskCreation} from '../../../../types/task';
 import {getTaskRequest} from '../../store/tasks/reducers/get-task';
 import {deleteTaskRequest} from '../../store/tasks/reducers/delete-task';
 import {updateTaskGroupRequest} from '../../store/tasks/reducers/update-task-group';
-import {FieldType, ModuleInformation} from '../../../../graphql/integration/handlers/settings/module-information';
+import {FieldType, ModuleField, ModuleInformation, ModuleStatus} from '../../../../types/modules';
 import ipcRenderer from '../../util/ipc-renderer';
 import Select from '../../components/atoms/select';
 import TagInput from '../../components/atoms/tag-input';
+import FormItem from '../../components/atoms/form-item';
+import Label from '../../components/atoms/label';
+import Play from '../../assets/images/icons/play';
+import {Tag} from 'react-tag-input';
+import Button from '../../components/atoms/button';
+import {createTaskRequest} from '../../store/tasks/reducers/create-task';
+import DatePicker from '../../components/atoms/date-picker';
+import {updateTaskRequest} from '../../store/tasks/reducers/update-task';
+import {DateTime} from 'luxon';
 
 
 // TODO Create Task Status enum
@@ -43,6 +52,8 @@ type Props = {
 const Tasks: React.FC<Props> = () => {
   const dispatch = useDispatch();
   const selectedTaskGroup = useSelector((state: RootState) => state.tasks.selectedTaskGroup);
+  const proxyLists = useSelector((state: RootState) => state.proxies.proxyLists);
+  const profileGroups = useSelector((state: RootState) => state.profiles.profileGroups);
   const selectedTask = useSelector((state: RootState) => state.tasks.selectedTask);
   const taskGroups = useSelector((state: RootState) => state.tasks.taskGroups);
   const statuses = useSelector((state: RootState) => state.tasks.statuses);
@@ -50,7 +61,12 @@ const Tasks: React.FC<Props> = () => {
   const taskFormMethods = useForm<TaskCreation>();
   const [modalShown, setModalShown] = useState(false);
   const [editingTask, setEditingTask] = useState(false);
+  const [skippingTime, setSkippingTime] = useState(false);
   const [selectedModule, setSelectedModule] = useState(0);
+  const [start, setStart] = useState(DateTime.now().toISO());
+  const [positiveKeywords, setPositiveKeywords] = useState<Tag[]>([]);
+  const [negativeKeywords, setNegativeKeywords] = useState<Tag[]>([]);
+
   const handleSubmission: SubmitHandler<TaskCreation> = data =>
     !editingTask
       ? createTask(data)
@@ -76,12 +92,24 @@ const Tasks: React.FC<Props> = () => {
   const createTask: SubmitHandler<TaskCreation> = data => {
     if (!selectedTaskGroup) return toast.error('You haven\'t selected a task group');
 
-    // Insert validation here
+    const newTask: TaskCreation = {
+      ...data,
+      StartTime: !skippingTime ? start : undefined,
+      Product: {
+        ...data.Product,
+        LookupType: LookupType.Other,
+        Site: moduleInformation[selectedModule].Name,
+        PositiveKeywords: positiveKeywords.map(keyword => keyword.text),
+        NegativeKeywords: negativeKeywords.map(keyword => keyword.text)
+      }
+    };
 
-    // dispatch(createTaskRequest({
-    //   ...data,
-    //   GroupID: selectedTaskGroup.ID
-    // }));
+    // Insert validation here
+    dispatch(createTaskRequest({
+      ...newTask,
+      TaskGroupID: selectedTaskGroup.ID
+    }));
+    ipcRenderer.invoke('send-command');
   };
 
   const deleteTask = (id: string) => dispatch(deleteTaskRequest({ taskId: id }));
@@ -102,57 +130,145 @@ const Tasks: React.FC<Props> = () => {
   };
 
   const openModal = async () => {
-    const modules = await ipcRenderer.invoke('getModuleInformation');
-    console.log(modules);
+    if (!profileGroups || profileGroups.length === 0) return toast.warn('You should have profile groups set up before proceeding.');
+    if (!proxyLists || proxyLists.length === 0) return toast.warn('You should have proxy lists set up before proceeding.');
+
+    const modules = await ipcRenderer.invoke('getSiteInformation');
+
     setModuleInformation(modules);
     setModalShown(true);
   };
 
-  const getFieldFor = (type: FieldType) => {
-    if (type === FieldType.GENDER) return (
-      <select>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
+  const getFieldFor = (field: ModuleField) => {
+    const type = field.Type;
+    if (type === FieldType.DROPDOWN) return (
+      <FormItem>
+        <Label htmlFor={field.FieldKey}>{field.Label}</Label>
+        <Select id={field.FieldKey} {...taskFormMethods.register(`Product.Metadata.${field.FieldKey}`)}>
+          {field.DropdownValues && field.DropdownValues.map((dropdownValue, index) => (
+            <option value={dropdownValue} key={`${index}-${dropdownValue}`}>{dropdownValue}</option>
+          ))}
+        </Select>
+      </FormItem>
     );
     if (type === FieldType.KEYWORDS) return (
-      <>
-        <TagInput type={'positive'} handleAddition={e => console.log(e)} handleDelete={e => console.log(e)} />
-        <TagInput type={'negative'} handleAddition={e => console.log(e)} handleDelete={e => console.log(e)} />
-      </>
+      <FormItem>
+        <Label htmlFor={field.FieldKey}>{field.Label}</Label>
+        <TagInput
+          type={'positive'}
+          tags={positiveKeywords}
+          handleAddition={e => setPositiveKeywords([...positiveKeywords, e])}
+          handleDelete={e => setPositiveKeywords(positiveKeywords.filter((k, i) => e !== i))}
+          placeholder={'Positive Keywords'}
+        />
+        <TagInput
+          type={'negative'}
+          tags={negativeKeywords}
+          handleAddition={e => setNegativeKeywords([...negativeKeywords, e])}
+          handleDelete={e => setNegativeKeywords(negativeKeywords.filter((k, i) => e !== i))}
+          placeholder={'Negative Keywords'}
+        />
+      </FormItem>
     );
     if (type === FieldType.NUMBER) return (
-      <input type="number" />
-    );
-    if (type === FieldType.SHOE_SIZE) return (
-      <select>
-        <option value="male">12.5</option>
-        <option value="female">13</option>
-      </select>
-    );
-    if (type === FieldType.WIDTH) return (
-      <select>
-        <option value="male">2in</option>
-        <option value="female">13in</option>
-      </select>
+      <FormItem>
+        <Label htmlFor={field.FieldKey}>{field.Label}</Label>
+        <input type="number" {...taskFormMethods.register(`Product.Metadata.${field.FieldKey}`)} />
+      </FormItem>
     );
 
-    return <input type="text"/>
-  }
+    return (
+      <FormItem>
+        <Label htmlFor={field.FieldKey}>{field.Label}</Label>
+        <input type="text" {...taskFormMethods.register(`Product.Metadata.${field.FieldKey}`)}/>
+      </FormItem>
+    )
+  };
+
+  const playTask = (id?: string) => {
+    if (id) {
+      dispatch(updateTaskRequest({
+        taskId: id,
+        StartTime: DateTime.now().plus({ seconds: 10 }).toISO(),
+      }));
+
+      return;
+    }
+
+    selectedTaskGroup.Tasks.forEach(task => {
+      console.log('TASK ID', task.ID)
+      dispatch(updateTaskRequest({
+        taskId: task.ID,
+        StartTime: DateTime.now().plus({ seconds: 10 }).toISO(),
+      }));
+    });
+  };
 
   return (
     <div className={'task-page'}>
       <FormProvider {...taskFormMethods}>
-        <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
-          <form onSubmit={taskFormMethods.handleSubmit(handleSubmission)}>
-            <Select defaultValue={0} onChange={e => setSelectedModule(parseInt(e.target.value))}>
-              {moduleInformation.map((module, index) => (
-                <option value={index}>{ module.Name }</option>
+        {moduleInformation.length > 0 && (
+          <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
+            <form onSubmit={taskFormMethods.handleSubmit(handleSubmission)}>
+              <FormItem>
+                <Label htmlFor={'site'}>Product Name</Label>
+                <input type={'text'} {...taskFormMethods.register('Product.Name')}/>
+              </FormItem>
+              <FormItem>
+                <Label htmlFor={'site'}>Start Time</Label>
+                {!skippingTime && (
+                  <DatePicker onChange={e => setStart(e)} />
+                )}
+                <Label htmlFor={'skip-time'}>
+                  <input
+                    id={'skip-time'}
+                    type={'checkbox'}
+                    checked={skippingTime}
+                    onChange={e => setSkippingTime(e.target.checked)}
+                  />{' '}
+                  {skippingTime ? 'Skipped' : 'Skip?'}
+                </Label>
+              </FormItem>
+              <FormItem>
+                <Label htmlFor={'site'}>Image Url</Label>
+                <input type={'text'} {...taskFormMethods.register('Product.Image')}/>
+              </FormItem>
+              <FormItem>
+                <Label htmlFor={'site'}>Proxy List</Label>
+                <Select name={`ProxyListID`} {...taskFormMethods.register('ProxyListID')}>
+                  {proxyLists.map(proxyList => (
+                    <option value={proxyList.ID} key={proxyList.ID}>{proxyList.Name}</option>
+                  ))}
+                </Select>
+              </FormItem>
+              <FormItem>
+                <Label htmlFor={'site'}>Profile Group</Label>
+                <Select name={`ProfileGroupID`} {...taskFormMethods.register('ProfileGroupID')}>
+                  {profileGroups.map(profileGroup => (
+                    <option value={profileGroup.ID} key={profileGroup.ID}>{profileGroup.Name}</option>
+                  ))}
+                </Select>
+              </FormItem>
+              <FormItem>
+                <Label htmlFor={'site'}>Site</Label>
+                <Select
+                  defaultValue={0}
+                  onChange={e => setSelectedModule(parseInt(e.target.value))}
+                  id={'module'}>
+                  {moduleInformation.map((module, index) => (
+                    <option value={index} disabled={module.Status === ModuleStatus.DOWN} key={module.Name}>{ module.Name }</option>
+                  ))}
+                </Select>
+              </FormItem>
+              {moduleInformation[selectedModule].Fields.map(field => (
+                <div key={field.FieldKey}>
+                  {getFieldFor(field)}
+                </div>
               ))}
-            </Select>
-            {/*{moduleInformation[selectedModule].Fields.map(field => getFieldFor(field.Type))}*/}
-          </form>
-        </SideModal>
+              <Button type={'submit'}>Create Task</Button>
+            </form>
+          </SideModal>
+        )}
       </FormProvider>
       <GroupTable<FetchedTaskGroupsTask>
         type={'Task'}
@@ -161,7 +277,12 @@ const Tasks: React.FC<Props> = () => {
           Name: taskGroup.Name,
           Items: taskGroup.Tasks ? taskGroup.Tasks : [],
         }))}
-        items={selectedTaskGroup ? selectedTaskGroup.Tasks : []}
+        items={selectedTaskGroup
+          ? selectedTaskGroup.Tasks.map(task => ({
+            ...task,
+              StartTime: task.StartTime ? DateTime.fromISO(task.StartTime).toLocaleString(DateTime.DATETIME_MED) : undefined
+          }))
+          : []}
         selectedGroup={selectedTaskGroup ? {
           ID: selectedTaskGroup.ID,
           Name: selectedTaskGroup.Name,
@@ -169,24 +290,28 @@ const Tasks: React.FC<Props> = () => {
         } : null}
         headerItems={[
           {
-            Header: 'Task Name',
-            accessor: 'Name',
+            Header: 'Product',
+            accessor: 'Product.Name',
           },
           {
-            Header: 'Email',
-            accessor: 'Email',
+            Header: 'Proxy List',
+            accessor: 'ProxyList.Name',
           },
           {
-            Header: 'First Name',
-            accessor: 'Shipping.FirstName',
+            Header: 'Profile Group',
+            accessor: 'ProfileGroup.Name',
           },
           {
-            Header: 'Last Name',
-            accessor: 'Shipping.LastName',
+            Header: 'Site',
+            accessor: 'Product.Site',
           },
           {
-            Header: 'Address',
-            accessor: 'Shipping.ShippingAddress.AddressLine',
+            Header: 'Start Time',
+            accessor: 'StartTime',
+          },
+          {
+            Header: 'Status',
+            accessor: 'Status',
           },
         ]}
         createGroup={groupName => dispatch(createTaskGroupRequest({ Name: groupName }))}
@@ -199,6 +324,11 @@ const Tasks: React.FC<Props> = () => {
         groupDeletion={statuses.taskGroupDeletion}
         groupUpdating={statuses.taskGroupUpdating}
         actions={[
+          {
+            onClick: playTask,
+            icon: Play,
+            color: ActionColor.GREEN,
+          },
           {
             onClick: launchEditor,
             icon: Edit

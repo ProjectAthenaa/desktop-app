@@ -8,6 +8,7 @@ const CREATE_PROXY_LIST = gql`
         createProxyList(proxyList: $proxyList) {
             ID
             Name
+            Type
             Proxies {
                 ID
                 IP

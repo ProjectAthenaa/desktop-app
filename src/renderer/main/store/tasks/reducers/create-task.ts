@@ -15,11 +15,11 @@ export const createTaskRequest = createAsyncThunk(
 
 export const createTempTask = (state: Draft<TasksState>, action: PayloadAction<FetchedTask>): void => {
   state.statuses.taskCreation = Status.PENDING;
-
-  state.tasks.push({
-    ...action.payload,
-    ID: 'temp'
-  });
+  //
+  // state.tasks.push({
+  //   ...action.payload,
+  //   ID: 'temp'
+  // });
 };
 
 export const undoTaskCreation = (state: Draft<TasksState>): void => {
@@ -27,7 +27,7 @@ export const undoTaskCreation = (state: Draft<TasksState>): void => {
 
   toast.error('There was an issue creating the task at this time.');
 
-  state.tasks = state.tasks.filter(task => task.ID !== 'temp');
+  // state.tasks = state.tasks.filter(task => task.ID !== 'temp');
 
   state.statuses.taskGroupCreation = Status.IDLE;
 };
@@ -36,12 +36,14 @@ export const createTask = (state: Draft<TasksState>, action: PayloadAction<Fetch
   state.statuses.taskCreation = Status.FULFILLED;
 
   toast.success('Task created.');
+  //
+  // state.tasks = state.tasks.map(task =>
+  //   task.ID === 'temp'
+  //   ?  action.payload
+  //   : task
+  // );
 
-  state.tasks = state.tasks.map(task =>
-    task.ID === 'temp'
-    ?  action.payload
-    : task
-  );
+  state.selectedTaskGroup.Tasks.push(action.payload);
 
   state.statuses.taskCreation = Status.IDLE;
 };

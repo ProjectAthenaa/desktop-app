@@ -21,6 +21,3 @@ const getAccountGroups = async (): Promise<AccountGroup[]> => {
 };
 
 export default getAccountGroups;
-
-
-

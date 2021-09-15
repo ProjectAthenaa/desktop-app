@@ -19,19 +19,21 @@ const Global: React.FC = () => {
   const dispatch = useDispatch();
 
   const scheduleTaskUpdated = (e: unknown, taskStatus: TaskStatus) => {
+    console.log(e, taskStatus)
     dispatch(updateScheduledTask(taskStatus));
   };
 
-  const scheduleTasksUpdated = (e: unknown, tasks: ScheduledTask[]) => {
-    dispatch(updateScheduledTasks(tasks));
-  };
+  // const scheduleTasksUpdated = (e: unknown, tasks: ScheduledTask[]) => {
+  //   console.log(e, tasks)
+  //   dispatch(updateScheduledTasks(tasks));
+  // };
 
   useEffect(() => {
-    ipcRenderer.on('scheduled-tasks-updated', scheduleTasksUpdated);
+    // ipcRenderer.on('scheduled-tasks-updated', scheduleTasksUpdated);
     ipcRenderer.on('scheduled-task-updated', scheduleTaskUpdated);
 
     return () => {
-      ipcRenderer.removeListener('scheduled-tasks-updated', scheduleTasksUpdated);
+      // ipcRenderer.removeListener('scheduled-tasks-updated', scheduleTasksUpdated);
       ipcRenderer.removeListener('scheduled-task-updated', scheduleTaskUpdated);
     }
   }, []);

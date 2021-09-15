@@ -7,6 +7,7 @@ import {BrowserWindow} from 'electron';
 import {createAuthenticationWindow} from '../../../index';
 import loginRequest from './login';
 import {hostname, type} from 'os';
+import {handleTaskUpdates} from '../../tasks/handlers/task-updates';
 
 export const REFRESH_SESSION = gql`
     mutation RefreshSession($session: SessionInput!) {
@@ -20,6 +21,7 @@ export const REFRESH_SESSION = gql`
 const ONE_MINUTE = 1000 * 60;
 
 export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<NodeJS.Timer> => {
+  let sub: {unsubscribe: () => any};
   return setInterval(async () => {
     const hardwareId = await machineId(true);
     const sessionId: string = store.get('sessionId');
@@ -55,8 +57,11 @@ export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<No
         });
 
         store.set('sessionId', loginResponse.Session.ID);
+
+        return;
       } catch (error) {
         window.close();
+        sub.unsubscribe();
         await createAuthenticationWindow();
       }
     }
@@ -70,7 +75,7 @@ export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<No
       // Close main window and open auth window
       window.close();
       await createAuthenticationWindow();
-
+      sub.unsubscribe();
       return;
     }
 

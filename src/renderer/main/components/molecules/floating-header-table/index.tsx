@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import './styles.scss';
 import {useTable} from 'react-table';
 import LogoLoadingIndicator from '../../atoms/logo-loading-indicator';
+import {DateTime} from 'luxon';
+import TextTransition, {presets} from 'react-text-transition';
 
 export enum ActionColor {
   RED = 'red',
@@ -64,7 +66,8 @@ const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions, loadingCo
           <tr {...row.getRowProps()}>
             {row.cells.map((cell, index) => (
               <td {...cell.getCellProps()} className={columns[index].accessor === 'Password' ? `hidden ${hiddenShown ? 'shown' : ''}` : ''} onClick={() => setHiddenShown(!hiddenShown)}>
-                <span>{cell.render('Cell')}</span>
+                {/*<span>{ cell.value }</span>*/}
+                <TextTransition text={cell.value ? cell.value : ''} inline springConfig={presets.wobbly}/>
               </td>
             ))}
             <td className={`actions count-${actions.length}`}>

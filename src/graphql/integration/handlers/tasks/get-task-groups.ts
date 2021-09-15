@@ -27,6 +27,7 @@ const GET_FIRST_TASK_GROUP = gql`
                 Product {
                     ID
                     Name
+                    Site
                 }
                 ProxyList {
                     ID

@@ -11,6 +11,15 @@ const updateScheduledTasks = (state: Draft<TasksState>, action: PayloadAction<Ta
       }
       : scheduledTask
   );
+
+
+  state.selectedTaskGroup.Tasks = state.selectedTaskGroup.Tasks.map(task => {
+    if (task.ID === action.payload.TaskID) return {
+      ...task,
+      Status: action.payload.Status
+    };
+    else return task;
+  });
 };
 
 export default updateScheduledTasks;

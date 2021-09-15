@@ -34,4 +34,5 @@ export const deleteTask = (state: Draft<TasksState>, action: PayloadAction<strin
   toast.success('Task deleted.');
 
   state.tasks = state.tasks.filter(task => task.ID !== action.payload);
+  state.selectedTaskGroup.Tasks = state.selectedTaskGroup.Tasks.filter(task => task.ID !== action.payload);
 };

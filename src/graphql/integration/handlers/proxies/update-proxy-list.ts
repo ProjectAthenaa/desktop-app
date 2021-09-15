@@ -8,6 +8,7 @@ const UPDATE_PROXY_LIST = gql`
         updateProxyList(proxyListID: $proxyListID, proxyList: $proxyList) {
             ID
             Name
+            Type
             Proxies {
                 ID
                 IP

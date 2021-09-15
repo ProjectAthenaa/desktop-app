@@ -1,4 +1,4 @@
-
+#
 type AccountGroup {
     ID: UUID!
     Name: String!
@@ -53,9 +53,7 @@ enum FieldType {
     KEYWORDS
     TEXT
     NUMBER
-    GENDER
-    WIDTH
-    SHOE_SIZE
+    DROPDOWN
 }
 
 type License {
@@ -94,8 +92,9 @@ type Metadata {
 }
 
 type Module {
-    Name: String!
+    Name: Site!
     Status: Status!
+    Accounts: Boolean!
     Fields: [ModuleField!]
 }
 
@@ -104,6 +103,7 @@ type ModuleField {
     Label: String!
     Validation: String
     FieldKey: String
+    DropdownValues: [String!]
 }
 
 type Mutation {

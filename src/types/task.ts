@@ -74,7 +74,7 @@ export type TaskCreation = {
     Sizes: string[];
     Colors: string[];
     Site: Site;
-    Metadata: { [key: string]: never; }
+    Metadata: Record<string, string>;
   };
   ProxyListID: string;
   ProfileGroupID: string;

@@ -1,4 +1,4 @@
 import {ipcMain} from 'electron';
-import getModuleInformation from './handlers/get-module-information';
+import getSiteInformation from './handlers/get-site-info'
 
-ipcMain.handle('getModuleInformation', getModuleInformation);
+ipcMain.handle('getSiteInformation', getSiteInformation);

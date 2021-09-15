@@ -9,6 +9,7 @@ import {refreshSessionHeartbeat} from './graphql/auth/handlers/refresh-session';
 import loginRequest from './graphql/auth/handlers/login';
 import {hostname, type} from 'os';
 import installExtensions, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
+import {handleTaskUpdates} from './graphql/tasks/handlers/task-updates';
 
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -86,6 +87,8 @@ export const createMainWindow = async (): Promise<void> => {
 
   // Refresh session every 15 min to receive updates on refresh token
   await refreshSessionHeartbeat(mainWindow);
+
+  await handleTaskUpdates({ windowId: mainWindow.id });
 };
 
 const onReady = async (): Promise<void> => {

@@ -10,16 +10,20 @@ import {FetchedTask} from '../../../../../graphql/integration/handlers/tasks/get
 type UpdatedTask = {
   taskId: string;
   StartTime?: string;
-  ProductID: string;
-  ProxyListID: string;
-  ProfileGroupID: string;
-  TaskGroupID: string;
+  ProductID?: string;
+  ProxyListID?: string;
+  ProfileGroupID?: string;
+  TaskGroupID?: string;
 };
 
 export const updateTaskRequest = createAsyncThunk(
   'tasks/updateTask',
   async ({ taskId, ...updatedPayload }: UpdatedTask): Promise<FetchedTask> => {
-    return await ipcRenderer.invoke('updateTask', taskId, updatedPayload);
+    const updatedTask = await ipcRenderer.invoke('updateTask', taskId, updatedPayload);
+
+    await ipcRenderer.invoke('resync-tasks', taskId);
+
+    return updatedTask;
   }
 );
 
@@ -30,6 +34,11 @@ export const updateTask = (state: Draft<TasksState>, action: PayloadAction<Fetch
     task.ID !== action.payload.ID
     ? task
     : action.payload
+  );
+  state.selectedTaskGroup.Tasks = state.selectedTaskGroup.Tasks.map(task =>
+    task.ID !== action.payload.ID
+      ? task
+      : action.payload
   );
 
   toast.success('Task updated.')

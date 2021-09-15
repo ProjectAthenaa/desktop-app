@@ -85,13 +85,15 @@ const Profiles: React.FC = () => {
     <div className={'task-page'}>
       <FormProvider {...profileFormMethods}>
         <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
-          <form onSubmit={profileFormMethods.handleSubmit(handleSubmission)}>
-            {
-              editingProfile
-              ? selectedProfile ? <ProfileForm /> : <></>
-              : <ProfileForm />
-            }
-          </form>
+          <div className={'modal-form'}>
+            <form onSubmit={profileFormMethods.handleSubmit(handleSubmission)}>
+              {
+                editingProfile
+                  ? selectedProfile ? <ProfileForm /> : <></>
+                  : <ProfileForm />
+              }
+            </form>
+          </div>
         </SideModal>
       </FormProvider>
       <GroupTable<FetchedProfileGroupsProfile>

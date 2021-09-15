@@ -9,7 +9,7 @@ const DELETE_PROXY_LIST = gql`
 
 const deleteProxyList = async (proxyListId: string): Promise<boolean> => {
   const response = await integrationClient().request<{ deleteProxyList: boolean }>(DELETE_PROXY_LIST, {
-    proxyList: proxyListId,
+    proxyListID: proxyListId,
   });
 
   return response.deleteProxyList;
