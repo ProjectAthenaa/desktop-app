@@ -189,7 +189,7 @@ const Tasks: React.FC<Props> = () => {
     if (id) {
       dispatch(updateTaskRequest({
         taskId: id,
-        StartTime: DateTime.now().plus({ seconds: 2 }).toISO(),
+        StartTime: DateTime.now().plus({ seconds: 10 }).toISO(),
       }));
 
       return;
@@ -199,7 +199,7 @@ const Tasks: React.FC<Props> = () => {
       console.log('TASK ID', task.ID)
       dispatch(updateTaskRequest({
         taskId: task.ID,
-        StartTime: DateTime.now().plus({ seconds: 2 }).toISO(),
+        StartTime: DateTime.now().plus({ seconds: 10 }).toISO(),
       }));
     });
   };
