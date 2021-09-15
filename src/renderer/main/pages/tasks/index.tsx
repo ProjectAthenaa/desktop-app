@@ -30,6 +30,7 @@ import {createTaskRequest} from '../../store/tasks/reducers/create-task';
 import DatePicker from '../../components/atoms/date-picker';
 import {updateTaskRequest} from '../../store/tasks/reducers/update-task';
 import {DateTime} from 'luxon';
+import SideModalHeader from '../../components/molecules/side-modal-header';
 
 
 // TODO Create Task Status enum
@@ -189,7 +190,7 @@ const Tasks: React.FC<Props> = () => {
     if (id) {
       dispatch(updateTaskRequest({
         taskId: id,
-        StartTime: DateTime.now().plus({ seconds: 10 }).toISO(),
+        StartTime: DateTime.now().plus({ seconds: 4 }).toISO(),
       }));
 
       return;
@@ -199,7 +200,7 @@ const Tasks: React.FC<Props> = () => {
       console.log('TASK ID', task.ID)
       dispatch(updateTaskRequest({
         taskId: task.ID,
-        StartTime: DateTime.now().plus({ seconds: 10 }).toISO(),
+        StartTime: DateTime.now().plus({ seconds: 4 }).toISO(),
       }));
     });
   };
@@ -209,6 +210,7 @@ const Tasks: React.FC<Props> = () => {
       <FormProvider {...taskFormMethods}>
         {moduleInformation.length > 0 && (
           <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
+            <SideModalHeader>Task Creation</SideModalHeader>
             <form onSubmit={taskFormMethods.handleSubmit(handleSubmission)}>
               <FormItem>
                 <Label htmlFor={'site'}>Product Name</Label>

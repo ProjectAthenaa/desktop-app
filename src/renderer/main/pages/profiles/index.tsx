@@ -20,6 +20,10 @@ import {deleteProfileRequest} from '../../store/profiles/reducers/delete-profile
 import ProfileForm from './profile-form';
 import {updateProfileRequest} from '../../store/profiles/reducers/update-profile';
 import {getProfileRequest} from '../../store/profiles/reducers/get-profile';
+import SideModalHeader from '../../components/molecules/side-modal-header';
+import SideModalBody from '../../components/molecules/side-modal-body';
+import SideModalFooter from '../../components/molecules/side-modal-footer';
+import Button from '../../components/atoms/button';
 
 const Profiles: React.FC = () => {
   const dispatch = useDispatch();
@@ -85,7 +89,8 @@ const Profiles: React.FC = () => {
     <div className={'task-page'}>
       <FormProvider {...profileFormMethods}>
         <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
-          <div className={'modal-form'}>
+          <SideModalHeader>Task Creation</SideModalHeader>
+          <SideModalBody>
             <form onSubmit={profileFormMethods.handleSubmit(handleSubmission)}>
               {
                 editingProfile
@@ -93,7 +98,10 @@ const Profiles: React.FC = () => {
                   : <ProfileForm />
               }
             </form>
-          </div>
+          </SideModalBody>
+          <SideModalFooter>
+            <Button type={'submit'}>Create Profile</Button>
+          </SideModalFooter>
         </SideModal>
       </FormProvider>
       <GroupTable<FetchedProfileGroupsProfile>

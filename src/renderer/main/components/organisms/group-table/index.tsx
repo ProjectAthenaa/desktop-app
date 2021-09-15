@@ -134,7 +134,7 @@ function GroupTable <Item>({ type, createGroup, openModal, plural, items, header
                 className={'site'}
                 onChange={e => setSelectedSite(e.target.value as never)}>
                 {(Object.keys(Site) as Array<keyof typeof Site>).map(key => (
-                  <option value={key}>{key.split('_').join(' ')}</option>
+                  <option value={key} key={key}>{key.split('_').join(' ')}</option>
                 ))}
               </Select>
             )}
@@ -144,7 +144,7 @@ function GroupTable <Item>({ type, createGroup, openModal, plural, items, header
                 className={'site'}
                 onChange={e => setSelectedType(e.target.value as never)}>
                 {(Object.keys(ProxyListType) as Array<keyof typeof ProxyListType>).map(key => (
-                  <option value={key}>{key}</option>
+                  <option value={key} key={key}>{key}</option>
                 ))}
               </Select>
             )}
