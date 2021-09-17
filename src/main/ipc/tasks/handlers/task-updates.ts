@@ -6,7 +6,7 @@ let taskUpdatesSubscription: { unsubscribe: () => void } | null = null;
 let interval: NodeJS.Timer | null = null;
 let init = false;
 
-export const taskUpdater = async (ids: { id?: string; windowId: number; }): Promise<void> => {
+export const taskUpdater = async (ids: { ids?: string[]; windowId: number; }): Promise<void> => {
   if (interval) clearInterval(interval);
 
   if (taskUpdatesSubscription) taskUpdatesSubscription.unsubscribe();

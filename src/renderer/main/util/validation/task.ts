@@ -1,6 +1,4 @@
 import * as yup from 'yup';
-import creditCard from './regex/credit-card';
-
 const LookupTypes = ['Keywords', 'Link', 'Other'];
 const Sites = ['FinishLine', 'JD_Sports', 'YeezySupply', 'Supreme', 'Eastbay_US', 'Champs_US', 'Footaction_US', 'Footlocker_US', 'Bestbuy', 'Pokemon_Center', 'Panini_US', 'Topss', 'Nordstorm', 'End', 'Target', 'Amazon', 'Solebox', 'Onygo', 'Snipes', 'Ssense', 'Walmart', 'Hibbet', 'NewBalance'];
 

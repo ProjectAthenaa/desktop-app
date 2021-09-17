@@ -28,6 +28,7 @@ import {FetchedTaskGroup, FetchedTaskGroupsTask} from '../../../../graphql/integ
 import {FetchedTask} from '../../../../graphql/integration/handlers/tasks/get-task';
 import {FetchedTaskGroups} from '../../../../graphql/integration/handlers/tasks/get-task-groups';
 import {ScheduledTask} from '../../../../graphql/tasks/handlers/get-scheduled-tasks';
+import {startingTasks, startTasks, startTasksRequest, undoStartTasks} from './reducers/start-tasks';
 
 export enum TaskStatusType {
   taskCreation = 'taskCreation'
@@ -85,6 +86,11 @@ const tasksSlice = createSlice({
     updateScheduledTask: updateScheduledTaskReducer,
   },
   extraReducers: {
+    // Start Tasks
+    [startTasksRequest.pending.type]: startingTasks,
+    [startTasksRequest.rejected.type]: undoStartTasks,
+    [startTasksRequest.fulfilled.type]: startTasks,
+
     // Task Groups Fetching
     [getTaskGroupsRequest.pending.type]: fetchingTaskGroups,
     [getTaskGroupsRequest.rejected.type]: failedGetTaskGroups,

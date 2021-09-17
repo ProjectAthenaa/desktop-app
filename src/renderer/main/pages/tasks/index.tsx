@@ -31,6 +31,7 @@ import DatePicker from '../../components/atoms/date-picker';
 import {updateTaskRequest} from '../../store/tasks/reducers/update-task';
 import {DateTime} from 'luxon';
 import SideModalHeader from '../../components/molecules/side-modal-header';
+import {startTasksRequest} from '../../store/tasks/reducers/start-tasks';
 
 
 // TODO Create Task Status enum
@@ -188,21 +189,13 @@ const Tasks: React.FC<Props> = () => {
 
   const playTask = (id?: string) => {
     if (id) {
-      dispatch(updateTaskRequest({
-        taskId: id,
-        StartTime: DateTime.now().plus({ seconds: 4 }).toISO(),
-      }));
-
+      dispatch(startTasksRequest([id]));
       return;
     }
 
-    selectedTaskGroup.Tasks.forEach(task => {
-      console.log('TASK ID', task.ID)
-      dispatch(updateTaskRequest({
-        taskId: task.ID,
-        StartTime: DateTime.now().plus({ seconds: 4 }).toISO(),
-      }));
-    });
+    const tasksToStart: string[] = selectedTaskGroup.Tasks.map(task => task.ID);
+
+    dispatch(startTasksRequest(tasksToStart));
   };
 
   return (

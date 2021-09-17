@@ -1,10 +1,11 @@
 import {createSubscriptionObservable} from '../../../main/util/subscriptions';
 import {WS_SERVICE_ENDPOINT} from '../index';
 import {gql} from 'graphql-request';
-import {DocumentNode} from 'apollo-link';
+import {DocumentNode, FetchResult} from 'apollo-link';
 import {getScheduledTasks} from './get-scheduled-tasks';
-import {BrowserWindow, ipcMain} from 'electron';
+import {BrowserWindow} from 'electron';
 import { Status } from '../../../types/task';
+import {Observable} from 'subscriptions-transport-ws';
 
 const TASK_UPDATES = gql`
   subscription TaskUpdates($subscriptionTokens: [String!]!) {
@@ -30,21 +31,19 @@ const taskUpdatesObservable = (variables?: Record<string, unknown>) => createSub
   variables
 );
 
-export const handleTaskUpdates = async (ids: { id?: string; windowId: number; }): Promise<{ unsubscribe: () => void }> => {
+type OT =  Observable<FetchResult<{[p: string]: any}, Record<string, any>, Record<string, any>>>;
 
+export const handleTaskUpdates = async (ids: { ids?: string[]; windowId: number; }): Promise<{ unsubscribe: () => void }> => {
   const window = BrowserWindow.fromId(ids.windowId);
+  let taskUpdatesClient: OT;
 
-  const scheduledTasks = await getScheduledTasks();
-
-  console.log(JSON.stringify(scheduledTasks), 's');
-
-  window.webContents.send('scheduled-tasks-updated', scheduledTasks);
-
-  const taskUpdatesClient = taskUpdatesObservable({
-    subscriptionTokens:
-      ids.id ? [ids.id, ...scheduledTasks.map(scheduledTask => scheduledTask.SubscriptionToken)]
-         : scheduledTasks.map(scheduledTask => scheduledTask.SubscriptionToken)
-  });
+  if (ids.ids) {
+    taskUpdatesClient = taskUpdatesObservable({ subscriptionTokens: ids.ids });
+  } else {
+    const scheduledTasks = await getScheduledTasks();
+    taskUpdatesClient = taskUpdatesObservable({ subscriptionTokens: scheduledTasks.map(sT => sT.SubscriptionToken)})
+    window.webContents.send('scheduled-tasks-updated', scheduledTasks);
+  }
 
   const taskUpdatesSubscription = taskUpdatesClient.subscribe({
     next: (e) => {
@@ -56,6 +55,8 @@ export const handleTaskUpdates = async (ids: { id?: string; windowId: number; })
       handleTaskUpdates(ids);
     }
   });
+
+  console.log(taskUpdatesClient)
 
   return taskUpdatesSubscription;
 };

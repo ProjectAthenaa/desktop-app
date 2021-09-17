@@ -1,17 +1,19 @@
-
-type TaskStatus {
-    TaskID: String!
-    Status: STATUS!
-    Error: String
-    Information: Map!
-}
-
-scalar Time
-
+#
 enum COMMAND {
     STOP
     PAUSE
     CONTINUE
+}
+
+scalar Map
+
+type Mutation {
+    sendCommand(ControlToken: String!, Command: COMMAND!): Boolean!
+    startTasks(taskIDs: [String!]): Boolean!
+}
+
+type Query {
+    getScheduledTasks: [Task]!
 }
 
 enum STATUS {
@@ -50,12 +52,8 @@ enum STATUS {
     RESTARTING
 }
 
-type Query {
-    getScheduledTasks: [Task]!
-}
-
-type Mutation {
-    sendCommand(ControlToken: String!, Command: COMMAND!): Boolean!
+type Subscription {
+    taskUpdates(subscriptionTokens: [String!]!): TaskStatus!
 }
 
 type Task {
@@ -65,8 +63,11 @@ type Task {
     StartTime: Time!
 }
 
-type Subscription {
-    taskUpdates(subscriptionTokens: [String!]!): TaskStatus!
+type TaskStatus {
+    TaskID: String!
+    Status: STATUS!
+    Error: String
+    Information: Map!
 }
 
-scalar Map
+scalar Time
