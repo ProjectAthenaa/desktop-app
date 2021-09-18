@@ -64,7 +64,7 @@ export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<No
 
         return;
       } catch (error) {
-        window.close();
+        if (window) window.close();
         sub.unsubscribe();
         await createAuthenticationWindow();
       }
@@ -77,7 +77,7 @@ export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<No
       store.set('token', null);
 
       // Close main window and open auth window
-      window.close();
+      if (window) window.close();
       await createAuthenticationWindow();
       sub.unsubscribe();
       return;

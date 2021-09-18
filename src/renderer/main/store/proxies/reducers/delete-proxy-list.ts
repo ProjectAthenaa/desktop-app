@@ -37,6 +37,8 @@ export const deleteProxyList = (state: Draft<ProxiesState>, action: PayloadActio
 
   if (state.proxyLists.length > 0) {
     state.selectedProxyList = state.proxyLists[0];
+  } else {
+    state.selectedProxyList = null;
   }
 };
 

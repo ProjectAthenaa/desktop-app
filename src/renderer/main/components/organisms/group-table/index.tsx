@@ -96,7 +96,8 @@ function GroupTable <Item>({ type, createGroup, openModal, plural, items, header
 
   const handleDelete = () => {
     toast.warn(
-      <AreYouSure yesCallback={deleteGroup} doThis={'delete this group'} />
+      <AreYouSure yesCallback={deleteGroup} doThis={'delete this group'} />,
+      { toastId: 'group-delete' }
     );
   };
 

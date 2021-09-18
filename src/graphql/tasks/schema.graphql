@@ -1,73 +1,435 @@
-#
-enum COMMAND {
-    STOP
-    PAUSE
-    CONTINUE
+type AccountGroup {
+    ID: UUID!
+    Name: String!
+    Site: Site!
+    Accounts: Map!
+}
+
+input AccountGroupInput {
+    Name: String!
+    Site: Site!
+    Accounts: Map!
+}
+
+type Address {
+    ID: UUID!
+    AddressLine: String!
+    AddressLine2: String
+    Country: String!
+    State: String!
+    City: String!
+    ZIP: String!
+    StateCode: String
+}
+
+type App {
+    ID: UUID!
+    Settings: Settings!
+    ProxyLists: [ProxyList!]
+    ProfileGroups: [ProfileGroup!]
+    TaskGroups: [TaskGroup!]
+    AccountGroups: [AccountGroup!]
+}
+
+type Billing {
+    ID: UUID!
+    CardHolderName: String!
+    CardNumber: String!
+    ExpiryMonth: String!
+    ExpiryYear: String!
+    CVV: String!
+}
+
+enum DeviceType {
+    Unknown
+    Phone
+    Tablet
+    PC
+    Laptop
+}
+
+enum FieldType {
+    KEYWORDS
+    TEXT
+    NUMBER
+    DROPDOWN
+}
+
+type License {
+    ID: UUID!
+    CreatedAt: Time!
+    Key: String!
+    HardwareID: String
+    MobileHardwareID: String
+    Type: LicenseType!
+}
+
+enum LicenseType {
+    Lifetime
+    Renewal
+    Beta
+    Weekly
+    FNF
+}
+
+enum LookupType {
+    Keywords
+    Link
+    Other
 }
 
 scalar Map
 
+type Metadata {
+    ID: UUID!
+    FirstLogin: Boolean!
+    Theme: Theme!
+    DiscordID: String!
+    DiscordUsername: String!
+    DiscordAvatar: String!
+    DiscordDiscriminator: String!
+}
+
+type Module {
+    Name: Site!
+    Status: Status!
+    Accounts: Boolean!
+    Fields: [ModuleField!]
+}
+
+type ModuleField {
+    Type: FieldType!
+    Label: String!
+    Validation: String
+    FieldKey: String
+    DropdownValues: [String!]
+}
+
 type Mutation {
-    sendCommand(ControlToken: String!, Command: COMMAND!): Boolean!
-    startTasks(taskIDs: [String!]): Boolean!
+    setSuccessWebhook(Webhook: String!): Boolean!
+    setDeclineWebhook(Webhook: String!): Boolean!
+    setCheckoutDelay(Delay: Int!): Boolean!
+    setATCDelay(Delay: Int!): Boolean!
+    createAccountGroup(newAccountGroup: AccountGroupInput!): AccountGroup!
+    updateAccountGroup(
+        accountGroupID: UUID!
+        updatedAccountGroup: AccountGroupInput!
+    ): AccountGroup!
+    deleteAccountGroup(accountGroupID: UUID!): Boolean!
+    createProfile(newProfile: NewProfile!): Profile!
+    updateProfile(profileID: UUID!, updatedProfile: NewProfile!): Profile!
+    deleteProfile(profileID: UUID!): Boolean!
+    createProfileGroup(newGroup: NewProfileGroup!): ProfileGroup!
+    updateProfileGroup(
+        groupID: UUID!
+        updatedGroup: NewProfileGroup!
+    ): ProfileGroup!
+    deleteProfileGroup(groupID: UUID!): Boolean!
+    createProxyList(proxyList: NewProxyList!): ProxyList!
+    updateProxyList(proxyListID: UUID!, proxyList: NewProxyList!): ProxyList!
+    deleteProxyList(proxyListID: UUID!): Boolean!
+    createTask(newTask: NewTask!): Task!
+    updateTask(taskID: UUID!, updatedTask: UpdatedTask!): Task!
+    deleteTask(taskID: UUID!, deletedProduct: Boolean!): Boolean!
+    createTaskGroup(newTaskGroup: NewTaskGroup!): TaskGroup!
+    updateTaskGroup(
+        taskGroupID: UUID!
+        updatedTaskGroup: NewTaskGroup!
+    ): TaskGroup!
+    deleteTaskGroup(taskGroupID: UUID!): Boolean!
+    updateProduct(productID: UUID!, updatedProduct: ProductIn!): Product!
+}
+
+input NewAddress {
+    AddressLine: String!
+    AddressLine2: String
+    Country: String!
+    State: String!
+    StateCode: String
+    City: String!
+    ZIP: String!
+}
+
+input NewBilling {
+    CardHolderName: String!
+    CardNumber: String!
+    ExpiryMonth: String!
+    ExpiryYear: String!
+    CVV: String!
+}
+
+input NewProfile {
+    GroupID: UUID!
+    Name: String!
+    Email: String!
+    Shipping: NewShipping!
+    Billing: NewBilling!
+}
+
+input NewProfileGroup {
+    Name: String!
+    Profiles: [UUID!]
+}
+
+input NewProxy {
+    Username: String
+    Password: String
+    IP: String!
+    Port: String!
+}
+
+input NewProxyList {
+    Name: String!
+    Type: ProxyListType!
+    Proxies: [NewProxy!]
+}
+
+input NewShipping {
+    FirstName: String!
+    LastName: String!
+    PhoneNumber: String!
+    ShippingAddress: NewAddress!
+    BillingAddress: NewAddress
+    BillingIsShipping: Boolean!
+}
+
+input NewTask {
+    StartTime: Time
+    Product: ProductIn!
+    ProxyListID: UUID!
+    ProfileGroupID: UUID!
+    TaskGroupID: String! = "DEF_GROUP"
+}
+
+input NewTaskGroup {
+    Name: String! = "DEF_GROUP"
+    Tasks: [String!]
+}
+
+type Product {
+    ID: UUID!
+    Name: String!
+    Image: String
+    LookupType: LookupType!
+    PositiveKeywords: [String!]
+    NegativeKeywords: [String!]
+    Link: String
+    Quantity: Int
+    Sizes: [String!]
+    Colors: [String!]
+    Site: Site!
+    Metadata: Map
+}
+
+input ProductIn {
+    Name: String!
+    Image: String
+    LookupType: LookupType!
+    PositiveKeywords: [String!]
+    NegativeKeywords: [String!]
+    Link: String
+    Quantity: Int
+    Sizes: [String!]
+    Colors: [String!]
+    Site: Site!
+    Metadata: Map
+}
+
+type Profile {
+    ID: UUID!
+    Name: String!
+    Email: String!
+    Shipping: Shipping!
+    Billing: Billing!
+}
+
+type ProfileGroup {
+    ID: UUID!
+    Name: String!
+    Profiles: [Profile!]
+}
+
+type Proxy {
+    ID: UUID!
+    Username: String
+    Password: String
+    IP: String!
+    Port: String!
+}
+
+type ProxyList {
+    ID: UUID!
+    Name: String!
+    Type: ProxyListType!
+    Proxies: [Proxy!]
+}
+
+enum ProxyListType {
+    Residential
+    Datacenter
+    ISP
+}
+
+type ProxyTest {
+    Latency: Int!
+    Status: ProxyTestStatus!
+    ProxyID: String!
+}
+
+enum ProxyTestStatus {
+    Pinging
+    NotPinging
 }
 
 type Query {
-    getScheduledTasks: [Task]!
+    getSettings: Settings!
+    testSuccessWebhook: Boolean!
+    testDeclineWebhook: Boolean!
+    getAllAccountGroups: [AccountGroup!]
+    getAccountGroup(accountGroupID: UUID!): AccountGroup!
+    getApp: App!
+    moduleInformation: [Module!]
+    getProfile(profileID: UUID!): Profile!
+    getProfileGroup(profileGroupID: UUID!): ProfileGroup!
+    getProfileGroups: [ProfileGroup!]!
+    getProxyList(proxyListID: UUID!): ProxyList!
+    testProxyList(proxyListID: UUID!): [ProxyTest!]!
+    getAllProxyLists: [ProxyList!]
+    getTask(taskID: UUID!): Task!
+    getTaskGroup(taskGroupID: UUID!): TaskGroup!
+    getProduct(productID: UUID!): Product!
+    getAllTaskGroups: [TaskGroup!]
+    getAllTasks(taskGroupID: UUID!): [Task!]!
+    getUserData: Metadata!
+    getUserStatistics: [Statistic!]!
+    getUserLicense: License!
 }
 
-enum STATUS {
-    PADDING
-    STARTING
-    MONITORING
-    PRODUCT_FOUND
-    ADDING_TO_CART
-    SOLVING_CAPTCHA
-    CHECKING_OUT
-    CHECKED_OUT
-    ERROR
-    ACTION_NEEDED
-    GENERATING_COOKIES
-    TASK_NOT_FOUND
-    WAITING_FOR_CHECKOUT
-    CHECKOUT_ERROR
-    CHECKOUT_FAILED
-    CHECKOUT_DUPLICATE
-    CHECKOUT_OOS
-    CHECKOUT_DECLINE
-    CHECKOUT_WAITING_FOR_3DS
-    CHECKOUT_3DS_ERROR
-    LOGGING_IN
-    LOGGED_IN
-    PROCESSING
-    SUBMITTING_SHIPPING
-    SUBMITTING_PAYMENT
-    SUBMITTING_CHECKOUT
-    ADDED_TO_CART
-    STOPPED
-    PAUSING
-    PAUSED
-    CONTINUING
-    CONTINUED
-    RESTARTING
+type Session {
+    ID: UUID!
+    DeviceName: String!
+    DeviceType: DeviceType!
+    IP: String!
+    OS: String!
+    Expired: Boolean!
 }
 
-type Subscription {
-    taskUpdates(subscriptionTokens: [String!]!): TaskStatus!
+type Settings {
+    ID: UUID!
+    SuccessWebhook: String!
+    DeclineWebhook: String!
+    CheckoutDelay: Int!
+    ATCDelay: Int!
+}
+
+type Shipping {
+    ID: UUID!
+    FirstName: String!
+    LastName: String!
+    PhoneNumber: String!
+    BillingIsShipping: Boolean!
+    ShippingAddress: Address!
+    BillingAddress: Address
+}
+
+enum Site {
+    FinishLine
+    JD_Sports
+    YeezySupply
+    Supreme
+    Eastbay_US
+    Champs_US
+    Footaction_US
+    Footlocker_US
+    Bestbuy
+    Pokemon_Center
+    Panini_US
+    Topss
+    Nordstorm
+    End
+    Target
+    Amazon
+    Solebox
+    Onygo
+    Snipes
+    Ssense
+    Walmart
+    Hibbet
+    NewBalance
+}
+
+enum StatType {
+    CHECKOUTS
+    DECLINES
+    ERRORS
+    FAILED
+    COOKIE_GENS
+    RECAPTCHA_USAGE
+    TASKS_RUNNING
+    MONEY_SPENT
+}
+
+type Statistic {
+    ID: UUID!
+    Type: StatType!
+    PotentialProfit: Int
+    Axis: Map!
+    Value: Int
+    Spent: Float
+}
+
+enum Status {
+    FUNCTIONAL
+    DEGRADED
+    DOWN
+}
+
+type Stripe {
+    ID: UUID!
+    CustomerID: String!
+    SubscriptionID: String
+    RenewalDate: Time
 }
 
 type Task {
-    ID: String!
-    SubscriptionToken: String!
-    ControlToken: String!
-    StartTime: Time!
+    ID: UUID!
+    StartTime: Time
+    Product: Product
+    ProxyList: ProxyList
+    ProfileGroup: ProfileGroup
 }
 
-type TaskStatus {
-    TaskID: String!
-    Status: STATUS!
-    Error: String
-    Information: Map!
+type TaskGroup {
+    ID: UUID!
+    Name: String!
+    Tasks: [Task!]
+}
+
+enum Theme {
+    Variation1
+    Variation2
+    Variation3
+    Variation4
 }
 
 scalar Time
+
+scalar UUID
+
+input UpdatedTask {
+    StartTime: Time
+    ProductID: UUID
+    ProxyListID: UUID
+    ProfileGroupID: UUID
+    TaskGroupID: UUID
+}
+
+type User {
+    ID: UUID!
+    Disabled: Boolean!
+    License: License!
+    Statistics: [Statistic!]
+    App: App!
+    Metadata: Metadata!
+    Sessions: [Session!]
+}

@@ -27,7 +27,8 @@ const login = async (event: Electron.IpcMainInvokeEvent, key: string): Promise<L
   );
 
   // Close out of the authentication window and open the main frame
-  BrowserWindow.fromId(event.frameId).close();
+  const win = BrowserWindow.fromId(event.frameId);
+  if (win) win.close();
   await createMainWindow();
 
   return response;
