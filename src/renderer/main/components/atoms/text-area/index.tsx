@@ -3,7 +3,7 @@ import './styles.scss';
 
 const TextArea: React.FC<DetailedHTMLProps<TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>> = ({ ...rest }) => {
   return (
-    <textarea {...rest} className={'text-area'} />
+    <textarea {...rest} className={`text-area ${rest.className ? rest.className : ''}`} />
   );
 }
 

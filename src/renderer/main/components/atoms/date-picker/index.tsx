@@ -2,6 +2,7 @@ import React, {forwardRef, useState} from 'react';
 import DP from 'react-datepicker';
 import './styles.scss';
 import {DateTime} from 'luxon';
+import Input from '../input';
 
 type Props = {
   onChange: (e: string) => void;

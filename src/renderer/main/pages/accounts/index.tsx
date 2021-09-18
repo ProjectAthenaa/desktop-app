@@ -20,6 +20,9 @@ import base64 from 'base-64';
 import {deleteAccountGroupRequest} from '../../store/accounts/reducers/delete-account-group';
 import {updateProxyListRequest} from '../../store/proxies/reducers/update-proxy-list';
 import {Proxy} from '../../../../types/proxy';
+import SideModalHeader from '../../components/molecules/side-modal-header';
+import SideModalFooter from '../../components/molecules/side-modal-footer';
+import SideModalBody from '../../components/molecules/side-modal-body';
 
 
 const Accounts: React.FC = () => {
@@ -132,13 +135,19 @@ const Accounts: React.FC = () => {
   return (
     <div className={'task-page'}>
       <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
+        <SideModalHeader>Account Import</SideModalHeader>
         <form onSubmit={profileFormMethods.handleSubmit(handleSubmission)}>
-          <TextArea
-            placeholder={'email:password'}
-            onChange={e => setAccountsTextArea(e.target.value)}
-            value={accountsTextArea}
-          />
-          <Button type={'submit'}>Import Accounts</Button>
+          <SideModalBody>
+            <TextArea
+              placeholder={'email:password'}
+              onChange={e => setAccountsTextArea(e.target.value)}
+              value={accountsTextArea}
+              className={'fill'}
+            />
+          </SideModalBody>
+          <SideModalFooter>
+            <Button type={'submit'}>Import Accounts</Button>
+          </SideModalFooter>
         </form>
       </SideModal>
       <GroupTable

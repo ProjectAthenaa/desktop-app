@@ -6,8 +6,13 @@
   border-radius: 6px;
   appearance: none;
   outline: none;
-  padding: 9px 45px 9px 15px;
+  padding: 9px 15px;
   background-position: calc(100% - 15px) center;
   background-repeat: no-repeat;
   resize: none;
+
+  &.fill {
+    width: 100%;
+    height: calc(100vh - 240px);
+  }
 }

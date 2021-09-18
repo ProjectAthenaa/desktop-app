@@ -16,6 +16,9 @@ import Button from '../../components/atoms/button';
 import {deleteProxyListRequest} from '../../store/proxies/reducers/delete-proxy-list';
 import {ProxyListType} from '../../../../types/proxy';
 import {updateProfileGroupRequest} from '../../store/profiles/reducers/update-profile-group';
+import SideModalHeader from '../../components/molecules/side-modal-header';
+import SideModalBody from '../../components/molecules/side-modal-body';
+import SideModalFooter from '../../components/molecules/side-modal-footer';
 
 
 const Proxies: React.FC = () => {
@@ -132,13 +135,20 @@ const Proxies: React.FC = () => {
   return (
     <div className={'task-page'}>
       <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
+        <SideModalHeader>Update Proxies</SideModalHeader>
+
         <form onSubmit={proxyListMethods.handleSubmit(handleSubmission)}>
-          <TextArea
-            placeholder={'username:password:ip:port'}
-            onChange={e => setProxiesTextArea(e.target.value)}
-            value={proxiesTextArea}
-          />
-          <Button type={'submit'}>Update Proxies</Button>
+          <SideModalBody>
+            <TextArea
+              placeholder={'username:password:ip:port'}
+              onChange={e => setProxiesTextArea(e.target.value)}
+              value={proxiesTextArea}
+              className={'fill'}
+            />
+          </SideModalBody>
+          <SideModalFooter>
+            <Button type={'submit'}>Update Proxies</Button>
+          </SideModalFooter>
         </form>
       </SideModal>
       <GroupTable

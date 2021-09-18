@@ -32,6 +32,9 @@ import {updateTaskRequest} from '../../store/tasks/reducers/update-task';
 import {DateTime} from 'luxon';
 import SideModalHeader from '../../components/molecules/side-modal-header';
 import {startTasksRequest} from '../../store/tasks/reducers/start-tasks';
+import SideModalBody from '../../components/molecules/side-modal-body';
+import SideModalFooter from '../../components/molecules/side-modal-footer';
+import Input from '../../components/atoms/input';
 
 
 // TODO Create Task Status enum
@@ -163,6 +166,7 @@ const Tasks: React.FC<Props> = () => {
           handleDelete={e => setPositiveKeywords(positiveKeywords.filter((k, i) => e !== i))}
           placeholder={'Positive Keywords'}
         />
+        <br />
         <TagInput
           type={'negative'}
           tags={negativeKeywords}
@@ -182,7 +186,7 @@ const Tasks: React.FC<Props> = () => {
     return (
       <FormItem>
         <Label htmlFor={field.FieldKey}>{field.Label}</Label>
-        <input type="text" {...taskFormMethods.register(`Product.Metadata.${field.FieldKey}`)}/>
+        <Input type="text" {...taskFormMethods.register(`Product.Metadata.${field.FieldKey}`)}/>
       </FormItem>
     )
   };
@@ -205,62 +209,73 @@ const Tasks: React.FC<Props> = () => {
           <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
             <SideModalHeader>Task Creation</SideModalHeader>
             <form onSubmit={taskFormMethods.handleSubmit(handleSubmission)}>
-              <FormItem>
-                <Label htmlFor={'site'}>Product Name</Label>
-                <input type={'text'} {...taskFormMethods.register('Product.Name')}/>
-              </FormItem>
-              <FormItem>
-                <Label htmlFor={'site'}>Start Time</Label>
-                {!skippingTime && (
-                  <DatePicker onChange={e => setStart(e)} />
-                )}
-                <Label htmlFor={'skip-time'}>
-                  <input
-                    id={'skip-time'}
-                    type={'checkbox'}
-                    checked={skippingTime}
-                    onChange={e => setSkippingTime(e.target.checked)}
-                  />{' '}
-                  {skippingTime ? 'Skipped' : 'Skip?'}
-                </Label>
-              </FormItem>
-              <FormItem>
-                <Label htmlFor={'site'}>Image Url</Label>
-                <input type={'text'} {...taskFormMethods.register('Product.Image')}/>
-              </FormItem>
-              <FormItem>
-                <Label htmlFor={'site'}>Proxy List</Label>
-                <Select name={`ProxyListID`} {...taskFormMethods.register('ProxyListID')}>
-                  {proxyLists.map(proxyList => (
-                    <option value={proxyList.ID} key={proxyList.ID}>{proxyList.Name}</option>
-                  ))}
-                </Select>
-              </FormItem>
-              <FormItem>
-                <Label htmlFor={'site'}>Profile Group</Label>
-                <Select name={`ProfileGroupID`} {...taskFormMethods.register('ProfileGroupID')}>
-                  {profileGroups.map(profileGroup => (
-                    <option value={profileGroup.ID} key={profileGroup.ID}>{profileGroup.Name}</option>
-                  ))}
-                </Select>
-              </FormItem>
-              <FormItem>
-                <Label htmlFor={'site'}>Site</Label>
-                <Select
-                  defaultValue={0}
-                  onChange={e => setSelectedModule(parseInt(e.target.value))}
-                  id={'module'}>
-                  {moduleInformation.map((module, index) => (
-                    <option value={index} disabled={module.Status === ModuleStatus.DOWN} key={module.Name}>{ module.Name }</option>
-                  ))}
-                </Select>
-              </FormItem>
-              {moduleInformation[selectedModule].Fields.map(field => (
-                <div key={field.FieldKey}>
-                  {getFieldFor(field)}
-                </div>
-              ))}
-              <Button type={'submit'}>Create Task</Button>
+              <SideModalBody>
+                <FormItem>
+                  <Label htmlFor={'site'}>Product Name</Label>
+                  <Input type={'text'} {...taskFormMethods.register('Product.Name')}/>
+                </FormItem>
+                <FormItem>
+                  <Label htmlFor={'site'}>Start Time</Label>
+                  {!skippingTime && (
+                    <DatePicker onChange={e => setStart(e)} />
+                  )}
+                  <br/><br/>
+                  <Label htmlFor={'skip-time'}>
+                    <input
+                      id={'skip-time'}
+                      type={'checkbox'}
+                      checked={skippingTime}
+                      onChange={e => setSkippingTime(e.target.checked)}
+                    />{' '}
+                    {skippingTime ? 'Skipped' : 'Skip?'}
+                  </Label>
+                </FormItem>
+                <FormItem>
+                  <Label htmlFor={'site'}>Image Url</Label>
+                  <Input type={'text'} {...taskFormMethods.register('Product.Image')}/>
+                </FormItem>
+                <hr/>
+                <h3>Configuration</h3>
+                <FormItem>
+                  <Label htmlFor={'site'}>Proxy List</Label>
+                  <Select name={`ProxyListID`} {...taskFormMethods.register('ProxyListID')}>
+                    {proxyLists.map(proxyList => (
+                      <option value={proxyList.ID} key={proxyList.ID}>{proxyList.Name}</option>
+                    ))}
+                  </Select>
+                </FormItem>
+                <FormItem>
+                  <Label htmlFor={'site'}>Profile Group</Label>
+                  <Select name={`ProfileGroupID`} {...taskFormMethods.register('ProfileGroupID')}>
+                    {profileGroups.map(profileGroup => (
+                      <option value={profileGroup.ID} key={profileGroup.ID}>{profileGroup.Name}</option>
+                    ))}
+                  </Select>
+                </FormItem>
+                <hr/>
+                <h3>Site Selection</h3>
+                <FormItem>
+                  <Label htmlFor={'site'}>Site</Label>
+                  <Select
+                    defaultValue={0}
+                    onChange={e => setSelectedModule(parseInt(e.target.value))}
+                    id={'module'}>
+                    {moduleInformation.map((module, index) => (
+                      <option value={index} disabled={module.Status === ModuleStatus.DOWN} key={module.Name}>{ module.Name }</option>
+                    ))}
+                  </Select>
+                </FormItem>
+                <hr/>
+                <h3>{moduleInformation[selectedModule].Name}</h3>
+                {moduleInformation[selectedModule].Fields.map(field => (
+                  <div key={field.FieldKey}>
+                    {getFieldFor(field)}
+                  </div>
+                ))}
+              </SideModalBody>
+              <SideModalFooter>
+                <Button type={'submit'}>Create Task</Button>
+              </SideModalFooter>
             </form>
           </SideModal>
         )}
