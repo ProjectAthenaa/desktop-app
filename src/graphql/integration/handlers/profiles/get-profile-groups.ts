@@ -47,7 +47,7 @@ export interface FetchedProfileGroupSlim {
 export type FetchedProfileGroups = Array<FetchedProfileGroupSlim>
 
 const getProfileGroups = async (): Promise<{ groups: FetchedProfileGroups, selectedProfileGroup: FetchedProfileGroup | null }> => {
-  const response = await integrationClient()
+  const response = await (await integrationClient())
     .request<{ getProfileGroups: FetchedProfileGroups }>(GET_PROFILE_GROUPS);
 
   if (response.getProfileGroups.length === 0) return {
@@ -55,7 +55,7 @@ const getProfileGroups = async (): Promise<{ groups: FetchedProfileGroups, selec
     selectedProfileGroup: null
   };
 
-  const firstProfileResponse = await integrationClient()
+  const firstProfileResponse = await (await integrationClient())
     .request<{ getProfileGroup: FetchedProfileGroup }>(GET_FIRST_PROFILE_GROUP, {
       profileGroupID: response.getProfileGroups[0].ID
     });

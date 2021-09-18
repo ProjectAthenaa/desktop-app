@@ -51,7 +51,7 @@ export interface FetchedTaskGroupSlim {
 export type FetchedTaskGroups = Array<FetchedTaskGroupSlim>
 
 const getTaskGroups = async (): Promise<{ groups: FetchedTaskGroups, selectedTaskGroup: FetchedTaskGroup | null }> => {
-  const response = await integrationClient()
+  const response = await (await integrationClient())
     .request<{ getAllTaskGroups: FetchedTaskGroups }>(GET_TASK_GROUPS);
 
   if (response.getAllTaskGroups.length === 0) return {
@@ -59,7 +59,7 @@ const getTaskGroups = async (): Promise<{ groups: FetchedTaskGroups, selectedTas
     selectedTaskGroup: null,
   };
 
-  const firstTaskResponse = await integrationClient()
+  const firstTaskResponse = await (await integrationClient())
     .request<{ getTaskGroup: FetchedTaskGroup }>(GET_FIRST_TASK_GROUP, {
       taskGroupID: response.getAllTaskGroups[0].ID
     });

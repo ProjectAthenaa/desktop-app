@@ -16,7 +16,7 @@ export interface ScheduledTask {
 }
 
 export const sendCommand = async (token: string, command: Command): Promise<boolean> => {
-  const response = await taskClient()
+  const response = await (await taskClient())
     .request<{ sendCommand: boolean }>(SEND_COMMAND, {
       ControlToken: token, Command: command
     });

@@ -15,7 +15,7 @@ const GET_GROUP = gql`
 `
 
 const getGroup = async (groupId: string): Promise<AccountGroup> => {
-  const response = await integrationClient().request<{ getAccountGroup: AccountGroup }>(GET_GROUP, {
+  const response = await (await integrationClient()).request<{ getAccountGroup: AccountGroup }>(GET_GROUP, {
     accountGroupID: groupId
   });
 

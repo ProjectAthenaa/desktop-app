@@ -21,7 +21,7 @@ const CREATE_PROXY_LIST = gql`
 `;
 
 export const createProxyList = async (proxyList: NewProxyList): Promise<ProxyList> => {
-  const response = await integrationClient()
+  const response = await (await integrationClient())
     .request<{ createProxyList: ProxyList }>(CREATE_PROXY_LIST, {
       proxyList: proxyList
     });

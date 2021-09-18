@@ -4,10 +4,11 @@ import {DeviceType, LoginResponse, Session} from '../../../types/auth';
 import store from '../../../main/util/store';
 import {machineId} from 'node-machine-id';
 import {BrowserWindow} from 'electron';
-import {createAuthenticationWindow} from '../../../index';
+import {createAuthenticationWindow, KEYTAR_ACCOUNT, KEYTAR_SERVICE} from '../../../index';
 import loginRequest from './login';
 import {hostname, type} from 'os';
 import {handleTaskUpdates} from '../../tasks/handlers/task-updates';
+import keytar from '../../../main/util/keytar';
 
 export const REFRESH_SESSION = gql`
     mutation RefreshSession($session: SessionInput!) {
@@ -24,7 +25,7 @@ export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<No
   let sub: {unsubscribe: () => any};
   return setInterval(async () => {
     const hardwareId = await machineId(true);
-    const sessionId: string = store.get('sessionId');
+    const sessionId = await keytar.getPassword(KEYTAR_SERVICE, KEYTAR_ACCOUNT);
 
     let response: { refreshSession: Session };
 
@@ -56,7 +57,11 @@ export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<No
           DeviceType: DeviceType.Desktop,
         });
 
-        store.set('sessionId', loginResponse.Session.ID);
+        await keytar.setPassword(
+          KEYTAR_SERVICE,
+          KEYTAR_ACCOUNT,
+          loginResponse.Session.ID
+        );
 
         return;
       } catch (error) {
@@ -69,7 +74,7 @@ export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<No
     const session = response.refreshSession;
 
     if (hardwareId !== session.HardwareID) {
-      store.set('sessionId', null);
+      await keytar.deletePassword(KEYTAR_SERVICE, KEYTAR_ACCOUNT);
       store.set('token', null);
 
       // Close main window and open auth window
@@ -79,6 +84,10 @@ export const refreshSessionHeartbeat = async (window: BrowserWindow): Promise<No
       return;
     }
 
-    store.set('sessionId', session.ID);
+    await keytar.setPassword(
+      KEYTAR_SERVICE,
+      KEYTAR_ACCOUNT,
+      session.ID
+    );
   }, ONE_MINUTE * 15);
 };

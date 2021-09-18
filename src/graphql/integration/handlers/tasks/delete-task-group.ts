@@ -9,7 +9,7 @@ const DELETE_TASK_GROUP = gql`
 
 
 const deleteTaskGroup = async (taskGroupId: string): Promise<boolean> => {
-  const response = await integrationClient()
+  const response = await (await integrationClient())
     .request<{ deleteTaskGroup: boolean }>(DELETE_TASK_GROUP, { taskGroupID: taskGroupId });
 
   return response.deleteTaskGroup;

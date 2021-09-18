@@ -29,7 +29,7 @@ const CREATE_PROFILE_GROUP = gql`
 `;
 
 export const createProfileGroup = async (taskGroup: ProfileGroupCreation): Promise<FetchedProfileGroup> => {
-  const response = await integrationClient()
+  const response = await (await integrationClient())
     .request<{ createProfileGroup: FetchedProfileGroup }>(CREATE_PROFILE_GROUP, {
       newProfileGroup: taskGroup
     });

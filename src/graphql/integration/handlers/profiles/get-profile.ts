@@ -55,7 +55,7 @@ export interface FetchedProfile {
 }
 
 const getProfile = async (profileId: string): Promise<FetchedProfile> => {
-  const response = await integrationClient().request<{ getProfile: Profile }>(GET_TASK, {
+  const response = await (await integrationClient()).request<{ getProfile: Profile }>(GET_TASK, {
     profileID: profileId
   });
 

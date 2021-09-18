@@ -14,7 +14,7 @@ const CREATE_ACCOUNT_GROUP = gql`
 `;
 
 export const createAccountGroup = async (accountGroup: AccountGroupInput): Promise<AccountGroup> => {
-  const response = await integrationClient()
+  const response = await (await integrationClient())
     .request<{ createAccountGroup: AccountGroup }>(CREATE_ACCOUNT_GROUP, {
       newAccountGroup: accountGroup,
     });

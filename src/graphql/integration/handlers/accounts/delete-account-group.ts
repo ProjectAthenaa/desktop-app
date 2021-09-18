@@ -8,7 +8,7 @@ const DELETE_ACCOUNT = gql`
 `;
 
 const deleteAccountGroup = async (accountGroupId: string): Promise<boolean> => {
-  const response = await integrationClient().request<{ deleteAccountGroup: boolean }>(DELETE_ACCOUNT, {
+  const response = await (await integrationClient()).request<{ deleteAccountGroup: boolean }>(DELETE_ACCOUNT, {
     accountGroupID: accountGroupId,
   });
 

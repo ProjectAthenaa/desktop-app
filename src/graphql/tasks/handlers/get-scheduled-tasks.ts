@@ -22,7 +22,7 @@ export interface ScheduledTask {
 }
 
 export const getScheduledTasks = async (): Promise<ScheduledTask[]> => {
-    const response = await taskClient()
+    const response = await (await taskClient())
       .request<{ getScheduledTasks: ScheduledTask[] }>(GET_SCHEDULED_TASKS);
 
     return response.getScheduledTasks;

@@ -20,7 +20,7 @@ const GET_PROXY_LIST = gql`
 `
 
 const getProxyList = async (proxyListId: string): Promise<ProxyList> => {
-  const response = await integrationClient().request<{ getProxyList: ProxyList }>(GET_PROXY_LIST, {
+  const response = await (await integrationClient()).request<{ getProxyList: ProxyList }>(GET_PROXY_LIST, {
     proxyListID: proxyListId
   });
 

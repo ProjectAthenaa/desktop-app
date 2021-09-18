@@ -43,7 +43,7 @@ const UPDATE_TASK = gql`
 `;
 
 const updateTask = async (taskId: string, updatedPayload: UpdatedTask): Promise<FetchedTask> => {
-  const response = await integrationClient().request<{ updateTask: FetchedTask }>(UPDATE_TASK, {
+  const response = await (await integrationClient()).request<{ updateTask: FetchedTask }>(UPDATE_TASK, {
     taskID: taskId,
     updatedTask: {
       StartTime: updatedPayload.StartTime

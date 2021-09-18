@@ -9,7 +9,7 @@ const DELETE_PROFILE_GROUP = gql`
 
 
 const deleteProfileGroup = async (profileGroupId: string): Promise<boolean> => {
-  const response = await integrationClient()
+  const response = await (await integrationClient())
     .request<{ deleteProfileGroup: boolean }>(DELETE_PROFILE_GROUP, { profileGroupID: profileGroupId });
 
   return response.deleteProfileGroup;

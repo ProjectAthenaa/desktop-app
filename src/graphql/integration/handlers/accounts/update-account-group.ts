@@ -14,7 +14,7 @@ const UPDATE_GROUP = gql`
 `;
 
 const updateAccountGroup = async (accountGroupId: string, updatedAccountGroup: AccountGroupInput): Promise<AccountGroup> => {
-  const response = await integrationClient().request<{ updateAccountGroup: AccountGroup }>(UPDATE_GROUP, {
+  const response = await (await integrationClient()).request<{ updateAccountGroup: AccountGroup }>(UPDATE_GROUP, {
     accountGroupID: accountGroupId,
     updatedAccountGroup
   });

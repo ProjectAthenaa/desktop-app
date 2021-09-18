@@ -14,7 +14,7 @@ const GET_ACCOUNT_GROUPS = gql`
 `;
 
 const getAccountGroups = async (): Promise<AccountGroup[]> => {
-  const response = await integrationClient()
+  const response = await (await integrationClient())
     .request<{ getAllAccountGroups: AccountGroup[] }>(GET_ACCOUNT_GROUPS);
 
   return response.getAllAccountGroups;

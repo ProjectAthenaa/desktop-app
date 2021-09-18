@@ -31,7 +31,7 @@ const taskUpdatesObservable = (variables?: Record<string, unknown>) => createSub
   variables
 );
 
-type OT =  Observable<FetchResult<{[p: string]: any}, Record<string, any>, Record<string, any>>>;
+type OT =  Observable<FetchResult<{[p: string]: unknown}, Record<string, unknown>, Record<string, unknown>>>;
 
 export const handleTaskUpdates = async (ids: { ids?: string[]; windowId: number; }): Promise<{ unsubscribe: () => void }> => {
   const window = BrowserWindow.fromId(ids.windowId);
@@ -55,8 +55,6 @@ export const handleTaskUpdates = async (ids: { ids?: string[]; windowId: number;
       handleTaskUpdates(ids);
     }
   });
-
-  console.log(taskUpdatesClient)
 
   return taskUpdatesSubscription;
 };

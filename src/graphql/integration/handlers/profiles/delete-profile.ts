@@ -8,7 +8,7 @@ const DELETE_PROFILE = gql`
 `;
 
 const deleteProfile = async (profileId: string): Promise<boolean> => {
-  const response = await integrationClient().request<{ deleteProfile: boolean }>(DELETE_PROFILE, {
+  const response = await (await integrationClient()).request<{ deleteProfile: boolean }>(DELETE_PROFILE, {
     profileID: profileId,
   });
 

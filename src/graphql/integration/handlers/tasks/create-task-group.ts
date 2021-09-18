@@ -30,7 +30,7 @@ const CREATE_TASK_GROUP = gql`
 `;
 
 export const createTaskGroup = async (taskGroup: TaskGroupCreation): Promise<FetchedTaskGroup> => {
-  const response = await integrationClient()
+  const response = await (await integrationClient())
     .request<{ createTaskGroup: FetchedTaskGroup }>(CREATE_TASK_GROUP, {
       newTaskGroup: taskGroup
     });

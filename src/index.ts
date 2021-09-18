@@ -1,4 +1,4 @@
-import {app, BrowserWindow, session} from 'electron';
+import {app, BrowserWindow} from 'electron';
 import isDev from 'electron-is-dev';
 import * as Sentry from '@sentry/node';
 import './main';
@@ -7,13 +7,16 @@ import {machineId} from 'node-machine-id';
 import {DeviceType,} from './types/auth';
 import {refreshSessionHeartbeat} from './graphql/auth/handlers/refresh-session';
 import loginRequest from './graphql/auth/handlers/login';
-import {hostname, type} from 'os';
+import {hostname, type, userInfo} from 'os';
 import installExtensions, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import {handleTaskUpdates} from './graphql/tasks/handlers/task-updates';
-
+import keytar from './main/util/keytar';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const AUTH_WINDOW_WEBPACK_ENTRY: string;
+
+export const KEYTAR_SERVICE = 'athena-aio';
+export const KEYTAR_ACCOUNT = userInfo().username;
 
 Sentry.init({
   dsn: 'https://1e22a3786c39402886f145cbae15881b@o706779.ingest.sentry.io/5867060',
@@ -92,19 +95,10 @@ export const createMainWindow = async (): Promise<void> => {
 };
 
 const onReady = async (): Promise<void> => {
-  // store.set('token', null);
-  // store.set('sessionId', null);
-
   const hardwareId = await machineId(true);
   const operatingSystem = type();
   const hostName = hostname();
   const token: string | null = store.get('token');
-
-  // await authClient.request(gql`
-  //     mutation {
-  //         reBindHardwareID(key: "ATH-7d8ed177-52d6-4b11-ac35-22da0712d3d0", newHardwareID: "${hardwareId}")
-  //     }
-  // `);
 
   // If the token doesn't exist, open the auth window.
   if (!token) return await createAuthenticationWindow();
@@ -118,10 +112,15 @@ const onReady = async (): Promise<void> => {
       DeviceType: DeviceType.Desktop,
     });
 
-    // The session is now valid, store the ID and create the main window
-    store.set('sessionId', response.Session.ID);
+    // The session is now valid, store the session and create the main window
+    await keytar.setPassword(
+      KEYTAR_SERVICE,
+      KEYTAR_ACCOUNT,
+      response.Session.ID
+    );
     await createMainWindow();
   } catch (error) {
+    console.log(error);
     return await createAuthenticationWindow();
   }
 };

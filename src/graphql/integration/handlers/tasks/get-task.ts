@@ -71,7 +71,7 @@ export interface FetchedTask {
 }
 
 const getTask = async (taskId: string): Promise<FetchedTask> => {
-  const response = await integrationClient().request<{ getTask: FetchedTask }>(GET_TASK, {
+  const response = await (await integrationClient()).request<{ getTask: FetchedTask }>(GET_TASK, {
     taskID: taskId
   });
 

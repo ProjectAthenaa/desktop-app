@@ -19,7 +19,7 @@ const GET_MODULE_INFORMATION = gql`
 `;
 
 const getModuleInformation = async (): Promise<ModuleInformation[]> => {
-  const response = await integrationClient()
+  const response = await (await integrationClient())
     .request<{ moduleInformation: ModuleInformation[] }>(GET_MODULE_INFORMATION);
 
   return response.moduleInformation;

@@ -8,7 +8,7 @@ const START_TASKS = gql`
 `;
 
 export const startTasks = async (taskIDs: string[]): Promise<boolean> => {
-    const response = await taskClient()
+    const response = await (await taskClient())
       .request<{ startTasks: boolean }>(START_TASKS, {
           taskIDs
       });

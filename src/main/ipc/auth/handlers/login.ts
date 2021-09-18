@@ -4,7 +4,8 @@ import store from '../../../util/store';
 import {machineId} from 'node-machine-id';
 import { type, hostname } from 'os';
 import {BrowserWindow} from 'electron';
-import {createMainWindow} from '../../../../index';
+import {createMainWindow, KEYTAR_ACCOUNT, KEYTAR_SERVICE} from '../../../../index';
+import keytar from '../../../util/keytar';
 
 const login = async (event: Electron.IpcMainInvokeEvent, key: string): Promise<LoginResponse> => {
   const hardwareId = await machineId(true);
@@ -19,7 +20,11 @@ const login = async (event: Electron.IpcMainInvokeEvent, key: string): Promise<L
   });
 
   store.set('token', key);
-  store.set('sessionId', response.Session.ID);
+  await keytar.setPassword(
+    KEYTAR_SERVICE,
+    KEYTAR_ACCOUNT,
+    response.Session.ID
+  );
 
   // Close out of the authentication window and open the main frame
   BrowserWindow.fromId(event.frameId).close();

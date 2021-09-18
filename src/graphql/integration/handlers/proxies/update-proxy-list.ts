@@ -21,7 +21,7 @@ const UPDATE_PROXY_LIST = gql`
 `;
 
 const updateProxyList = async (proxyListID: string, proxyList: NewProxyList): Promise<ProxyList> => {
-  const response = await integrationClient().request<{ updateProxyList: ProxyList }>(UPDATE_PROXY_LIST, {
+  const response = await (await integrationClient()).request<{ updateProxyList: ProxyList }>(UPDATE_PROXY_LIST, {
     proxyListID: proxyListID,
     proxyList
   });

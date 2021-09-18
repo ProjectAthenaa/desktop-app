@@ -50,7 +50,7 @@ export interface FetchedProfileGroup {
 
 
 const getGroup = async (groupId: string): Promise<FetchedProfileGroup> => {
-  const response = await integrationClient().request<{ getProfileGroup: FetchedProfileGroup }>(GET_GROUP, {
+  const response = await (await integrationClient()).request<{ getProfileGroup: FetchedProfileGroup }>(GET_GROUP, {
     profileGroupID: groupId
   });
 

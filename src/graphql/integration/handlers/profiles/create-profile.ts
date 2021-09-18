@@ -24,7 +24,7 @@ const CREATE_PROFILE = gql`
 `;
 
 const createProfile = async (newProfile: ProfileCreation): Promise<FetchedProfileGroupsProfile> => {
-  const response = await integrationClient().request<{ createProfile: FetchedProfileGroupsProfile }>(CREATE_PROFILE, {
+  const response = await (await integrationClient()).request<{ createProfile: FetchedProfileGroupsProfile }>(CREATE_PROFILE, {
     newProfile
   });
   return response.createProfile;

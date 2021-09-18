@@ -73,7 +73,7 @@ export interface FetchedTaskGroup {
 }
 
 const getGroup = async (groupId: string): Promise<FetchedTaskGroup> => {
-  const response = await integrationClient().request<{ getTaskGroup: FetchedTaskGroup }>(GET_GROUP, {
+  const response = await (await integrationClient()).request<{ getTaskGroup: FetchedTaskGroup }>(GET_GROUP, {
     taskGroupID: groupId
   });
 
