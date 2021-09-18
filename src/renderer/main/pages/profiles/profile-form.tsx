@@ -6,8 +6,12 @@ import {ProfileCreation} from '../../../../types/profile';
 import Input from '../../components/atoms/input';
 import FormItem from '../../components/atoms/form-item';
 
-const ProfileForm: React.FC = () => {
-  const [shown, setShown] = useState(false);
+type Props = {
+  shown: boolean;
+  setShown: (to: boolean) => void;
+}
+
+const ProfileForm: React.FC<Props> = ({ shown, setShown }) => {
   const {register} = useFormContext<ProfileCreation>();
 
   return (

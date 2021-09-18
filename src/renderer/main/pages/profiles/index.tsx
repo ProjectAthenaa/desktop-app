@@ -24,9 +24,11 @@ import SideModalHeader from '../../components/molecules/side-modal-header';
 import SideModalBody from '../../components/molecules/side-modal-body';
 import SideModalFooter from '../../components/molecules/side-modal-footer';
 import Button from '../../components/atoms/button';
+import {newProfileSchema} from '../../util/validation/profile';
 
 const Profiles: React.FC = () => {
   const dispatch = useDispatch();
+  const [shown, setShown] = useState(false);
   const selectedProfileGroup = useSelector((state: RootState) => state.profiles.selectedProfileGroup);
   const selectedProfile = useSelector((state: RootState) => state.profiles.selectedProfile);
   const profileGroups = useSelector((state: RootState) => state.profiles.profileGroups);
@@ -35,21 +37,33 @@ const Profiles: React.FC = () => {
   const [modalShown, setModalShown] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
 
-  const handleSubmission: SubmitHandler<ProfileCreation> = data =>
-    !editingProfile
+  const handleSubmission: SubmitHandler<ProfileCreation> = async data => {
+    try {
+      await newProfileSchema(data.Shipping.BillingIsShipping).validate(data);
+    } catch (error) {
+      return toast.error(
+        error.errors[0],
+        {
+          position: 'bottom-left'
+        }
+      );
+    }
+
+    return !editingProfile
       ? createProfile(data)
       : updateProfile(data);
+  }
 
   const updateProfile: SubmitHandler<ProfileCreation> = data => {
     if (!selectedProfileGroup) return toast.error('You haven\'t selected a profile group.');
     if (selectedProfile) return toast.error('You haven\'t selected profile.');
 
-    // Insert validation here
-
     dispatch(updateProfileRequest({
       ...data,
       ID: selectedProfile.ID,
     }));
+
+    closeAndResetModal();
   };
 
   const launchEditor = (id: string) => {
@@ -60,12 +74,12 @@ const Profiles: React.FC = () => {
   const createProfile: SubmitHandler<ProfileCreation> = data => {
     if (!selectedProfileGroup) return toast.error('You haven\'t selected a profile group');
 
-    // Insert validation here
-
     dispatch(createProfileRequest({
       ...data,
       GroupID: selectedProfileGroup.ID
     }));
+
+    closeAndResetModal();
   };
 
   const deleteProfile = (id: string) => dispatch(deleteProfileRequest({ profileId: id }));
@@ -81,27 +95,27 @@ const Profiles: React.FC = () => {
     if (editingProfile) setEditingProfile(false);
 
     setModalShown(false);
-
-    // Reset form
+    setShown(false);
+    profileFormMethods.reset();
   };
 
   return (
     <div className={'task-page'}>
       <FormProvider {...profileFormMethods}>
         <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
-          <SideModalHeader>Task Creation</SideModalHeader>
-          <SideModalBody>
+          <SideModalHeader>Profile Creation</SideModalHeader>
             <form onSubmit={profileFormMethods.handleSubmit(handleSubmission)}>
-              {
-                editingProfile
-                  ? selectedProfile ? <ProfileForm /> : <></>
-                  : <ProfileForm />
-              }
-            </form>
-          </SideModalBody>
-          <SideModalFooter>
-            <Button type={'submit'}>Create Profile</Button>
-          </SideModalFooter>
+            <SideModalBody>
+                {
+                  editingProfile
+                    ? selectedProfile ? <ProfileForm shown={shown} setShown={setShown}/> : <></>
+                    : <ProfileForm shown={shown} setShown={setShown}/>
+                }
+            </SideModalBody>
+            <SideModalFooter>
+              <Button type={'submit'}>Create Profile</Button>
+            </SideModalFooter>
+          </form>
         </SideModal>
       </FormProvider>
       <GroupTable<FetchedProfileGroupsProfile>
