@@ -7,7 +7,6 @@ import {BrowserWindow} from 'electron';
 import {createAuthenticationWindow, KEYTAR_ACCOUNT, KEYTAR_SERVICE} from '../../../index';
 import loginRequest from './login';
 import {hostname, type} from 'os';
-import {handleTaskUpdates} from '../../tasks/handlers/task-updates';
 import keytar from '../../../main/util/keytar';
 
 export const REFRESH_SESSION = gql`

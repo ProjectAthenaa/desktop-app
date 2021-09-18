@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/node';
 import './main';
 import store from './main/util/store';
 import {machineId} from 'node-machine-id';
-import {DeviceType,} from './types/auth';
+import {DeviceType, LoginResponse,} from './types/auth';
 import {refreshSessionHeartbeat} from './graphql/auth/handlers/refresh-session';
 import loginRequest from './graphql/auth/handlers/login';
 import {hostname, type, userInfo} from 'os';
@@ -118,11 +118,11 @@ const onReady = async (): Promise<void> => {
       KEYTAR_ACCOUNT,
       response.Session.ID
     );
-    await createMainWindow();
   } catch (error) {
-    console.log(error);
     return await createAuthenticationWindow();
   }
+
+  await createMainWindow();
 };
 
 app.on('ready', onReady);
