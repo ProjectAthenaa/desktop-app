@@ -106,10 +106,11 @@ const Profiles: React.FC = () => {
           <SideModalHeader>Profile Creation</SideModalHeader>
             <form onSubmit={profileFormMethods.handleSubmit(handleSubmission)}>
             <SideModalBody>
-                {
-                  editingProfile
-                    ? selectedProfile ? <ProfileForm shown={shown} setShown={setShown}/> : <></>
-                    : <ProfileForm shown={shown} setShown={setShown}/>
+                {editingProfile
+                  ? selectedProfile
+                    ? <ProfileForm shown={shown} setShown={setShown}/>
+                    : <></>
+                  : <ProfileForm shown={shown} setShown={setShown}/>
                 }
             </SideModalBody>
             <SideModalFooter>

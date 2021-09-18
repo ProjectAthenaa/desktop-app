@@ -55,7 +55,7 @@ export interface NewAddress {
   ShippingAddress?: Address;
   BillingAddress: Address;
 }
-
+//
 export interface NewBilling {
   CardHolderName: string;
   CardNumber: string;
