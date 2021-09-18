@@ -3,16 +3,16 @@ module.exports = [
     test: /\.node$/,
     use: 'node-loader',
   },
-  {
-    test: /\.(m?js|node)$/,
-    parser: { amd: false },
-    use: {
-      loader: '@timfish/webpack-asset-relocator-loader',
-      options: {
-        outputAssetBase: 'native_modules',
-      },
-    },
-  },
+  // {
+  //   test: /\.(m?js|node)$/,
+  //   parser: { amd: false },
+  //   use: {
+  //     loader: '@timfish/webpack-asset-relocator-loader',
+  //     options: {
+  //       outputAssetBase: 'native_modules',
+  //     },
+  //   },
+  // },
   {
     test: /\.tsx?$/,
     exclude: /(node_modules|\.webpack)/,
