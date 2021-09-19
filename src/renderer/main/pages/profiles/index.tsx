@@ -25,6 +25,7 @@ import SideModalBody from '../../components/molecules/side-modal-body';
 import SideModalFooter from '../../components/molecules/side-modal-footer';
 import Button from '../../components/atoms/button';
 import {newProfileSchema} from '../../util/validation/profile';
+import AreYouSure from '../../components/molecules/dialogues/are-you-sure';
 
 const Profiles: React.FC = () => {
   const dispatch = useDispatch();
@@ -91,7 +92,14 @@ const Profiles: React.FC = () => {
     }));
   };
 
+  const confirmClose = () => {
+    toast.warn(<AreYouSure yesCallback={closeAndResetModal} doThis={'close this form without saving'} />, {
+      toastId: 'profile-creation-close-confirm'
+    });
+  };
+
   const closeAndResetModal = () => {
+    if (profileFormMethods.getValues())
     if (editingProfile) setEditingProfile(false);
 
     setModalShown(false);
@@ -102,7 +110,7 @@ const Profiles: React.FC = () => {
   return (
     <div className={'task-page'}>
       <FormProvider {...profileFormMethods}>
-        <SideModal isOpen={modalShown} onCloseClick={closeAndResetModal}>
+        <SideModal isOpen={modalShown} onCloseClick={confirmClose}>
           <SideModalHeader>Profile Creation</SideModalHeader>
             <form onSubmit={profileFormMethods.handleSubmit(handleSubmission)}>
             <SideModalBody>

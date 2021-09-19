@@ -4,22 +4,30 @@ import Marquee from 'react-fast-marquee';
 import NotificationBellImage from '../../../assets/images/icons/notification';
 import CheckoutIcon from '../../../assets/images/icons/checkout';
 import DeclineIcon from '../../../assets/images/icons/decline';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../../store';
+import {clearNotifications, Notification, sawNotifications} from '../../../store/notifications';
+import {Status} from '../../../../../types/task';
 
 const NotificationPanel: React.FC = () => {
+  const notifications = useSelector((state: RootState) => state.notifications.notifications);
+  const seen = useSelector<RootState>(state => state.notifications.seen);
+  const dispatch = useDispatch();
   const [isShown, setIsShown] = useState(false);
-  const [notifications, setNotifications] = useState(['test']);
+  // const [notifications, setNotifications] = useState(['test']);
 
   const clearAllNotifications = () => {
-    // Make call to clear notifications. Assuming all went well, update notifications state
-    setNotifications([]);
+    dispatch(clearNotifications())
   };
 
-  const toggleShown = () => setIsShown(!isShown);
-  const hasNoNotifications = notifications.length === 0;
+  const toggleShown = () => {
+    if (!isShown) dispatch(sawNotifications())
+    setIsShown(!isShown);
+  }
 
   return (
     <div className={'notification-panel'}>
-      <button className={`bell-button${hasNoNotifications ? ' no-notifications' : ''}`} onClick={toggleShown}>
+      <button className={`bell-button${seen ? ' no-notifications' : ''}`} onClick={toggleShown}>
         {NotificationBellImage}
       </button>
       <div className={`notification-drop${isShown ? ' shown' : ''}`}>
@@ -28,83 +36,20 @@ const NotificationPanel: React.FC = () => {
           <button className={'heading-button'} onClick={clearAllNotifications}>Clear All</button>
         </div>
         <div className="list">
-          <div className="notification">
-            {CheckoutIcon}
-            <div className={'meta'}>
-              <h3>Checkout Success</h3>
-              <Marquee pauseOnHover gradientWidth={'5px'} speed={10}>
-                <p>5/24/21 10:05 AM - Jordan 1 Retro High Travis Scott</p>
-              </Marquee>
+          {notifications.map(notification => (
+            <div className="notification" key={notification.ID}>
+              {notification.Status === Status.CHECKED_OUT
+                ? CheckoutIcon
+                : DeclineIcon
+              }
+              <div className={'meta'}>
+                <h3>Checkout Success</h3>
+                <Marquee pauseOnHover gradientWidth={'5px'} speed={10}>
+                  <p>{ notification.Message }</p>
+                </Marquee>
+              </div>
             </div>
-          </div>
-          <div className="notification">
-            {DeclineIcon}
-            <div className={'meta'}>
-              <h3>Card Decline</h3>
-              <p>Your card on Task #1291 has been declined.</p>
-            </div>
-          </div>
-          <div className="notification">
-            {CheckoutIcon}
-            <div className={'meta'}>
-              <h3>Checkout Success</h3>
-              <Marquee pauseOnHover gradientWidth={'5px'} speed={10}>
-                <p>5/24/21 10:03 AM - Jordan 1 Retro High Travis Scott</p>
-              </Marquee>
-            </div>
-          </div>
-          <div className="notification">
-            {CheckoutIcon}
-            <div className={'meta'}>
-              <h3>Checkout Success</h3>
-              <Marquee pauseOnHover gradientWidth={'5px'} speed={10}>
-                <p>5/24/21 10:02 AM - Jordan 1 Retro High Travis Scott</p>
-              </Marquee>
-            </div>
-          </div>
-          <div className="notification">
-            {CheckoutIcon}
-            <div className={'meta'}>
-              <h3>Checkout Success</h3>
-              <Marquee pauseOnHover gradientWidth={'5px'} speed={10}>
-                <p>5/24/21 10:01 AM - Jordan 1 Retro High Travis Scott</p>
-              </Marquee>
-            </div>
-          </div>
-          <div className="notification">
-            {DeclineIcon}
-            <div className={'meta'}>
-              <h3>Card Decline</h3>
-              <p>Your card on Task #1291 has been declined.</p>
-            </div>
-          </div>
-          <div className="notification">
-            {CheckoutIcon}
-            <div className={'meta'}>
-              <h3>Checkout Success</h3>
-              <Marquee pauseOnHover gradientWidth={'5px'} speed={10}>
-                <p>5/24/21 10:03 AM - Jordan 1 Retro High Travis Scott</p>
-              </Marquee>
-            </div>
-          </div>
-          <div className="notification">
-            {CheckoutIcon}
-            <div className={'meta'}>
-              <h3>Checkout Success</h3>
-              <Marquee pauseOnHover gradientWidth={'5px'} speed={10}>
-                <p>5/24/21 10:02 AM - Jordan 1 Retro High Travis Scott</p>
-              </Marquee>
-            </div>
-          </div>
-          <div className="notification">
-            {CheckoutIcon}
-            <div className={'meta'}>
-              <h3>Checkout Success</h3>
-              <Marquee pauseOnHover gradientWidth={'5px'} speed={10}>
-                <p>5/24/21 10:01 AM - Jordan 1 Retro High Travis Scott</p>
-              </Marquee>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

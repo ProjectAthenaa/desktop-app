@@ -9,7 +9,10 @@ type Props = {
 const SideModal: React.FC<Props> = ({ isOpen, onCloseClick, children }) => {
   const modalContentRef = useRef();
 
-  useOutsideAlerter(modalContentRef, onCloseClick);
+  // TODO: Make this work to where a user can click and dialogue pops
+  // useOutsideAlerter(modalContentRef, () => {
+  //   if (isOpen) onCloseClick();
+  // });
 
   return (
     <div className={`side-modal ${isOpen ? 'shown' : ''}`}>

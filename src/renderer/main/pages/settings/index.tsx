@@ -1,23 +1,17 @@
 import React, {useState} from 'react';
-import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import './styles.scss';
-import TaskGroupHeader from '../../components/organisms/task-group-header';
-import FloatingHeaderTable, {ActionColor} from '../../components/molecules/floating-header-table';
-import PlayIcon from '../../assets/images/icons/play';
-import EditIcon from '../../assets/images/icons/edit';
-import DeleteIcon from '../../assets/images/icons/delete';
-import OverlayScrollbars from 'overlayscrollbars';
-import ipcRenderer from '../../util/ipc-renderer';
+import SideModalHeader from '../../components/molecules/side-modal-header';
 
-
-type Props = {
-  isOpen: boolean;
-}
-
-const Settings: React.FC<Props> = () => {
-
+const Settings: React.FC = () => {
   return (
-
+    <div className={'settings-page'}>
+      <section>
+        <SideModalHeader>Settings</SideModalHeader>
+      </section>
+      <section>
+        <SideModalHeader>Change Log</SideModalHeader>
+      </section>
+    </div>
   );
 };
 

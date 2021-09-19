@@ -43,7 +43,7 @@
     pointer-events: none;
     transform: translateY(10px);
     transition: transform 200ms ease, opacity 200ms ease;
-    z-index: 1000;
+    z-index: 99999;
 
     &.shown {
       opacity: 1;

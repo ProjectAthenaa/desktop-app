@@ -19,7 +19,7 @@ const Header: React.FC = () => {
   return (
     <div className={`header${title !== 'Dashboard' ? ' slim' : ''}`}>
       <h1>
-        <TextTransition text={title} inline springConfig={presets.stiff}/>
+        <TextTransition text={title} inline springConfig={presets.stiff} noOverflow />
       </h1>
       <div className="right">
         <Clock />

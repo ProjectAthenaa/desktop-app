@@ -1,5 +1,14 @@
 @import '../../assets/styles/vars';
 
 .settings-page {
+  display: grid;
+  grid-template-columns: 1fr 420px;
 
+  section {
+    height: calc(100vh - 30px);
+  }
+
+  section:last-child {
+    border-left: 1px solid #E6E6E6;
+  }
 }

@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './styles.scss';
 import SideNavigation from '../../components/organisms/side-navigation';
 import Header from '../../components/organisms/header';
-import { Switch, Route } from 'react-router-dom';
+import {Route, Switch} from 'react-router-dom';
 import Tasks from '../../pages/tasks';
 import Frame from '../../components/organisms/frame';
 import Profiles from '../../pages/profiles';
@@ -11,16 +11,34 @@ import Proxies from '../../pages/proxies';
 import Accounts from '../../pages/accounts';
 import {useDispatch} from 'react-redux';
 import ipcRenderer from '../../util/ipc-renderer';
-import {updateScheduledTask, updateScheduledTasks} from '../../store/tasks';
-import {ScheduledTask} from '../../../../graphql/tasks/handlers/get-scheduled-tasks';
+import {updateScheduledTask} from '../../store/tasks';
 import {TaskStatus} from '../../../../graphql/tasks/handlers/task-updates';
+import {Status} from '../../../../types/task';
+import {addNotification} from '../../store/notifications';
+import { v4 as uuid } from 'uuid';
+import {DateTime} from 'luxon';
+import statusFormatter from '../../util/status-formatter';
+import FullModal from '../../components/molecules/full-modal';
+import Settings from '../../pages/settings';
 
 const Global: React.FC = () => {
   const dispatch = useDispatch();
-
+  const [settingsIsVisible, setSettingsIsVisible] = useState(false);
   const scheduleTaskUpdated = (e: unknown, taskStatus: TaskStatus) => {
-    console.log(e, taskStatus)
     dispatch(updateScheduledTask(taskStatus));
+
+    if (
+      taskStatus.Status === Status.CHECKED_OUT ||
+      taskStatus.Status === Status.ERROR ||
+      taskStatus.Status === Status.CHECKOUT_ERROR ||
+      taskStatus.Status === Status.CHECKOUT_3DS_ERROR
+    ) {
+      dispatch(addNotification({
+        ID: uuid(),
+        Status: taskStatus.Status,
+        Message: `${DateTime.now().toLocaleString(DateTime.DATETIME_SHORT)} - ${statusFormatter(taskStatus.Status)}: ${taskStatus.Information.Message}`
+      }))
+    }
   };
 
   // const scheduleTasksUpdated = (e: unknown, tasks: ScheduledTask[]) => {
@@ -40,7 +58,10 @@ const Global: React.FC = () => {
 
   return (
     <div className={'global'}>
-      <Frame />
+      <FullModal isOpen={settingsIsVisible} onCloseClick={() => setSettingsIsVisible(false)}>
+        <Settings />
+      </FullModal>
+      <Frame openSettings={() => setSettingsIsVisible(true)} />
       <div className="global-grid">
         <SideNavigation />
         <div>
