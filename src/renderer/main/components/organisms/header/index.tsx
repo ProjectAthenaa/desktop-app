@@ -8,7 +8,10 @@ import DefaultProfileImage from '../../../assets/images/profile.svg';
 import Profile from '../../molecules/profile';
 import Shadow from '../../../assets/images/overflow-shadow.png'
 import TextTransition, { presets } from 'react-text-transition';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../store';
 const Header: React.FC = () => {
+  const user = useSelector((state: RootState) => state.user);
   const { pathname } = useLocation();
 
   const route = routes.filter(
@@ -27,7 +30,7 @@ const Header: React.FC = () => {
       <div className="right">
         <Clock />
         <NotificationPanel />
-        <Profile name={'bellu'} tag={'2520'} image={DefaultProfileImage} />
+        <Profile name={user.DiscordUsername} tag={user.DiscordDiscriminator} image={user.DiscordAvatar} />
       </div>
     </div>
   );

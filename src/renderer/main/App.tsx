@@ -8,6 +8,7 @@ import {getProfileGroupsRequest} from './store/profiles/reducers/get-profile-gro
 import {getAccountGroupsRequest} from './store/accounts/reducers/get-account-groups';
 import {getProxyListsRequest} from './store/proxies/reducers/get-proxy-lists';
 import {getSettingsRequest} from './store/settings/reducers/get-settings';
+import {getUserDataRequest} from './store/user/reducers/get-user-data';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -15,6 +16,7 @@ const App: React.FC = () => {
   // As soon as the component is mounted, fetch all
   // available information to initialize the app.
   useEffect(() => {
+    dispatch(getUserDataRequest());
     dispatch(getSettingsRequest());
     dispatch(getTaskGroupsRequest());
     dispatch(getProfileGroupsRequest());

@@ -5,6 +5,7 @@ import { reducer as accountsReducer } from './accounts';
 import { reducer as proxiesReducer } from './proxies';
 import { reducer as notificationsReducer } from './notifications';
 import { reducer as settingsReducer } from './settings';
+import { reducer as userReducer } from './user';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     proxies: proxiesReducer,
     notifications: notificationsReducer,
     settings: settingsReducer,
+    user: userReducer,
   }
 });
 
