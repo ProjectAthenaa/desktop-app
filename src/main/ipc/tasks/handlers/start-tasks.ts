@@ -6,5 +6,3 @@ const startTasks = async (event: Electron.IpcMainInvokeEvent, taskIDs: string[])
 
 export default startTasks;
 
-
-
