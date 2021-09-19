@@ -18,6 +18,10 @@
     transition: font-size 300ms ease;
   }
 
+  .left {
+    overflow-y: hidden;
+  }
+
   .right {
     display: flex;
     justify-content: center;

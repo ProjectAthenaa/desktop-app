@@ -9,20 +9,22 @@ import {updateProxyListRequest} from '../../store/proxies/reducers/update-proxy-
 import SideModal from '../../components/molecules/side-modal';
 import {createProxyListRequest} from '../../store/proxies/reducers/create-proxy-list';
 import {setSelectedProxyList} from '../../store/proxies';
-import {ProxyList, NewProxyList, NewProxy, Proxy} from '../../../../types/proxy';
+import {NewProxyList, Proxy, ProxyList, ProxyListType} from '../../../../types/proxy';
 import TextArea from '../../components/atoms/text-area';
 import {SubmitHandler, useForm} from 'react-hook-form';
 import Button from '../../components/atoms/button';
 import {deleteProxyListRequest} from '../../store/proxies/reducers/delete-proxy-list';
-import {ProxyListType} from '../../../../types/proxy';
-import {updateProfileGroupRequest} from '../../store/profiles/reducers/update-profile-group';
 import SideModalHeader from '../../components/molecules/side-modal-header';
 import SideModalBody from '../../components/molecules/side-modal-body';
 import SideModalFooter from '../../components/molecules/side-modal-footer';
+import ipcRenderer from '../../util/ipc-renderer';
+import {ProxyTest} from '../../../../graphql/integration/handlers/proxies/test-proxy-list';
+import Play from '../../assets/images/icons/play';
 
 
 const Proxies: React.FC = () => {
   const dispatch = useDispatch();
+  const [tests, setTests] = useState<ProxyTest[]>([]);
   const proxyListMethods = useForm<NewProxyList>();
   const selectedProxyList = useSelector((state: RootState) => state.proxies.selectedProxyList);
   const proxyLists = useSelector((state: RootState) => state.proxies.proxyLists);
@@ -69,6 +71,12 @@ const Proxies: React.FC = () => {
 
     setProxiesTextArea(inputString);
     setModalShown(true);
+  };
+
+  const testProxies = async () => {
+    const proxyStatuses = await ipcRenderer.invoke('testProxyList', selectedProxyList.ID);
+    console.log(proxyStatuses);
+    setTests(proxyStatuses);
   };
 
   const deleteGroup = () => {
@@ -186,6 +194,12 @@ const Proxies: React.FC = () => {
         openModal={launchEditor}
         setSelectedGroup={setSelectedGroup}
         actions={[
+          {
+            onClick: testProxies,
+            icon: Play,
+            color: ActionColor.GREEN,
+            hideBody: true
+          },
           {
             onClick: deleteProxy,
             icon: Delete,

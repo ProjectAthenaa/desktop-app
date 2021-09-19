@@ -1,3 +1,4 @@
+@import "../../../assets/styles/vars";
 .label {
   margin-bottom: 6px;
   display: block;
@@ -5,4 +6,16 @@
   font-size: 14px;
   line-height: 17px;
   color: #000000;
+
+  span {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: $fw-bold;
+    color: #16407F;
+    background-color: #E3E8F0;
+    border-radius: 15px;
+    transform: translateY(-2px);
+  }
 }

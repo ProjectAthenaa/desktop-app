@@ -26,6 +26,8 @@ body {
   width: 100vw;
   overflow: hidden;
   background-color: #fff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::-webkit-scrollbar {

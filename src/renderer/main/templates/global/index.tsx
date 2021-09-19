@@ -36,7 +36,12 @@ const Global: React.FC = () => {
       dispatch(addNotification({
         ID: uuid(),
         Status: taskStatus.Status,
-        Message: `${DateTime.now().toLocaleString(DateTime.DATETIME_SHORT)} - ${statusFormatter(taskStatus.Status)}: ${taskStatus.Information.Message}`
+        Message: `${DateTime.now().toLocaleString(DateTime.DATETIME_SHORT)} - ${
+          statusFormatter(taskStatus.Status)}${
+          taskStatus.Information.message 
+            ? `: ${taskStatus.Information.message}` 
+            : ''
+        }`
       }))
     }
   };

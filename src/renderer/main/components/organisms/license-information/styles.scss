@@ -1,0 +1,54 @@
+@import "../../../assets/styles/vars";
+
+.license {
+  padding: 30px;
+  background:  url("../../../assets/images/license-bg.svg") no-repeat center right, linear-gradient(115.06deg, #16407F -52.21%, #060E35 84.07%), linear-gradient(180deg, #C4C4C4 0%, rgba(196, 196, 196, 0) 100%);
+  box-shadow: 0 4px 15px rgba(22, 64, 127, 0.25);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .license-information {
+    h3 {
+      font-weight: $fw-bold;
+      font-size: 18px;
+      line-height: 22px;
+      color: #FFFFFF;
+    }
+    .license-key {
+      margin-top: 7px;
+      background: linear-gradient(268.6deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.0434) 188.26%);
+      border-radius: 4px;
+      padding: 7px 15px;
+      font-weight: $fw-bold;
+      font-size: 12px;
+      line-height: 15px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  .button {
+    font-weight: $fw-bold;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 10px 23px;
+    padding-top: 9px;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.17);
+    box-sizing: border-box;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 200ms ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, .05);
+    }
+    &:active {
+      position: relative;
+      top: 1px;
+    }
+  }
+}

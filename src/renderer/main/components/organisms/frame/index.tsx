@@ -12,6 +12,8 @@ const Frame: React.FC<Props> = ({ openSettings }) => {
   const onClickWindowAction = async (action: 'minimize' | 'maximize' | 'close') => {
     const currentWindow = remote.getCurrentWindow();
 
+    if (!currentWindow) return;
+
     switch (action) {
       case "maximize":
         if (currentWindow.isMaximized()) {

@@ -1,0 +1,49 @@
+@import '../../../assets/styles/vars';
+
+.change-log-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  &:first-child {
+    margin-top: 15px;
+  }
+
+  .lead {
+    margin-right: 15px;
+
+    h3 {
+      font-weight: $fw-bold;
+      font-size: 14px;
+      line-height: 17px;
+      color: #000000;
+    }
+
+    p {
+      font-size: 10px;
+      line-height: 12px;
+      color: #808080;
+    }
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    background-color: rgba(0,0,0,.1);
+    color: #808080;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 17px;
+
+    &.feature {
+      color: #207A20;
+      background-color: #EBF9EB;
+    }
+
+    &.fix {
+      color: #7A6620;
+      background-color: #FBF3D7;
+    }
+  }
+}

@@ -13,6 +13,8 @@ export type Action = {
   onClick: (id?: string) => void;
   icon: JSX.Element;
   color?: ActionColor;
+  hideHead?: boolean;
+  hideBody?: boolean;
 }
 
 type Props = {
@@ -45,7 +47,9 @@ const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions, loadingCo
           ))}
           <th className={`actions count-${actions.length}`}>
             <div className="actions-layout">
-              {actions.map((action, index) => (
+              {actions
+                .filter(action => !action.hideHead)
+                .map((action, index) => (
                 <button
                   key={index}
                   className={action.color ? action.color : ''}
@@ -64,18 +68,24 @@ const FloatingHeaderTable: React.FC<Props> = ({columns, data, actions, loadingCo
         return (
           <tr {...row.getRowProps()}>
             {row.cells.map((cell, index) => (
-              <td {...cell.getCellProps()} className={columns[index].accessor === 'Password' ? `hidden ${hiddenShown ? 'shown' : ''}` : ''} onClick={() => setHiddenShown(!hiddenShown)}>
-                {/*<span>{ cell.value }</span>*/}
-                <TextTransition
-                  text={cell.value ? cell.value : ''}
-                  inline
-                  noOverflow
-                  springConfig={presets.wobbly}/>
+              <td {...cell.getCellProps()} className={columns[index].accessor === 'Password' ? `hidden ${hiddenShown ? 'shown' : ''}` : ''}>
+                <span
+                  onClick={() => {
+                    if (columns[index].accessor === 'Password') setHiddenShown(!hiddenShown)
+                  }}
+                >{ cell.value }</span>
+                {/*<TextTransition*/}
+                {/*  text={cell.value ? cell.value : ''}*/}
+                {/*  inline*/}
+                {/*  noOverflow*/}
+                {/*  springConfig={presets.wobbly}/>*/}
               </td>
             ))}
             <td className={`actions count-${actions.length}`}>
               <div className="actions-layout">
-                {actions.map((action, index) => (
+                {actions
+                  .filter(action => !action.hideBody)
+                  .map((action, index) => (
                   <button
                     key={index}
                     className={action.color ? action.color : ''}

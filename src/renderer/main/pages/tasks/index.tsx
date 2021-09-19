@@ -29,6 +29,7 @@ import {startTasksRequest} from '../../store/tasks/reducers/start-tasks';
 import SideModalBody from '../../components/molecules/side-modal-body';
 import SideModalFooter from '../../components/molecules/side-modal-footer';
 import TaskForm from './task-form';
+import AreYouSure from '../../components/molecules/dialogues/are-you-sure';
 
 
 
@@ -96,7 +97,16 @@ const Tasks: React.FC = () => {
     ipcRenderer.invoke('send-command');
   };
 
-  const deleteTask = (id: string) => dispatch(deleteTaskRequest({ taskId: id }));
+  const deleteTask = (id?: string) => {
+    if (!id) {
+      toast.warn(<AreYouSure yesCallback={clearTasks} doThis={'clear all your tasks'} />, {
+        toastId: 'clear-all-tasks'
+      });
+      return;
+    }
+
+    dispatch(deleteTaskRequest({taskId: id}));
+  }
 
   const editTaskGroup = (newName: string) => {
     dispatch(updateTaskGroupRequest({
@@ -123,7 +133,9 @@ const Tasks: React.FC = () => {
     setModalShown(true);
   };
 
-
+  const clearTasks = () => {
+    selectedTaskGroup.Tasks.forEach(({ ID }) => dispatch(deleteTaskRequest({ taskId: ID })));
+  }
 
   const playTask = (id?: string) => {
     if (id) {
@@ -227,7 +239,8 @@ const Tasks: React.FC = () => {
           },
           {
             onClick: launchEditor,
-            icon: Edit
+            icon: Edit,
+            hideHead: true,
           },
           {
             onClick: deleteTask,

@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store';
 import {clearNotifications, Notification, sawNotifications} from '../../../store/notifications';
 import {Status} from '../../../../../types/task';
+import statusFormatter from '../../../util/status-formatter';
 
 const NotificationPanel: React.FC = () => {
   const notifications = useSelector((state: RootState) => state.notifications.notifications);
@@ -43,7 +44,7 @@ const NotificationPanel: React.FC = () => {
                 : DeclineIcon
               }
               <div className={'meta'}>
-                <h3>Checkout Success</h3>
+                <h3>{ statusFormatter(notification.Status) }</h3>
                 <Marquee pauseOnHover gradientWidth={'5px'} speed={10}>
                   <p>{ notification.Message }</p>
                 </Marquee>

@@ -51,9 +51,9 @@ table.floating-header-table {
           max-width: 70px;
         }
         &.count-2 {
-          width: 115px;
-          min-width: 115px;
-          max-width: 115px;
+          width: 125px;
+          min-width: 125px;
+          max-width: 125px;
         }
         &.count-3 {
           width: 185px;
@@ -129,7 +129,7 @@ table.floating-header-table {
     .actions-layout {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: space-around;
       height: 52px;
     }
     button {
