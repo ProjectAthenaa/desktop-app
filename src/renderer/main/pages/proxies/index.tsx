@@ -18,7 +18,7 @@ import SideModalHeader from '../../components/molecules/side-modal-header';
 import SideModalBody from '../../components/molecules/side-modal-body';
 import SideModalFooter from '../../components/molecules/side-modal-footer';
 import ipcRenderer from '../../util/ipc-renderer';
-import {ProxyTest} from '../../../../graphql/integration/handlers/proxies/test-proxy-list';
+import {ProxyTest, ProxyTestStatus} from '../../../../types/proxy';
 import Play from '../../assets/images/icons/play';
 
 
@@ -74,17 +74,40 @@ const Proxies: React.FC = () => {
   };
 
   const testProxies = async () => {
+    setTests([]);
     const proxyStatuses = await ipcRenderer.invoke('testProxyList', selectedProxyList.ID);
     console.log(proxyStatuses);
     setTests(proxyStatuses);
   };
 
   const deleteGroup = () => {
+    setTests([]);
     dispatch(deleteProxyListRequest(selectedProxyList.ID));
   };
 
   const closeAndResetModal = () => {
     setModalShown(false);
+  };
+
+  const filterBadProxies = () => {
+    if (tests.length <= 0) return;
+    dispatch(updateProxyListRequest({
+      ...selectedProxyList,
+      Proxies: selectedProxyList.Proxies.filter(proxy => {
+        const foundProxyTest = tests
+          .find(test => test.ProxyID === proxy.ID);
+
+          if (!foundProxyTest) return false;
+
+          return foundProxyTest.Status !== ProxyTestStatus.NotPinging;
+        })
+        .map(proxy => ({
+        IP: proxy.IP,
+        Port: proxy.Port,
+        Username: proxy.Username,
+        Password: proxy.Password
+      } as Proxy))
+    }));
   };
 
   const deleteProxy = (id: string) => {
@@ -122,7 +145,7 @@ const Proxies: React.FC = () => {
   }
 
   const setSelectedGroup = (group: Group) => {
-
+    setTests([]);
 
     dispatch(setSelectedProxyList({...(group as unknown as ProxyList), Proxies: []}))
   };
@@ -203,7 +226,14 @@ const Proxies: React.FC = () => {
           {
             onClick: deleteProxy,
             icon: Delete,
-            color: ActionColor.RED
+            color: ActionColor.RED,
+            hideHead: true,
+          },
+          {
+            onClick: filterBadProxies,
+            icon: Delete,
+            color: ActionColor.RED,
+            hideBody: true,
           }
         ]}
       />

@@ -1,3 +1,14 @@
+export enum ProxyTestStatus {
+  Pinging = 'Pinging',
+  NotPinging = 'NotPinging'
+}
+
+export type ProxyTest = {
+  Latency: number;
+  Status: ProxyTestStatus;
+  ProxyID: string;
+}
+
 export enum ProxyListType {
   Residential = "Residential",
   Datacenter  = "Datacenter",

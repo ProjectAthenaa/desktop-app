@@ -1,16 +1,6 @@
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
-
-export enum ProxyTestStatus {
-  Pinging = 'Pinging',
-  NotPinging = 'NotPinging'
-}
-
-export type ProxyTest = {
-  Latency: number;
-  Status: ProxyTestStatus;
-  ProxyID: string;
-}
+import {ProxyTest} from '../../../../types/proxy';
 
 const GET_PROXY_LIST = gql`
     query GetProxyList ($proxyListID: UUID!){
