@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './styles.scss';
 import SideModalHeader from '../../components/molecules/side-modal-header';
 import ChangeLogItem from '../../components/molecules/change-log-item';
@@ -12,16 +12,23 @@ import Button from '../../components/atoms/button';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store';
 import {setDelayRequest} from '../../store/settings/reducers/set-delay';
-import {DelayType} from '../../../../types/settings'
+import {DelayType, WebhookType} from '../../../../types/settings'
+import {setWebhookRequest} from '../../store/settings/reducers/set-webhook';
+import ipcRenderer from '../../util/ipc-renderer';
+import {toast} from 'react-toastify';
 
 const CheckoutDelay = () => {
   const delay = useSelector((state: RootState) => state.settings.CheckoutDelay);
   const dispatch = useDispatch();
-  const [delayValue, setDelayValue] = useState<number>(delay);
+  const [delayValue, setDelayValue] = useState(0);
 
   const saveDelay = () => {
     dispatch(setDelayRequest({ type: DelayType.CHECKOUT, value: delayValue }));
   };
+
+  useEffect(() => {
+    setDelayValue(delay);
+  }, [delay]);
 
   return (
     <div className="setting">
@@ -39,7 +46,110 @@ const CheckoutDelay = () => {
       </FormItem>
     </div>
   );
-}
+};
+
+const ATCDelay = () => {
+  const delay = useSelector((state: RootState) => state.settings.ATCDelay);
+  const dispatch = useDispatch();
+  const [delayValue, setDelayValue] = useState<number>(delay);
+
+  const saveDelay = () => {
+    dispatch(setDelayRequest({ type: DelayType.ATC, value: delayValue }));
+  };
+
+  useEffect(() => {
+    setDelayValue(delay);
+  }, [delay]);
+
+  return (
+    <div className="setting">
+      <FormItem>
+        <Label>Add to Cart Delay</Label>
+        <div className="horizontal-form">
+          <Input
+            type={'number'}
+            min={0}
+            value={delayValue}
+            onChange={e => setDelayValue(parseInt(e.target.value))}
+          />
+          <Button onClick={saveDelay}>Save</Button>
+        </div>
+      </FormItem>
+    </div>
+  );
+};
+
+const DeclineWebhookURL = () => {
+  const webhook = useSelector((state: RootState) => state.settings.DeclineWebhook);
+  const dispatch = useDispatch();
+  const [webhookValue, setWebhookValue] = useState('');
+
+  const saveHook = () => {
+    dispatch(setWebhookRequest({ type: WebhookType.DECLINE, value: webhookValue }));
+  };
+
+  const testWebhook = async () => {
+    try {
+      await ipcRenderer.invoke('testWebhook', WebhookType.DECLINE);
+      toast.success('A decline webhook test has been sent.');
+    } catch (error) {
+      toast.error('Your webhook could not be sent at this time.');
+    }
+  }
+
+  useEffect(() => {
+    setWebhookValue(webhook);
+  }, [webhook]);
+
+  return (
+    <div className="setting">
+      <FormItem>
+        <Label>Decline Webhook URL</Label>
+        <div className="horizontal-form">
+          <Input placeholder={'https://discord.com/api/webhooks/.../...'} onChange={e => setWebhookValue(e.target.value)}/>
+          <Button onClick={saveHook}>Save</Button>
+          <Button secondary onClick={testWebhook}>Test</Button>
+        </div>
+      </FormItem>
+    </div>
+  );
+};
+
+const SuccessWebhookURL = () => {
+  const webhook = useSelector((state: RootState) => state.settings.SuccessWebhook);
+  const dispatch = useDispatch();
+  const [webhookValue, setWebhookValue] = useState('');
+
+  const saveHook = () => {
+    dispatch(setWebhookRequest({ type: WebhookType.SUCCESS, value: webhookValue }));
+  };
+
+  const testWebhook = async () => {
+    try {
+      await ipcRenderer.invoke('testWebhook', WebhookType.SUCCESS);
+      toast.success('A success webhook test has been sent.');
+    } catch (error) {
+      toast.error('Your webhook could not be sent at this time.');
+    }
+  }
+
+  useEffect(() => {
+    setWebhookValue(webhook);
+  }, [webhook]);
+
+  return (
+    <div className="setting">
+      <FormItem>
+        <Label>Success Webhook URL</Label>
+        <div className="horizontal-form">
+          <Input placeholder={'https://discord.com/api/webhooks/.../...'} onChange={e => setWebhookValue(e.target.value)}/>
+          <Button onClick={saveHook}>Save</Button>
+          <Button secondary onClick={testWebhook}>Test</Button>
+        </div>
+      </FormItem>
+    </div>
+  );
+};
 
 const Settings: React.FC = () => {
   return (
@@ -60,48 +170,22 @@ const Settings: React.FC = () => {
               </div>
             </FormItem>
           </div>
-          <div className="setting">
-            <FormItem>
-              <Label>Checkout Webhook URL</Label>
-              <div className="horizontal-form">
-                <Input placeholder={'https://discord.com/api/webhooks/.../...'} />
-                <Button>Save</Button>
-                <Button secondary>Test</Button>
-              </div>
-            </FormItem>
-          </div>
-          <div className="setting">
-            <FormItem>
-              <Label>Decline Webhook URL</Label>
-              <div className="horizontal-form">
-                <Input placeholder={'https://discord.com/api/webhooks/.../...'} />
-                <Button>Save</Button>
-                <Button secondary>Test</Button>
-              </div>
-            </FormItem>
-          </div>
+          <SuccessWebhookURL />
+          <DeclineWebhookURL />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridGap: '30px' }}>
-            <div className="setting">
-              <FormItem>
-                <Label>Add to Cart Delay</Label>
-                <div className="horizontal-form">
-                  <Input type={'number'} min={0} />
-                  <Button>Save</Button>
-                </div>
-              </FormItem>
-            </div>
-
-            <div className="setting">
-              <FormItem>
-                <Label>Miscellaneous</Label>
-                <div className="horizontal-form right">
-                  <Button secondary>Billing Details</Button>
-                  <Button secondary>Website</Button>
-                  <Button secondary>Twitter</Button>
-                  <Button secondary>Status Page</Button>
-                </div>
-              </FormItem>
-            </div>
+            <CheckoutDelay />
+            <ATCDelay />
+          </div>
+          <div className="setting">
+            <FormItem>
+              <Label>Miscellaneous</Label>
+              <div className="horizontal-form right">
+                <Button secondary>Billing Details</Button>
+                <Button secondary>Website</Button>
+                <Button secondary>Twitter</Button>
+                <Button secondary>Status Page</Button>
+              </div>
+            </FormItem>
           </div>
         </div>
       </section>

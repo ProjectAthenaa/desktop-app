@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify';
 import {getProfileGroupsRequest} from './store/profiles/reducers/get-profile-groups';
 import {getAccountGroupsRequest} from './store/accounts/reducers/get-account-groups';
 import {getProxyListsRequest} from './store/proxies/reducers/get-proxy-lists';
+import {getSettingsRequest} from './store/settings/reducers/get-settings';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -14,6 +15,7 @@ const App: React.FC = () => {
   // As soon as the component is mounted, fetch all
   // available information to initialize the app.
   useEffect(() => {
+    dispatch(getSettingsRequest());
     dispatch(getTaskGroupsRequest());
     dispatch(getProfileGroupsRequest());
     dispatch(getAccountGroupsRequest());

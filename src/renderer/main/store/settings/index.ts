@@ -1,6 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {setDelayRequest, setDelay} from './reducers/set-delay';
 import {setWebhook, setWebhookRequest} from './reducers/set-webhook';
+import {failedGetSettings, getSettings, getSettingsRequest} from './reducers/get-settings';
 
 
 export interface SettingsState {
@@ -22,6 +23,8 @@ const tasksSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
+    [getSettingsRequest.fulfilled.type]: getSettings,
+    [getSettingsRequest.rejected.type]: failedGetSettings,
     [setDelayRequest.fulfilled.type]: setDelay,
     [setWebhookRequest.fulfilled.type]: setWebhook,
   }
