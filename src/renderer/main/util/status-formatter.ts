@@ -1,6 +1,6 @@
-import {Status} from '../../../types/task';
+import {Site, Status} from '../../../types/task';
 
-const statusFormatter = (status: Status): string => {
+const statusFormatter = (status: Status | Site): string => {
   const statusWords = status.split('_');
 
   const newStatusWords = statusWords.map(

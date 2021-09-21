@@ -1,4 +1,4 @@
-import {Task} from '../../../../types/task';
+import {LookupType, Site, Task} from '../../../../types/task';
 import {gql} from 'graphql-request';
 import {integrationClient} from '../../index';
 import {FetchedTask} from './get-task';
@@ -9,6 +9,19 @@ type UpdatedTask = {
   ProxyListID?: string;
   ProfileGroupID?: string;
   TaskGroupID?: string;
+  Product?: {
+    Name: string;
+    Image?: string;
+    LookupType: LookupType;
+    PositiveKeywords: string[];
+    NegativeKeywords: string[];
+    Link?: string;
+    Quantity?: number;
+    Sizes: string[];
+    Colors: string[];
+    Site: Site;
+    Metadata: Record<string, string>;
+  }
 };
 
 const UPDATE_TASK = gql`
@@ -41,8 +54,20 @@ const UPDATE_TASK = gql`
         }
     }
 `;
+const UPDATE_PRODUCT = gql`
+    mutation UpdateProduct($productID: UUID!, $updatedProduct: ProductIn!) {
+        updateProduct(productID: $productID, updatedProduct: $updatedProduct) {
+            ID
+        }
+    }
+`;
 
 const updateTask = async (taskId: string, updatedPayload: UpdatedTask): Promise<FetchedTask> => {
+  await (await integrationClient()).request<{ updateTask: FetchedTask }>(UPDATE_PRODUCT, {
+    productID: updatedPayload.ProductID,
+    updatedProduct: updatedPayload.Product,
+  });
+
   const response = await (await integrationClient()).request<{ updateTask: FetchedTask }>(UPDATE_TASK, {
     taskID: taskId,
     updatedTask: {

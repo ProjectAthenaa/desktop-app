@@ -1,6 +1,6 @@
 import {TasksState} from '../index';
 import {createAsyncThunk, Draft, PayloadAction} from '@reduxjs/toolkit';
-import {Task} from '../../../../../types/task';
+import {LookupType, Product, Site, Task} from '../../../../../types/task';
 import ipcRenderer from '../../../util/ipc-renderer';
 import {Status} from '../../util/set-status';
 import {toast} from 'react-toastify';
@@ -14,6 +14,19 @@ type UpdatedTask = {
   ProxyListID?: string;
   ProfileGroupID?: string;
   TaskGroupID?: string;
+  Product?: {
+    Name: string;
+    Image?: string;
+    LookupType: LookupType;
+    PositiveKeywords: string[];
+    NegativeKeywords: string[];
+    Link?: string;
+    Quantity?: number;
+    Sizes: string[];
+    Colors: string[];
+    Site: Site;
+    Metadata: Record<string, string>;
+  };
 };
 
 export const updateTaskRequest = createAsyncThunk(

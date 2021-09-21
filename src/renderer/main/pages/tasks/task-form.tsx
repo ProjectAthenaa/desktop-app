@@ -25,9 +25,10 @@ type Props = {
   negativeKeywords: Tag[];
   setPositiveKeywords: React.Dispatch<React.SetStateAction<Tag[]>>;
   setNegativeKeywords: React.Dispatch<React.SetStateAction<Tag[]>>;
+  editing?: boolean;
 }
 
-const TaskForm: React.FC<Props> = ({ negativeKeywords, setNegativeKeywords, positiveKeywords, setPositiveKeywords, skippingTime, setStart, setSkippingTime, proxyLists, profileGroups, setSelectedModule, moduleInformation, selectedModule }) => {
+const TaskForm: React.FC<Props> = ({ editing, negativeKeywords, setNegativeKeywords, positiveKeywords, setPositiveKeywords, skippingTime, setStart, setSkippingTime, proxyLists, profileGroups, setSelectedModule, moduleInformation, selectedModule }) => {
   const taskFormMethods = useFormContext<TaskCreation>();
 
   const getFieldFor = (field: ModuleField) => {
@@ -122,19 +123,24 @@ const TaskForm: React.FC<Props> = ({ negativeKeywords, setNegativeKeywords, posi
         </Select>
       </FormItem>
       <hr/>
-      <h3>Site Selection</h3>
-      <FormItem>
-        <Label htmlFor={'site'}>Site</Label>
-        <Select
-          defaultValue={0}
-          onChange={e => setSelectedModule(parseInt(e.target.value))}
-          id={'module'}>
-          {moduleInformation.map((module, index) => (
-            <option value={index} disabled={module.Status === ModuleStatus.DOWN} key={module.Name}>{ module.Name }</option>
-          ))}
-        </Select>
-      </FormItem>
-      <hr/>
+      {!editing && (
+        <>
+          <h3>Site Selection</h3>
+          <FormItem>
+            <Label htmlFor={'site'}>Site</Label>
+            <Select
+              defaultValue={0}
+              onChange={e => setSelectedModule(parseInt(e.target.value))}
+              value={selectedModule}
+              id={'module'}>
+              {moduleInformation.map((module, index) => (
+                <option value={index} disabled={module.Status === ModuleStatus.DOWN} key={module.Name}>{ module.Name }</option>
+              ))}
+            </Select>
+          </FormItem>
+          <hr/>
+        </>
+      )}
       <h3>{moduleInformation[selectedModule].Name}</h3>
       {moduleInformation[selectedModule].Fields.map(field => (
         <div key={field.FieldKey}>

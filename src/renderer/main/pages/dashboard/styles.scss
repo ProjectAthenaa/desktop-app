@@ -1,5 +1,12 @@
 @import '../../assets/styles/vars';
 
 .dashboard-page {
-
+  .stats {
+    .stat-grid {
+      padding: 0 30px 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-gap: 15px;
+    }
+  }
 }

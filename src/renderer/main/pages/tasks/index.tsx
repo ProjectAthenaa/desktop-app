@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './styles.scss';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store';
@@ -13,7 +13,7 @@ import {getGroupRequest} from '../../store/tasks/reducers/get-group';
 import Edit from '../../assets/images/icons/edit';
 import Delete from '../../assets/images/icons/delete';
 import {ActionColor} from '../../components/molecules/floating-header-table';
-import {LookupType, TaskCreation} from '../../../../types/task';
+import {LookupType, Site, TaskCreation} from '../../../../types/task';
 import {getTaskRequest} from '../../store/tasks/reducers/get-task';
 import {deleteTaskRequest} from '../../store/tasks/reducers/delete-task';
 import {updateTaskGroupRequest} from '../../store/tasks/reducers/update-task-group';
@@ -30,6 +30,8 @@ import SideModalBody from '../../components/molecules/side-modal-body';
 import SideModalFooter from '../../components/molecules/side-modal-footer';
 import TaskForm from './task-form';
 import AreYouSure from '../../components/molecules/dialogues/are-you-sure';
+import enumFormatter from '../../util/status-formatter';
+import {updateTaskRequest} from '../../store/tasks/reducers/update-task';
 
 
 
@@ -52,11 +54,6 @@ const Tasks: React.FC = () => {
   const [positiveKeywords, setPositiveKeywords] = useState<Tag[]>([]);
   const [negativeKeywords, setNegativeKeywords] = useState<Tag[]>([]);
 
-  const handleSubmission: SubmitHandler<TaskCreation> = data =>
-    !editingTask
-      ? createTask(data)
-      : updateTask(data);
-
   const updateTask: SubmitHandler<TaskCreation> = data => {
     if (!selectedTaskGroup) return toast.error('You haven\'t selected a task group.');
     if (selectedTask) return toast.error('You haven\'t selected task.');
@@ -74,7 +71,7 @@ const Tasks: React.FC = () => {
     dispatch(getTaskRequest(id));
   };
 
-  const createTask: SubmitHandler<TaskCreation> = data => {
+  const handleSubmission: SubmitHandler<TaskCreation> = data => {
     if (!selectedTaskGroup) return toast.error('You haven\'t selected a task group');
 
     const newTask: TaskCreation = {
@@ -90,10 +87,24 @@ const Tasks: React.FC = () => {
     };
 
     // Insert validation here
-    dispatch(createTaskRequest({
-      ...newTask,
-      TaskGroupID: selectedTaskGroup.ID
-    }));
+
+    if (!editingTask) {
+      dispatch(createTaskRequest({
+        ...newTask,
+        TaskGroupID: selectedTaskGroup.ID
+      }));
+    } else {
+      dispatch(updateTaskRequest({
+        ...newTask,
+        taskId: selectedTask.ID,
+        TaskGroupID: selectedTaskGroup.ID,
+        ProductID: selectedTask.Product.ID,
+      }));
+    }
+
+    taskFormMethods.reset();
+    setModalShown(false);
+
     ipcRenderer.invoke('send-command');
   };
 
@@ -148,6 +159,52 @@ const Tasks: React.FC = () => {
     dispatch(startTasksRequest(tasksToStart));
   };
 
+  const loadEditForm = async () => {
+    // Check to see if module is available
+    const modules = await ipcRenderer.invoke('getSiteInformation') as ModuleInformation[];
+    setModuleInformation(modules);
+    let foundModuleIndex: number | null = null;
+    console.log(moduleInformation)
+    const foundModule = modules.find((module, index) => {
+      console.log(module.Name === selectedTask.Product.Site)
+      console.log(module.Name)
+      console.log(selectedTask.Product.Site)
+      if (module.Name === selectedTask.Product.Site) {
+        foundModuleIndex = index;
+        return true;
+      }
+    });
+
+    if (!foundModule) {
+      setEditingTask(false);
+      toast.error(`Editing for this task has been temporarily disabled. The ${enumFormatter(selectedTask.Product.Site)} service is currently unavailable at this time.`)
+      return;
+    }
+
+    // This is only set due to the site being set by an index
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    setSelectedModule(foundModuleIndex);
+    if (!selectedTask.StartTime) setSkippingTime(true)
+    else setSkippingTime(false);
+    taskFormMethods.setValue('Product.Name', selectedTask.Product.Name);
+    taskFormMethods.setValue('Product.Image', selectedTask.Product.Image);
+    taskFormMethods.setValue('ProxyListID', selectedTask.ProxyList.ID);
+    taskFormMethods.setValue('ProfileGroupID', selectedTask.ProfileGroup.ID);
+
+    Object.keys(selectedTask.Product.Metadata).forEach((key) => {
+      taskFormMethods.setValue(`Product.Metadata.${key}`, selectedTask.Product.Metadata[key] as string);
+    });
+
+    setModalShown(true);
+  }
+
+  useEffect(() => {
+    if (editingTask && !modalShown) {
+      loadEditForm()
+    }
+  }, [selectedTask]);
+
   return (
     <div className={'task-page'}>
       <FormProvider {...taskFormMethods}>
@@ -157,6 +214,7 @@ const Tasks: React.FC = () => {
             <form onSubmit={taskFormMethods.handleSubmit(handleSubmission)}>
               <SideModalBody>
                 <TaskForm
+                  editing={editingTask}
                   skippingTime={skippingTime}
                   setSkippingTime={setSkippingTime}
                   setStart={setStart}
@@ -172,7 +230,7 @@ const Tasks: React.FC = () => {
                 />
               </SideModalBody>
               <SideModalFooter>
-                <Button type={'submit'}>Create Task</Button>
+                <Button type={'submit'}>{editingTask ? 'Update' : 'Create'} Task</Button>
               </SideModalFooter>
             </form>
           </SideModal>
