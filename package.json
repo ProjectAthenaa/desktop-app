@@ -22,6 +22,7 @@
   "config": {
     "forge": {
       "packagerConfig": {},
+      "electronPa"
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -92,6 +93,7 @@
     "eslint": "^7.6.0",
     "eslint-plugin-import": "^2.24.1",
     "fork-ts-checker-webpack-plugin": "^6.0.1",
+    "javascript-obfuscator": "^2.19.0",
     "node-loader": "^2.0.0",
     "react-dnd": "^14.0.3",
     "react-dnd-html5-backend": "^14.0.1",
@@ -101,7 +103,8 @@
     "svg-url-loader": "^7.1.1",
     "ts-loader": "^9.2.2",
     "typescript": "^4.0.2",
-    "webpack": "^5.44.0"
+    "webpack": "^5.44.0",
+    "webpack-obfuscator": "^3.4.1"
   },
   "dependencies": {
     "@fontsource/inter": "^4.5.0",

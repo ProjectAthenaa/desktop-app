@@ -9,9 +9,12 @@ import FormItem from '../../components/atoms/form-item';
 type Props = {
   shown: boolean;
   setShown: (to: boolean) => void;
+  editing?: boolean;
+  updateBilling?: boolean;
+  setUpdateBilling?: (e: boolean) => void;
 }
 
-const ProfileForm: React.FC<Props> = ({ shown, setShown }) => {
+const ProfileForm: React.FC<Props> = ({ shown, setShown, editing, updateBilling, setUpdateBilling }) => {
   const {register} = useFormContext<ProfileCreation>();
 
   return (
@@ -122,26 +125,38 @@ const ProfileForm: React.FC<Props> = ({ shown, setShown }) => {
       <hr/>
 
       <h3>Billing Information</h3>
-      <FormItem>
-        <Label htmlFor={'Billing.CardHolderName'}>Name</Label>
-        <Input type={'text'} {...register('Billing.CardHolderName')} id={'Billing.CardHolderName'}/>
-      </FormItem>
-      <FormItem>
-        <Label htmlFor={'Billing.CardNumber'}>Card Number</Label>
-        <Input type={'text'} {...register('Billing.CardNumber')} id={'Billing.CardNumber'}/>
-      </FormItem>
-      <FormItem>
-        <Label htmlFor={'Billing.ExpiryMonth'}>Exp. Month</Label>
-        <Input type={'text'} {...register('Billing.ExpiryMonth')} id={'Billing.ExpiryMonth'}/>
-      </FormItem>
-      <FormItem>
-        <Label htmlFor={'Billing.ExpiryYear'}>Exp. Year</Label>
-        <Input type={'text'} {...register('Billing.ExpiryYear')} id={'Billing.ExpiryYear'}/>
-      </FormItem>
-      <FormItem>
-        <Label htmlFor={'Billing.CVV'}>CVV</Label>
-        <Input type={'text'} {...register('Billing.CVV')} id={'Billing.CVV'}/>
-      </FormItem>
+      {editing && (
+        <FormItem>
+          <Label htmlFor={'update-card'}>
+            <input type={'checkbox'} onChange={e => setUpdateBilling(e.target.checked)} id={'update-card'}/>{" "}
+            Update Card Information
+          </Label>
+        </FormItem>
+      )}
+      {(!editing || updateBilling) && (
+        <>
+          <FormItem>
+            <Label htmlFor={'Billing.CardHolderName'}>Name</Label>
+            <Input type={'text'} {...register('Billing.CardHolderName')} id={'Billing.CardHolderName'}/>
+          </FormItem>
+          <FormItem>
+            <Label htmlFor={'Billing.CardNumber'}>Card Number</Label>
+            <Input type={'text'} {...register('Billing.CardNumber')} id={'Billing.CardNumber'}/>
+          </FormItem>
+          <FormItem>
+            <Label htmlFor={'Billing.ExpiryMonth'}>Exp. Month</Label>
+            <Input type={'text'} {...register('Billing.ExpiryMonth')} id={'Billing.ExpiryMonth'}/>
+          </FormItem>
+          <FormItem>
+            <Label htmlFor={'Billing.ExpiryYear'}>Exp. Year</Label>
+            <Input type={'text'} {...register('Billing.ExpiryYear')} id={'Billing.ExpiryYear'}/>
+          </FormItem>
+          <FormItem>
+            <Label htmlFor={'Billing.CVV'}>CVV</Label>
+            <Input type={'text'} {...register('Billing.CVV')} id={'Billing.CVV'}/>
+          </FormItem>
+        </>
+      )}
     </>
   );
 };

@@ -34,6 +34,9 @@ const Dashboard: React.FC = () => {
           />
         </div>
         <DashChart />
+        <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <h2>This is a light preview of the dashboard. The data is static and won't update, for now.</h2>
+        </div>
       </div>
     </div>
   );

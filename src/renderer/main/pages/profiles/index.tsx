@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './styles.scss';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store';
@@ -9,7 +9,7 @@ import {FetchedProfileGroupsProfile} from '../../../../graphql/integration/handl
 import {getGroupRequest} from '../../store/profiles/reducers/get-group';
 import {deleteProfileGroupRequest} from '../../store/profiles/reducers/delete-profile-group';
 import {createProfileRequest} from '../../store/profiles/reducers/create-profile';
-import {ProfileCreation} from '../../../../types/profile';
+import {Address, ProfileCreation} from '../../../../types/profile';
 import {toast} from 'react-toastify';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import {ActionColor} from '../../components/molecules/floating-header-table';
@@ -24,8 +24,11 @@ import SideModalHeader from '../../components/molecules/side-modal-header';
 import SideModalBody from '../../components/molecules/side-modal-body';
 import SideModalFooter from '../../components/molecules/side-modal-footer';
 import Button from '../../components/atoms/button';
-import {newProfileSchema} from '../../util/validation/profile';
+import {newProfileSchema, updateProfileSchema} from '../../util/validation/profile';
 import AreYouSure from '../../components/molecules/dialogues/are-you-sure';
+import ipcRenderer from '../../util/ipc-renderer';
+import {ModuleInformation} from '../../../../types/modules';
+import enumFormatter from '../../util/status-formatter';
 
 const Profiles: React.FC = () => {
   const dispatch = useDispatch();
@@ -37,8 +40,48 @@ const Profiles: React.FC = () => {
   const profileFormMethods = useForm<ProfileCreation>();
   const [modalShown, setModalShown] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
+  const [updateBilling, setUpdatingBilling] = useState(false);
 
-  const handleSubmission: SubmitHandler<ProfileCreation> = async data => {
+  const handleSubmission: SubmitHandler<ProfileCreation> = async data =>
+     !editingProfile
+      ? createProfile(data)
+      : updateProfile(data);
+
+  const updateProfile: SubmitHandler<ProfileCreation> = async data => {
+    try {
+      await updateProfileSchema(data.Shipping.BillingIsShipping, updateBilling).validate(data);
+    } catch (error) {
+      return toast.error(
+        error.errors[0],
+        {
+          position: 'bottom-left'
+        }
+      );
+    }
+
+    if (!selectedProfileGroup) return toast.error('You haven\'t selected a profile group.');
+    if (!selectedProfile) return toast.error('You haven\'t selected profile.');
+
+    dispatch(updateProfileRequest({
+      ...data,
+      ID: selectedProfile.ID,
+      GroupID: selectedProfileGroup.ID,
+      Shipping: {
+        ...data.Shipping,
+        BillingAddress: !data.Shipping.BillingIsShipping ? data.Shipping.BillingAddress : undefined
+      },
+      Billing: updateBilling ? data.Billing : undefined,
+    }));
+
+    closeAndResetModal();
+  };
+
+  const launchEditor = (id: string) => {
+    setEditingProfile(true);
+    dispatch(getProfileRequest(id));
+  };
+
+  const createProfile: SubmitHandler<ProfileCreation> = async data => {
     try {
       await newProfileSchema(data.Shipping.BillingIsShipping).validate(data);
     } catch (error) {
@@ -50,29 +93,6 @@ const Profiles: React.FC = () => {
       );
     }
 
-    return !editingProfile
-      ? createProfile(data)
-      : updateProfile(data);
-  }
-
-  const updateProfile: SubmitHandler<ProfileCreation> = data => {
-    if (!selectedProfileGroup) return toast.error('You haven\'t selected a profile group.');
-    if (selectedProfile) return toast.error('You haven\'t selected profile.');
-
-    dispatch(updateProfileRequest({
-      ...data,
-      ID: selectedProfile.ID,
-    }));
-
-    closeAndResetModal();
-  };
-
-  const launchEditor = (id: string) => {
-    setEditingProfile(true);
-    dispatch(getProfileRequest(id));
-  };
-
-  const createProfile: SubmitHandler<ProfileCreation> = data => {
     if (!selectedProfileGroup) return toast.error('You haven\'t selected a profile group');
 
     dispatch(createProfileRequest({
@@ -83,7 +103,11 @@ const Profiles: React.FC = () => {
     closeAndResetModal();
   };
 
-  const deleteProfile = (id: string) => dispatch(deleteProfileRequest({ profileId: id }));
+  const deleteProfile = (id?: string) => {
+    if (id) return dispatch(deleteProfileRequest({profileId: id}))
+
+    selectedProfileGroup.Profiles.forEach(profile => dispatch(deleteProfileRequest({profileId: profile.ID})))
+  };
 
   const editProfileGroup = (newName: string) => {
     dispatch(updateProfileGroupRequest({
@@ -107,6 +131,40 @@ const Profiles: React.FC = () => {
     profileFormMethods.reset();
   };
 
+  const loadEditForm = async () => {
+    profileFormMethods.setValue('Name', selectedProfile.Name)
+    profileFormMethods.setValue('Email', selectedProfile.Email)
+    profileFormMethods.setValue('Shipping.FirstName', selectedProfile.Shipping.FirstName)
+    profileFormMethods.setValue('Shipping.LastName', selectedProfile.Shipping.LastName)
+    profileFormMethods.setValue('Shipping.PhoneNumber', selectedProfile.Shipping.PhoneNumber)
+    profileFormMethods.setValue('Shipping.BillingIsShipping', selectedProfile.Shipping.BillingIsShipping)
+    setShown(selectedProfile.Shipping.BillingIsShipping);
+    if (!selectedProfile.Shipping.BillingIsShipping) {
+      profileFormMethods.setValue('Shipping.BillingAddress.AddressLine', selectedProfile.Shipping.BillingAddress.AddressLine)
+      profileFormMethods.setValue('Shipping.BillingAddress.AddressLine2', selectedProfile.Shipping.BillingAddress.AddressLine2)
+      profileFormMethods.setValue('Shipping.BillingAddress.Country', selectedProfile.Shipping.BillingAddress.Country)
+      profileFormMethods.setValue('Shipping.BillingAddress.State', selectedProfile.Shipping.BillingAddress.State)
+      profileFormMethods.setValue('Shipping.BillingAddress.City', selectedProfile.Shipping.BillingAddress.City)
+      profileFormMethods.setValue('Shipping.BillingAddress.ZIP', selectedProfile.Shipping.BillingAddress.ZIP)
+      profileFormMethods.setValue('Shipping.BillingAddress.StateCode', selectedProfile.Shipping.BillingAddress.StateCode)
+    }
+    profileFormMethods.setValue('Shipping.ShippingAddress.AddressLine', selectedProfile.Shipping.ShippingAddress.AddressLine)
+    profileFormMethods.setValue('Shipping.ShippingAddress.AddressLine2', selectedProfile.Shipping.ShippingAddress.AddressLine2)
+    profileFormMethods.setValue('Shipping.ShippingAddress.Country', selectedProfile.Shipping.ShippingAddress.Country)
+    profileFormMethods.setValue('Shipping.ShippingAddress.State', selectedProfile.Shipping.ShippingAddress.State)
+    profileFormMethods.setValue('Shipping.ShippingAddress.City', selectedProfile.Shipping.ShippingAddress.City)
+    profileFormMethods.setValue('Shipping.ShippingAddress.ZIP', selectedProfile.Shipping.ShippingAddress.ZIP)
+    profileFormMethods.setValue('Shipping.ShippingAddress.StateCode', selectedProfile.Shipping.ShippingAddress.StateCode)
+
+    setModalShown(true);
+  }
+
+  useEffect(() => {
+    if (editingProfile && !modalShown) {
+      loadEditForm()
+    }
+  }, [selectedProfile]);
+
   return (
     <div className={'task-page'}>
       <FormProvider {...profileFormMethods}>
@@ -116,13 +174,24 @@ const Profiles: React.FC = () => {
             <SideModalBody>
                 {editingProfile
                   ? selectedProfile
-                    ? <ProfileForm shown={shown} setShown={setShown}/>
+                    ? <ProfileForm
+                      shown={shown}
+                      setShown={setShown}
+                      setUpdateBilling={setUpdatingBilling}
+                      updateBilling={updateBilling}
+                      editing
+                    />
                     : <></>
-                  : <ProfileForm shown={shown} setShown={setShown}/>
+                  : (
+                    <ProfileForm
+                      shown={shown}
+                      setShown={setShown}
+                    />
+                  )
                 }
             </SideModalBody>
             <SideModalFooter>
-              <Button type={'submit'}>Create Profile</Button>
+              <Button type={'submit'}>{editingProfile ? 'Update' : 'Create'} Profile</Button>
             </SideModalFooter>
           </form>
         </SideModal>
@@ -174,12 +243,14 @@ const Profiles: React.FC = () => {
         actions={[
           {
             onClick: launchEditor,
-            icon: Edit
+            icon: Edit,
+            hideHead: true,
           },
           {
             onClick: deleteProfile,
             icon: Delete,
-            color: ActionColor.RED
+            color: ActionColor.RED,
+            // hideHead: true,
           }
         ]}
       />
