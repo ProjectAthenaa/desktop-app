@@ -9,7 +9,7 @@
   justify-content: space-between;
   position: relative;
   z-index: 1000;
-  -webkit-app-region: drag;
+
 
   &::after {
     content: "";
@@ -34,6 +34,13 @@
     font-size: $fs-small;
     position: relative;
     top: 1px;
+  }
+
+  .draggable-region {
+    display: flex;
+    flex: 1;
+    -webkit-app-region: drag;
+    height: 35px;
   }
 
   .right {
@@ -70,7 +77,7 @@
     position: relative;
     z-index: 10000;
     button {
-      cursor: pointer !important;
+      cursor: pointer;
       height: 12px;
       width: 12px;
       border-radius: 8px;

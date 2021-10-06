@@ -41,6 +41,7 @@ const Frame: React.FC<Props> = ({ openSettings }) => {
         <button className="minimize" onClick={() => onClickWindowAction('minimize')}/>
         <button className="maximize" onClick={() => onClickWindowAction('maximize')}/>
       </div>
+      <div className="draggable-region" />
       <div className={'right'}>
         <p className={'version'}>v{'1.0.0'}</p>
         <button
